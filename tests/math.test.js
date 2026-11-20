@@ -322,3 +322,143 @@ Deno.test("pizza slice as a polycon: adjoint, canonical function and the weight 
   close(P.lambdaO(0, 1), 0);            // vanishes on the arc
   close(P.lambdaO(0.6, 0.8), 0);
 });
+
+/* ---------------- Section 8.3–8.5 ---------------- */
+
+Deno.test("mean value coordinates: perimeter of the dual; Wachspress: twice its area", async () => {
+  const { meanValue, meanValueWeights } = await import("../js/math/barycentric.js");
+  const { perimeter } = await import("../js/math/polygon.js");
+  const rand = rng(21);
+  for (let n = 3; n <= 8; n++) {
+    for (let t = 0; t < 5; t++) {
+      const pts = randomPolygon(n, rand), x = randomInside(pts, rand);
+      const dual = polarDual(pts, x);
+      close(meanValueWeights(pts, x).reduce((a, b) => a + b), perimeter(dual), 1e-9, "MV sum");
+      close(vertexWedges(pts, x).reduce((a, b) => a + b), 2 * signedArea(dual), 1e-9, "W sum");
+      // Wachspress weight of vertex i = (length of its dual edge) / |p_i − x|
+      vertexWedges(pts, x).forEach((w, i) => {
+        const L = Math.hypot(dual[i][0] - dual[mod(i - 1, n)][0], dual[i][1] - dual[mod(i - 1, n)][1]);
+        close(w, L / Math.hypot(pts[i][0] - x[0], pts[i][1] - x[1]), 1e-9, "W_i = L_i / r_i");
+      });
+      const lam = meanValue(pts, x);
+      if (!lam.every((l) => l > 0)) throw new Error("MV positive");
+      close(lam.reduce((a, b) => a + b), 1);
+      const y = combine(lam, pts);
+      close(y[0], x[0]); close(y[1], x[1]);
+      if (n === 3) wachspress(pts, x).forEach((l, i) => close(l, lam[i])); // triangle: unique
+    }
+  }
+});
+
+Deno.test("disc: dual area / perimeter formulas and the smooth Wachspress kernel", async () => {
+  const { ellipticE, discDualArea2, discDualPerimeter, discKernel } = await import("../js/math/canonical.js");
+  close(ellipticE(0), Math.PI / 2);
+  close(ellipticE(0.5), 1.3506438810476755, 1e-12);
+  const N = 20000;
+  for (const r of [0.2, 0.6, 0.9]) {
+    // ∫ dθ / ρ(θ) with ρ the distance from x = (r, 0) to the circle in direction θ
+    let per = 0, ker = 0;
+    for (let k = 0; k < N; k++) {
+      const t = (2 * Math.PI * (k + 0.5)) / N;
+      const rho = -r * Math.cos(t) + Math.sqrt(1 - r * r * Math.sin(t) ** 2);
+      per += 1 / rho; ker += discKernel(t, [r, 0]);
+    }
+    close((per * 2 * Math.PI) / N, discDualPerimeter(r), 1e-9, "perimeter");
+    // the kernel κ/(n·(v−x))² = 1/(1 − v·x)² integrates to 2π/(1−r²)^{3/2} = 2 x dual area
+    close((ker * 2 * Math.PI) / N, 1, 1e-9, "kernel integrates to 1");
+    // dual ellipse: semi-axes 1/(1−r²) and 1/√(1−r²), so 2 x area = 2π/(1−r²)^{3/2}
+    close(2 * Math.PI * (1 / (1 - r * r)) * (1 / Math.sqrt(1 - r * r)), discDualArea2(r));
+    close(discDualArea2(r), discCanonical([r, 0]));
+  }
+  // Wachspress coordinates of inscribed regular polygons converge to the kernel
+  const x = [0.3, 0.2], n = 720;
+  const pts = regularPolygon(n, 1, 0);
+  const lam = wachspress(pts, x);
+  lam.forEach((l, i) => close((l * n) / (2 * Math.PI), discKernel((2 * Math.PI * i) / n, x), 1e-4, "kernel"));
+});
+
+Deno.test("Wachspress' polycon basis on the pizza slice (with a side node)", async () => {
+  const { pizzaWachspress, PIZZA } = await import("../js/math/canonical.js");
+  let sawNegative = false;
+  for (const deg of [50, 75, 90, 120]) {
+    const theta = (deg * Math.PI) / 180;
+    // each function is 1 at its own node and 0 at the others
+    const { nodes } = pizzaWachspress(theta, [0, 0.5]);
+    nodes.forEach((nd, i) => pizzaWachspress(theta, nd).weights.forEach((w, j) => close(w, i === j ? 1 : 0, 1e-9, "Kronecker")));
+    const rand = rng(deg);
+    for (let t = 0; t < 200; t++) {
+      const r = 0.98 * Math.sqrt(rand()), a = Math.PI / 6 + (2 * Math.PI / 3) * rand();
+      const p = [r * Math.cos(a), r * Math.sin(a)];
+      const { weights } = pizzaWachspress(theta, p);
+      close(weights.reduce((s, w) => s + w), 1, 1e-9, "partition of unity");
+      close(weights.reduce((s, w, i) => s + w * nodes[i][0], 0), p[0], 1e-9, "linear precision x");
+      close(weights.reduce((s, w, i) => s + w * nodes[i][1], 0), p[1], 1e-9, "linear precision y");
+      close(weights[0], PIZZA.lambdaO(p[0], p[1]));                 // corner function: independent of M
+      if (!(weights[0] >= 0 && weights[3] >= 0)) throw new Error("corner and side-node functions are non-negative");
+      if (weights[1] < -1e-6 || weights[2] < -1e-6) sawNegative = true;
+    }
+  }
+  if (!sawNegative) throw new Error("expected negative values of the vertex wedges on the conic side");
+});
+
+Deno.test("dual measure: disc cut by a line (Mazzucchelli-Raman) and polygons", async () => {
+  const { chordRegion: R, dualIntegral } = await import("../js/math/canonical.js");
+  for (const a of [0.4, 0.7]) {
+    const box = { xmin: -1.001, xmax: 1.001, ymin: -1.001, ymax: 1 / a + 0.001 };
+    for (const x of [[0.1, 0.2], [-0.3, 0.4], [0.4, -0.1]]) {
+      const I = dualIntegral((y) => R.inDual(a, y), (y) => R.density(a, y), x, box, 900);
+      close(I, R.canonical(a, x), 4e-3, `a=${a}`);
+    }
+  }
+  // polygon: density 1 on the dual polygon (the dual volume formula 3.10)
+  const pts = regularPolygon(5, 1, 0.3), x = [0.2, -0.15];
+  const dual = polarDual(pts, [0, 0]);
+  const I = dualIntegral((y) => pointInConvex(dual, y), () => 1, x,
+    { xmin: -1.5, xmax: 1.5, ymin: -1.5, ymax: 1.5 }, 900);
+  close(I, polygonCanonical(pts, x), 4e-3, "polygon dual volume");
+});
+
+Deno.test("push-forward: quadrilateral from the unit square; parallelograms", async () => {
+  const { inverseBilinear, pushforwardCanonical, bilinear, bilinearWeights } =
+    await import("../js/math/pushforward.js");
+  const rand = rng(31);
+  let complexSeen = false;
+  for (let t = 0; t < 300; t++) {
+    const P = randomPolygon(4, rand), y = randomInside(P, rand);
+    const roots = inverseBilinear(P, y);
+    close(pushforwardCanonical(P, y), polygonCanonical(P, y), 1e-7, "push-forward");
+    if (roots.some((r) => Math.abs(r.u[1]) > 1e-9)) complexSeen = true;
+    // each real root really solves B(u, v) = y; exactly one lies in the open unit square
+    const real = roots.filter((r) => Math.abs(r.u[1]) < 1e-12);
+    for (const r of real) {
+      if (Math.abs(r.u[0]) > 1e6) continue;
+      const q = bilinear(P, r.u[0], r.v[0]);
+      close(q[0], y[0], 1e-6); close(q[1], y[1], 1e-6);
+    }
+    const inSquare = real.filter((r) => r.u[0] > 0 && r.u[0] < 1 && r.v[0] > 0 && r.v[0] < 1);
+    if (inSquare.length !== 1) throw new Error("exactly one preimage in the square");
+  }
+  // parallelogram: one root, and bilinear weights = Wachspress coordinates
+  const P = [[0, 0], [2, 0.3], [2.5, 1.4], [0.5, 1.1]], y = [1.2, 0.7];
+  const roots = inverseBilinear(P, y);
+  if (roots.length !== 1) throw new Error("parallelogram: affine map, one root");
+  close(pushforwardCanonical(P, y), polygonCanonical(P, y));
+  const lam = wachspress(P, y);
+  bilinearWeights(roots[0].u[0], roots[0].v[0]).forEach((w, i) => close(w, lam[i]));
+  // a generic quadrilateral: bilinear weights differ from Wachspress coordinates
+  const Q = [[0, 0], [2, 0], [1.6, 1.5], [0.2, 1]], z = [0.9, 0.6];
+  const r = inverseBilinear(Q, z).find((s) => s.u[0] > 0 && s.u[0] < 1 && Math.abs(s.u[1]) < 1e-12);
+  const diff = Math.max(...bilinearWeights(r.u[0], r.v[0]).map((w, i) => Math.abs(w - wachspress(Q, z)[i])));
+  if (!(diff > 1e-3)) throw new Error("expected a difference for a non-parallelogram");
+  void complexSeen;
+});
+
+Deno.test("positive Grassmannian G(2,4): chart, cyclic minors and the Plücker relation", () => {
+  // C = [[1, 0, −c, −d], [0, 1, a, b]]; minors p_ij = det of columns i, j
+  const [a, b, c, d] = [1.3, 0.4, 0.7, 2.1];
+  const C = [[1, 0, -c, -d], [0, 1, a, b]];
+  const p = (i, j) => C[0][i] * C[1][j] - C[0][j] * C[1][i];
+  close(p(0, 1), 1); close(p(1, 2), c); close(p(2, 3), a * d - b * c); close(p(0, 3), b);
+  close(p(0, 2), a); close(p(1, 3), d);
+  close(p(0, 2) * p(1, 3), p(0, 1) * p(2, 3) + p(0, 3) * p(1, 2)); // p13 p24 = p12 p34 + p14 p23
+});

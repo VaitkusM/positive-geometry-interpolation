@@ -23,6 +23,11 @@ import { initLineSpace } from "./figures/linespace.js";
 import { initDisc } from "./figures/disc.js";
 import { initPolytope3d } from "./figures/polytope3d.js";
 import { initPolycon } from "./figures/polycon.js";
+import { initPizzaBasis } from "./figures/pizzabasis.js";
+import { initDualMeasure } from "./figures/dualmeasure.js";
+import { initMeanValue } from "./figures/meanvalue.js";
+import { initSmooth } from "./figures/smooth.js";
+import { initQuad } from "./figures/quad.js";
 
 const FIGURES = {
   segment: initSegment,
@@ -35,6 +40,11 @@ const FIGURES = {
   disc: initDisc,
   polytope3d: initPolytope3d,
   polycon: initPolycon,
+  pizzabasis: initPizzaBasis,
+  dualmeasure: initDualMeasure,
+  meanvalue: initMeanValue,
+  smooth: initSmooth,
+  quad: initQuad,
 };
 
 /** Replace the TeX source inside every .tex element by its typeset form. */

@@ -399,8 +399,10 @@
     tetrahedron; its combinatorics is that of an octahedron, the hypersimplex. Can barycentric
     coordinates for lines be defined as ratios of canonical forms?</p>
   <p class="update"><span class="badge">Later development</span> While preparing this page (November
-    2026) we found no published follow-up on barycentric coordinates in line space; as far as we
-    can tell the question is still open.</p>
+    2026) we found no published construction of barycentric coordinates in line space; the
+    question appears to be open. What is now known about the relevant canonical forms, and a
+    distinction between the positive Grassmannian and the octahedron that is worth making, is
+    summarised in <a href="#later-lines">Section 8.5</a>.</p>
 
   <figure class="fig" data-figure="linespace">
     <figcaption><strong>Figure 8.</strong> Each vertex of the octahedron is an edge line
@@ -423,7 +425,10 @@
     space.</p>
   <p class="update"><span class="badge">Later development</span> Transforms of regions with curved
     boundaries that are no longer rational, including exactly this function for the disc, have
-    since been studied; see <a href="#later-transforms">Section 8.2</a>.</p>
+    since been studied; see <a href="#later-transforms">Section 8.2</a>. In the dual picture
+    this function turns out to be the continuous limit of the <em>Wachspress</em> normaliser,
+    while mean value coordinates correspond to a perimeter instead of an area; see
+    <a href="#later-meanvalue">Section 8.3</a>.</p>
 
   <figure class="fig" data-figure="disc">
     <figcaption><strong>Figure 9.</strong> Regular polygons circumscribed about the unit circle
@@ -483,11 +488,44 @@
   <p>What does this mean for interpolation? At a vertex where two <em>lines</em> meet, the wedge
     recipe of Section 5 still works as it stands: for the corner of the pizza slice it gives
     <span class="tex">\lambda_O=(1-x^2-y^2)/(1+2y)</span>, shown in Figure 10. At vertices on a
-    curved side the recipe needs a third “side” to close up a line and a conic, and
-    Wachspress’ own elements add extra nodes on curved sides. A description of those weights
-    as ratios of canonical forms is, to our knowledge, not in the literature. And Brüser’s
-    example shows that positivity of the denominator cannot be taken for granted beyond
-    polygons.</p>
+    curved side something new is needed.</p>
+
+  <h4>Wachspress’ own basis functions on a polycon</h4>
+  <p>Restricted to a conic, a linear function is no longer determined by two values but by
+    three. Wachspress therefore puts one extra <em>side node</em> on every conic side; its
+    position on the side is arbitrary. For a polycon of boundary degree
+    <span class="tex">m</span> all basis functions (“wedges”) share the adjoint, of degree
+    <span class="tex">m-3</span>, as denominator and have numerators of degree
+    <span class="tex">m-2</span>. For the pizza slice (<span class="tex">m=4</span>), with side lines
+    <span class="tex">L_1,L_2</span>, circle <span class="tex">Q=1-x^2-y^2</span>, adjoint
+    <span class="tex">D=1+2y</span> and side node <span class="tex">M</span>:</p>
+  <div class="tex block">W_O=\frac{Q}{D},\qquad W_M=k_M\frac{L_1L_2}{D},\qquad
+    W_{V_1}=k_1\frac{L_2\,\ell_1}{D},\qquad W_{V_2}=k_2\frac{L_1\,\ell_2}{D}.</div>
+  <p>The corner and the side node get the product of the sides they do not lie on. A vertex
+    where a line meets the conic gets the opposite side times an <em>adjacent factor</em>
+    <span class="tex">\ell_k</span>: the line through <span class="tex">M</span> and the residual point
+    where its side line meets the conic again. The constants make each function equal to one
+    at its own node. The four functions sum to one and reproduce linear functions for every
+    position of <span class="tex">M</span>.</p>
+
+  <figure class="fig" data-figure="pizzabasis">
+    <figcaption><strong>Figure 11.</strong> <span class="badge">Later development</span>
+      Wachspress’ four basis functions on the pizza slice. The corner function does not depend
+      on the side node; the two vertex functions vanish along their adjacent-factor line and
+      are negative beyond it. In Wachspress’ words: “The wedges are no longer positive
+      throughout the element.”</figcaption>
+  </figure>
+
+  <p>Multiplying the basis by the canonical function turns the partition of unity into a
+    decomposition of the canonical form,</p>
+  <div class="tex block">\Omega(P)=\frac{2\sqrt3\,D}{Q\,L_1L_2}\,dx\,dy
+    =2\sqrt3\left(\frac{1}{L_1L_2}+\frac{k_M}{Q}+\frac{k_1\,\ell_1}{Q\,L_1}+\frac{k_2\,\ell_2}{Q\,L_2}\right)dx\,dy .</div>
+  <p>The first term is the wedge form of the two lines, exactly as in Section 5. The others are
+    not canonical forms of sub-regions in any obvious way: the second has a pole only along
+    the circle, and all three change with the arbitrary position of the side node. So on curved domains only
+    part of Wachspress’ construction is, so far, explained by ratios of canonical forms; a full
+    description is, to our knowledge, not in the literature. And Brüser’s example shows that
+    positivity of the common denominator cannot be taken for granted beyond polygons.</p>
 
   <h3 id="later-transforms">8.2 Dual volumes, Laplace transforms and non-rational forms</h3>
   <p>The dual-volume formula of Section 5 has been developed in several directions that touch
@@ -512,12 +550,148 @@
       that paper does not count the disc among the examples of canonical forms, because a
       circle has no vertices.</li>
   </ul>
-  <p>So the non-rational, branched objects that the paper anticipated for mean value
-    coordinates now have a concrete theory around them. Whether mean value coordinates
-    themselves are ratios of such generalised forms has, as far as we know, not been worked
-    out.</p>
+  <p>The second item can be seen directly. In the plane, and with the dual taken about the
+    origin, the dual-volume formula of Section 5 reads</p>
+  <div class="tex block">C(\mathbf x)=2\int_{P^*}\frac{\mu(\mathbf y)\,d\mathbf y}{(1+\mathbf x\cdot\mathbf y)^{3}},</div>
+  <p>with <span class="tex">\mu\equiv1</span> for a polygon. For a disc cut by a line, Mazzucchelli and
+    Raman show that the same formula holds on the dual region (the convex hull of the disc and
+    the point dual to the line) with the density
+    <span class="tex">\mu=\tfrac12+\tfrac1\pi\arctan\!\big((y_2-a)/\sqrt{(1-a^2)(1-|\mathbf y|^2)}\big)</span>
+    inside the disc and <span class="tex">\mu=1</span> outside it. They prove that every such region
+    bounded by lines and <em>one</em> conic is completely monotone, and conjecture it for several
+    conics.</p>
 
-  <h3 id="later-reading">8.3 Where to read more</h3>
+  <figure class="fig" data-figure="dualmeasure">
+    <figcaption><strong>Figure 12.</strong> <span class="badge">Later development</span>
+      A volume becomes a measure. For the pentagon the dual is uniformly shaded and the
+      integral is the dual-volume formula of the paper. For the cut disc the density falls
+      from 1 to 0 across the dual disc. In both cases the numerical integral reproduces the
+      rational canonical function.</figcaption>
+  </figure>
+
+  <p>For products of linear forms the corresponding kernels are piecewise polynomial, which is
+    as close as this literature comes to the splines of the third open problem; we found no
+    paper that makes the link explicit.</p>
+
+  <h3 id="later-meanvalue">8.3 Mean value coordinates in the dual picture: area versus perimeter</h3>
+  <p>Section 7 related the disc function of eq. (5.14) to mean value coordinates. The dual
+    picture allows a sharper statement. Schaefer, Ju and Warren showed that Wachspress and mean
+    value coordinates are two members of one family of dual Shepard interpolants. Write
+    <span class="tex">L_i</span> for the length of the edge of the dual polygon
+    <span class="tex">P^*_{\mathbf x}</span> that corresponds to the vertex
+    <span class="tex">\mathbf p_i</span>, and <span class="tex">r_i=|\mathbf p_i-\mathbf x|</span>. Then</p>
+  <div class="tex block">\underbrace{\sum_i w_i^{\mathrm{W}}}_{\text{Wachspress}}=\sum_i\frac{L_i}{r_i}=2\operatorname{Area}(P^*_{\mathbf x}),
+    \qquad\qquad \underbrace{\sum_i w_i^{\mathrm{MV}}}_{\text{mean value}}=\sum_i L_i=\operatorname{Perimeter}(P^*_{\mathbf x}).</div>
+  <p>For Wachspress coordinates even the individual weights are
+    <span class="tex">w_i=L_i/r_i</span>, and linear precision becomes the fact that the edge
+    vectors of a closed polygon sum to zero. For mean value coordinates only the total is the
+    perimeter; the individual weights are distributed differently.</p>
+
+  <figure class="fig" data-figure="meanvalue">
+    <figcaption><strong>Figure 13.</strong> <span class="badge">Later development</span>
+      One dual polygon, two measurements. Its area normalises the Wachspress coordinates, its
+      perimeter the mean value coordinates. On a triangle the two sets of coordinates
+      coincide.</figcaption>
+  </figure>
+
+  <p>For the unit disc and a point at distance <span class="tex">r</span> from the centre, the dual
+    is an ellipse with semi-axes <span class="tex">1/(1-r^2)</span> and
+    <span class="tex">1/\sqrt{1-r^2}</span>, so the two normalisers are</p>
+  <div class="tex block">2\operatorname{Area}=\frac{2\pi}{(1-r^2)^{3/2}},\qquad
+    \operatorname{Perimeter}=\frac{4\,E(r)}{1-r^2},\qquad E(r)=\int_0^{\pi/2}\!\sqrt{1-r^2\sin^2\varphi}\;d\varphi .</div>
+  <p>The first is the function of eq. (5.14) and Figure 9. It is therefore the continuous limit of
+    the <em>Wachspress</em> normaliser. The mean value analogue is the second: an elliptic
+    integral, which grows only like <span class="tex">2/h</span> at distance
+    <span class="tex">h</span> from the boundary.</p>
+  <p>The same limit can be taken for the coordinates themselves. Warren, Schaefer, Hirani and
+    Desbrun extended Wachspress coordinates to smooth convex sets, with a weight
+    <span class="tex">\kappa(\mathbf v)/\big(\mathbf n(\mathbf v)\cdot(\mathbf v-\mathbf x)\big)^{d}</span> at the
+    boundary point <span class="tex">\mathbf v</span> (curvature over a power of the distance to the
+    tangent plane). For the unit circle this is
+    <span class="tex">1/(1-\mathbf v\cdot\mathbf x)^2</span>, and its integral over the circle is again
+    <span class="tex">2\pi/(1-|\mathbf x|^2)^{3/2}</span>.</p>
+
+  <figure class="fig" data-figure="smooth">
+    <figcaption><strong>Figure 14.</strong> <span class="badge">Later development</span>
+      Wachspress coordinates of inscribed regular polygons, rescaled to a weight per unit
+      angle, converge to the smooth kernel of the circle; the total weight converges to the
+      disc function of eq. (5.14).</figcaption>
+  </figure>
+
+  <p class="update">The area/perimeter comparison, the elliptic-integral formula and the
+    identification of eq. (5.14) with the Wachspress-type kernel are observations made while
+    preparing this page. They are verified numerically in the project’s tests, but we did not
+    find them stated in the literature, and a positive-geometry description of mean value
+    coordinates themselves remains open.</p>
+
+  <h3 id="later-pushforward">8.4 Push-forwards, bilinear patches and polynomial coordinates</h3>
+  <p>Besides triangulation there is a second way to compute canonical forms, already in
+    Arkani-Hamed, Bai and Lam: the <strong>push-forward</strong>. If a map sends one positive
+    geometry onto another, the canonical form of the image is obtained by summing the form of
+    the source over all preimages of a point, each divided by the Jacobian determinant. For a
+    quadrilateral the map is one every modeller knows, the bilinear patch
+    <span class="tex">B(u,v)</span> over the unit square, whose canonical form is
+    <span class="tex">du\,dv/\big(u(1-u)\,v(1-v)\big)</span>:</p>
+  <div class="tex block">C_{\text{quad}}(\mathbf x)=\sum_{B(u,v)=\mathbf x}\frac{1}{u(1-u)\,v(1-v)\,\det\!\big(\partial_uB,\partial_vB\big)} .</div>
+  <p>Inverse bilinear interpolation has two solutions. One lies in the square; the other lies
+    outside it or is complex, and it cannot be left out of the sum. In the same way the
+    canonical form of any polygon is the push-forward of
+    <span class="tex">\tfrac{dX_1}{X_1}\wedge\tfrac{dX_2}{X_2}</span> under a suitable toric patch.</p>
+
+  <figure class="fig" data-figure="quad">
+    <figcaption><strong>Figure 15.</strong> <span class="badge">Later development</span>
+      The canonical function of a quadrilateral as a sum over the two preimages under the
+      bilinear map, compared with the wedge formula of Section 5. The adjoint is the line
+      through the two points where opposite sides meet.</figcaption>
+  </figure>
+
+  <p>The bilinear blending functions, evaluated at the preimage inside the square, are also
+    barycentric coordinates of <span class="tex">\mathbf x</span>; but as functions of
+    <span class="tex">\mathbf x</span> they involve a square root, and in general they differ from
+    the Wachspress coordinates. For a parallelogram the map is affine, the two coincide, the
+    adjoint is constant and the coordinates are polynomials. Wachspress already observed that
+    a quadrilateral has polynomial barycentric coordinates only if it is a parallelogram.
+    Baumbach and Winter (2026) settle the general case: a polytope admits polynomial
+    generalised barycentric coordinates if and only if it is affinely equivalent to a product
+    of simplices, and Wachspress coordinates are the unique rational coordinates of minimal
+    degree. For toric patches, Garcia-Puente and Sottile relate linear precision to an
+    algebraic-statistics property, maximum likelihood degree one.</p>
+
+  <h3 id="later-lines">8.5 Line space: what is known about the canonical form</h3>
+  <p>The first open problem asks for barycentric coordinates in the space of lines. No such
+    construction has appeared, but the ingredients are now explicit, and they suggest keeping
+    two objects apart.</p>
+  <ul>
+    <li><strong>The positive Grassmannian has four facets.</strong> Its canonical form has poles
+      exactly where one of the <em>cyclically consecutive</em> Plücker coordinates vanishes
+      (Arkani-Hamed, Bai, Lam, eq. 5.40). For <span class="tex">G(2,4)</span>, in the chart where a
+      line is the row space of
+      <span class="tex">\left(\begin{smallmatrix}1&amp;0&amp;-c&amp;-d\\0&amp;1&amp;a&amp;b\end{smallmatrix}\right)</span>,
+      this gives
+      <div class="tex block">\Omega\big(G_{\ge0}(2,4)\big)=\frac{da\,db\,dc\,dd}{b\,c\,(ad-bc)},\qquad
+        p_{12}=1,\;p_{23}=c,\;p_{34}=ad-bc,\;p_{14}=b .</div>
+      The other two coordinates <span class="tex">p_{13}=a</span>, <span class="tex">p_{24}=d</span>
+      cannot vanish in the interior, because
+      <span class="tex">p_{13}p_{24}=p_{12}p_{34}+p_{14}p_{23}</span>. So this positive geometry has a
+      cyclic symmetry, not the full symmetry of a tetrahedron.</li>
+    <li><strong>The octahedron is a moment-map image.</strong> The six normalised Plücker
+      coordinates <span class="tex">p_{ij}/\sum p_{kl}</span> are non-negative and sum to one, and
+      they map the positive Grassmannian onto the octahedron (the hypersimplex) of Figure 8.
+      They look like barycentric coordinates with respect to the six edge lines, but the map
+      goes from four dimensions to three and is not injective; Łukowski and Stalknecht
+      describe the canonical forms that arise on the hypersimplex.</li>
+    <li><strong>A first adjoint in line space.</strong> Pavlov and Ranestad (2025) cut the positive
+      Grassmannian with one more hyperplane <span class="tex">\sum c_{ij}p_{ij}\ge0</span> and show
+      that, under genericity assumptions, the resulting “positive pentahedron” is a positive
+      geometry with a unique adjoint, the linear form
+      <span class="tex">\sum\max(c_{ij},0)\,p_{ij}</span>. Loosely speaking, this is the step
+      from a triangle to a quadrilateral.</li>
+  </ul>
+  <p>The chart formula above is our own evaluation of eq. (5.40). Which of these objects should
+    play the role of the “simplex” for interpolation, and what replaces linear precision, is
+    open.</p>
+
+  <h3 id="later-reading">8.6 Where to read more</h3>
   <ul>
     <li>T. Lam, <em>An invitation to positive geometries</em> (2022): a short introduction for
       mathematicians. <a href="https://arxiv.org/abs/2208.05407">arXiv:2208.05407</a></li>
@@ -570,6 +744,20 @@
       <a href="https://arxiv.org/abs/2509.02239">arXiv:2509.02239</a>, 2025.</li>
     <li>B. Shapiro. Canonical forms and moment-generating functions of plane polypols.
       <a href="https://arxiv.org/abs/2605.10864">arXiv:2605.10864</a>, 2026.</li>
+    <li>E. Wachspress. Generalized barycentrics: rational bases for 2D and 3D elements with
+      algebraic sides. Workshop slides,
+      <a href="https://www.inf.usi.ch/faculty/hormann/nsfworkshop/presentations/Wachspress.pdf">inf.usi.ch</a>.</li>
+    <li>J. Warren, S. Schaefer, A. N. Hirani, M. Desbrun. Barycentric coordinates for convex
+      sets. <em>Advances in Computational Mathematics</em> 27:319–338, 2007.</li>
+    <li>T. Baumbach, M. Winter. Rational barycentric coordinates and low degree adjoints.
+      <a href="https://arxiv.org/abs/2611.02110">arXiv:2611.02110</a>, 2026.</li>
+    <li>L. D. Garcia-Puente, F. Sottile. Linear precision for parametric patches.
+      <a href="https://arxiv.org/abs/0706.2116">arXiv:0706.2116</a>.</li>
+    <li>T. Łukowski, J. Stalknecht. The hypersimplex canonical forms and the momentum
+      amplituhedron-like logarithmic forms.
+      <a href="https://arxiv.org/abs/2107.07520">arXiv:2107.07520</a>, 2021.</li>
+    <li>D. Pavlov, K. Ranestad. Positive polytopes with few facets in the Grassmannian.
+      <a href="https://arxiv.org/abs/2503.01652">arXiv:2503.01652</a>, 2025.</li>
   </ol>
 </section>
 

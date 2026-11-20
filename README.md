@@ -14,7 +14,7 @@ with poles on the boundary of the domain.
 
 The page is written for a mixed audience (geometric modelling people who have
 not met positive geometries, and mathematicians / physicists who have not met
-barycentric coordinates) and contains ten interactive figures. Sections 1–7 follow
+barycentric coordinates) and contains fifteen interactive figures. Sections 1–7 follow
 the 2019 paper; material published since then is collected in Section 8 and marked
 "Later development" on the page, and figures that go beyond the paper's own are
 marked "Added illustration".
@@ -31,6 +31,11 @@ marked "Added illustration".
 | 8 | Line space | tetrahedral line complex and the octahedron (hypersimplex) |
 | 9 | Disc | simple pole (polygons) versus branch point (disc) |
 | 10 | Polycons *(later development)* | adjoint curves of regions with curved sides; Brüser's 2026 counterexample to Wachspress' conjecture |
+| 11 | Polycon basis *(later development)* | Wachspress' own basis on the pizza slice, with a movable side node; not positive |
+| 12 | Dual measure *(later development)* | canonical function as an integral over the dual with a density (Mazzucchelli–Raman) |
+| 13 | Area vs perimeter *(later development)* | Wachspress and mean value normalisers as area and perimeter of the dual polygon |
+| 14 | Smooth limit *(later development)* | inscribed polygons → the kernel of Warren et al. for the circle |
+| 15 | Push-forward *(later development)* | quadrilateral from the unit square via the bilinear patch; parallelogram case |
 
 ## Running locally
 
@@ -66,8 +71,10 @@ js/math/              pure mathematics, no DOM — the part worth reusing
   canonical.js          canonical functions: segment, triangle, wedge, polygon,
                         adjoint, half disc, pizza slice, disc; polycon data
                         (pizza slice, Brüser's counterexample)
-  barycentric.js        coordinates as ratios of forms, classic formulas, polar dual
+  barycentric.js        coordinates as ratios of forms, classic formulas, polar dual,
+                        mean value coordinates
   polytope3d.js         simple polyhedra from face planes, 3D Wachspress, 3D dual
+  pushforward.js        inverse bilinear map (complex roots), push-forward of the square's form
 js/ui/
   stage.js              canvas wrapper: world coordinates, hi-DPI, draggable handles
   ramp.js               sequential colour ramp (heat map, 3D surface)

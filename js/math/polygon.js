@@ -130,3 +130,10 @@ export function regularPolygon(n, r = 1, phase = Math.PI / 2, center = [0, 0]) {
   }
   return pts;
 }
+
+/** Perimeter of a polygon. */
+export function perimeter(pts) {
+  let s = 0;
+  for (let i = 0; i < pts.length; i++) s += dist(pts[i], pts[(i + 1) % pts.length]);
+  return s;
+}

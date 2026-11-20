@@ -188,3 +188,133 @@ export const PIZZA = {
   inside(x, y) { return this.circle(x, y) >= 0 && this.line1(x, y) >= 0 && this.line2(x, y) >= 0; },
   lambdaO: (x, y) => (1 - x * x - y * y) / (1 + 2 * y),
 };
+
+/* ------------------------------------------------------------------ */
+/*  Later developments, continued                                      */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Wachspress' rational basis ("wedges") for the pizza slice, following the
+ * construction in his slides "Generalized barycentrics: rational bases for 2D
+ * and 3D elements with algebraic sides": a conic side needs a third node, the
+ * SIDE NODE M (here at angle `theta` on the arc). With m = 4 the boundary
+ * order, all four functions share the adjoint D = 1 + 2y as denominator and
+ * have numerators of degree m − 2 = 2:
+ *
+ *     corner O  (two lines meet):        Q                (the opposite side)
+ *     side node M:                       L1 · L2          (all other sides)
+ *     vertex V1 (line L1 meets conic):   L2 · ℓ1          opposite side × "adjacent factor",
+ *     vertex V2 (line L2 meets conic):   L1 · ℓ2          ℓ_k = line through M and the
+ *                                                         residual point E_k of L_k
+ *
+ * each scaled to equal 1 at its own node. They sum to 1 and reproduce linear
+ * functions, but — unlike on polygons — they are NOT all positive inside.
+ *
+ * @returns {{nodes:number[][], weights:number[], adjacent:{a:number[],b:number[]}[]}}
+ *   nodes/weights in the order [O, V1, V2, M]; adjacent[k] gives two points
+ *   on the line ℓ_{k+1} (for drawing).
+ */
+export function pizzaWachspress(theta, [x, y]) {
+  const [O, V1, V2] = PIZZA.vertices;
+  const [E2, E1] = PIZZA.residual;          // E1 = −V1 lies on line1, E2 = −V2 on line2
+  const M = [Math.cos(theta), Math.sin(theta)];
+  // linear function vanishing on the line through a and b
+  const through = (a, b) => (px, py) => -(b[1] - a[1]) * (px - a[0]) + (b[0] - a[0]) * (py - a[1]);
+  const l1 = through(M, E1), l2 = through(M, E2);
+  const numerators = [
+    (px, py) => PIZZA.circle(px, py),
+    (px, py) => PIZZA.line2(px, py) * l1(px, py),
+    (px, py) => PIZZA.line1(px, py) * l2(px, py),
+    (px, py) => PIZZA.line1(px, py) * PIZZA.line2(px, py),
+  ];
+  const nodes = [O, V1, V2, M];
+  const D = PIZZA.adjoint;
+  const weights = numerators.map((N, i) => {
+    const k = D(nodes[i][0], nodes[i][1]) / N(nodes[i][0], nodes[i][1]); // normalise to 1 at the node
+    return (k * N(x, y)) / D(x, y);
+  });
+  return { nodes, weights, adjacent: [{ a: M, b: E1 }, { a: M, b: E2 }] };
+}
+
+/**
+ * Disc cut by a line: the region { x² + y² ≤ 1, y ≥ −a } with 0 < a < 1, and
+ * its dual description by Mazzucchelli & Raman (arXiv:2509.02239, eq. (61)).
+ *
+ *   canonical(x)   = 2√(1−a²) / ( (1 − x² − y²)(y + a) )
+ *   inDual(y)      : the polar dual about the origin = convex hull of the unit
+ *                    disc and the point (0, 1/a) dual to the cutting line
+ *   density(y)     : 1 outside the disc; inside it
+ *                    ½ + (1/π) arctan( (y₂ − a) / √((1−a²)(1 − |y|²)) )
+ *
+ * and canonical(x) = 2 ∫_dual density(y) dy / (1 + x·y)³. For a polygon the
+ * density is identically 1 and the formula is the dual volume (eq. 3.10).
+ */
+export const chordRegion = {
+  canonical: (a, [x, y]) => (2 * Math.sqrt(1 - a * a)) / ((1 - x * x - y * y) * (y + a)),
+  inside: (a, [x, y]) => x * x + y * y < 1 && y > -a,
+  inDual(a, [y1, y2]) {
+    if (y1 * y1 + y2 * y2 <= 1) return true;
+    if (y2 < a || y2 > 1 / a) return false;
+    // between the two tangent lines from the apex (0, 1/a); they touch the circle at (±√(1−a²), a)
+    return Math.abs(y1) <= (Math.sqrt(1 - a * a) * (1 / a - y2)) / (1 / a - a);
+  },
+  density(a, [y1, y2]) {
+    const q = 1 - y1 * y1 - y2 * y2;
+    if (q <= 0) return 1;
+    return 0.5 + Math.atan((y2 - a) / Math.sqrt((1 - a * a) * q)) / Math.PI;
+  },
+};
+
+/**
+ * Midpoint-rule value of  2 ∫_box inDual(y) · density(y) / (1 + x·y)³ dy,
+ * the Laplace-type dual integral of a region, on an N × N grid over `box`.
+ */
+export function dualIntegral(inDual, density, x, box, N = 400) {
+  const dx = (box.xmax - box.xmin) / N, dy = (box.ymax - box.ymin) / N;
+  let s = 0;
+  for (let j = 0; j < N; j++) {
+    const y2 = box.ymin + (j + 0.5) * dy;
+    for (let i = 0; i < N; i++) {
+      const y1 = box.xmin + (i + 0.5) * dx;
+      if (!inDual([y1, y2])) continue;
+      const t = 1 + x[0] * y1 + x[1] * y2;
+      s += density([y1, y2]) / (t * t * t);
+    }
+  }
+  return 2 * s * dx * dy;
+}
+
+/** Complete elliptic integral of the second kind E(m), m = k², 0 ≤ m < 1, by the AGM. */
+export function ellipticE(m) {
+  let a = 1, b = Math.sqrt(1 - m), c = Math.sqrt(m);
+  let sum = 0.5 * c * c, pow = 0.5;
+  for (let n = 0; n < 40 && Math.abs(c) > 1e-16; n++) {
+    c = 0.5 * (a - b);
+    const an = 0.5 * (a + b);
+    b = Math.sqrt(a * b);
+    a = an;
+    pow *= 2;
+    sum += pow * c * c;
+  }
+  return (Math.PI / (2 * a)) * (1 - sum);
+}
+
+/**
+ * The two "normalisers" of the unit disc at distance r from the centre:
+ *   Wachspress type (twice the area of the dual ellipse):  2π / (1 − r²)^{3/2}
+ *   mean value type (perimeter of the dual ellipse):       4 E(r²) / (1 − r²)
+ * The dual of the disc about x is an ellipse with semi-axes 1/(1−r²), 1/√(1−r²).
+ */
+export const discDualArea2 = (r) => (2 * Math.PI) / Math.pow(1 - r * r, 1.5);
+export const discDualPerimeter = (r) => (4 * ellipticE(r * r)) / (1 - r * r);
+
+/**
+ * Kernel of the Wachspress-type coordinates of a smooth convex set (Warren,
+ * Schaefer, Hirani, Desbrun 2007), w = κ / (n·(v − x))², for the unit circle:
+ * as a density in the angle θ of the boundary point v, normalised to
+ * integrate to 1:   b(θ; x) = (1 − |x|²)^{3/2} / ( 2π (1 − v·x)² ).
+ */
+export function discKernel(theta, x) {
+  const t = 1 - (Math.cos(theta) * x[0] + Math.sin(theta) * x[1]);
+  return Math.pow(1 - x[0] * x[0] - x[1] * x[1], 1.5) / (2 * Math.PI * t * t);
+}

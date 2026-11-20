@@ -81,3 +81,37 @@ export function combine(lambda, values) {
   lambda.forEach((l, i) => values[i].forEach((v, k) => (out[k] += l * v)));
   return out;
 }
+
+/* ------------------------------------------------------------------ */
+/*  Mean value coordinates (for the comparison in Section 8.3)         */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Unnormalised mean value weights (Floater 2003) of x in a convex CCW polygon:
+ *     w_i = ( tan(α_{i−1}/2) + tan(α_i/2) ) / |p_i − x|,
+ * where α_i is the angle at x between p_i and p_{i+1}.
+ *
+ * Their sum equals the PERIMETER of the polar dual polygon about x, whereas
+ * the Wachspress weights of canonical.js sum to twice its AREA. Reason: with
+ * ρ(θ) the distance from x to the boundary in direction θ, the mean value sum
+ * is ∫ dθ / ρ(θ); 1/ρ is the support function of the dual, and the integral of
+ * a support function over all directions is the perimeter (Cauchy's formula).
+ */
+export function meanValueWeights(pts, x) {
+  const n = pts.length;
+  const d = pts.map((p) => [p[0] - x[0], p[1] - x[1]]);
+  const r = d.map((v) => Math.hypot(v[0], v[1]));
+  const t = d.map((v, i) => {
+    const u = d[(i + 1) % n];
+    const alpha = Math.atan2(v[0] * u[1] - v[1] * u[0], v[0] * u[0] + v[1] * u[1]);
+    return Math.tan(alpha / 2);
+  });
+  return d.map((_, i) => (t[mod(i - 1, n)] + t[i]) / r[i]);
+}
+
+/** Mean value coordinates λ_i (normalised weights). */
+export function meanValue(pts, x) {
+  const w = meanValueWeights(pts, x);
+  const sum = w.reduce((a, b) => a + b, 0);
+  return w.map((v) => v / sum);
+}

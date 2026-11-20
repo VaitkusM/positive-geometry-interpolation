@@ -83,6 +83,7 @@ h2 { font-size: 1.7rem; line-height: 1.2; margin: 0 0 1rem; text-wrap: balance; 
 h2 .num { display: inline-block; min-width: 1.9rem; color: var(--accent); }
 h2.plain { font-size: 1.25rem; }
 h3 { font-size: 1.2rem; margin: 2.2rem 0 0.6rem; }
+h4 { font-size: 1.05rem; margin: 1.6rem 0 0.5rem; }
 p { margin: 0 0 1rem; }
 ul, ol { margin: 0 0 1rem; padding-left: 1.4rem; }
 li { margin-bottom: 0.3rem; }
@@ -166,6 +167,11 @@ canvas.stage { display: block; width: 100%; touch-action: auto; }
 .legend { display: flex; flex-wrap: wrap; gap: 0.3rem 1.2rem; font-size: 0.82rem; color: var(--ink); margin: 0.2rem 0 0.4rem; }
 .key { display: inline-flex; align-items: center; gap: 0.4rem; }
 .key i { display: inline-block; width: 18px; height: 3px; border-radius: 2px; }
+.key i.ramp { width: 46px; height: 10px; background: linear-gradient(90deg, #cde2fb, #2a78d6, #0d366b); }
+@media (prefers-color-scheme: dark) { .key i.ramp { background: linear-gradient(90deg, #0d366b, #2a78d6, #cde2fb); } }
+.bar-row.double .bar-track { height: 14px; display: grid; grid-template-rows: 1fr 1fr; gap: 2px; }
+.bar-row.double { grid-template-columns: 2.2rem 1fr 7.2rem; }
+.fig-split.reverse { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.25fr); }
 .key i.dashed { background: repeating-linear-gradient(90deg, var(--ink) 0 5px, transparent 5px 9px); }
 
 /* bar chart of barycentric coordinates */
@@ -191,7 +197,7 @@ canvas.stage { display: block; width: 100%; touch-action: auto; }
 @media (max-width: 720px) {
   body { font-size: 17px; }
   .fig { padding: 0.8rem 0.7rem; margin-left: -0.5rem; margin-right: -0.5rem; }
-  .fig-split, .fig-split:has(.wide), .fig-pair, .two-col { grid-template-columns: minmax(0, 1fr); }
+  .fig-split, .fig-split:has(.wide), .fig-split.reverse, .fig-pair, .two-col { grid-template-columns: minmax(0, 1fr); }
   .toc { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; }
   .control input[type="range"] { width: 9rem; }
 }
