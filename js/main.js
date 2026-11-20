@@ -1,0 +1,64 @@
+/**
+ * main.js — entry point of the applet.
+ *
+ * 1. Typesets every element with class "tex" using KaTeX (if it loaded).
+ * 2. Builds each interactive figure: an element
+ *        <figure class="fig" data-figure="NAME">
+ *    is handed to the init function registered under NAME below, which
+ *    inserts its canvases and controls BEFORE the figure's <figcaption>.
+ *
+ * Project layout
+ *   js/math/     pure mathematics (no DOM) — unit-tested in tests/
+ *   js/ui/       canvas stage, colour ramp, DOM widgets
+ *   js/figures/  one module per figure
+ */
+
+import { initSegment } from "./figures/segment.js";
+import { initTriangle } from "./figures/triangle.js";
+import { initSurface } from "./figures/surface.js";
+import { initResidue } from "./figures/residue.js";
+import { initWachspress } from "./figures/wachspress.js";
+import { initAdjoint } from "./figures/adjoint.js";
+import { initLineSpace } from "./figures/linespace.js";
+import { initDisc } from "./figures/disc.js";
+
+const FIGURES = {
+  segment: initSegment,
+  triangle: initTriangle,
+  surface: initSurface,
+  residue: initResidue,
+  wachspress: initWachspress,
+  adjoint: initAdjoint,
+  linespace: initLineSpace,
+  disc: initDisc,
+};
+
+/** Replace the TeX source inside every .tex element by its typeset form. */
+function typesetMath() {
+  if (!window.katex) return; // offline: the TeX source stays readable
+  for (const node of document.querySelectorAll(".tex")) {
+    window.katex.render(node.textContent, node, {
+      displayMode: node.classList.contains("block"),
+      throwOnError: false,
+    });
+  }
+}
+
+function buildFigures() {
+  for (const fig of document.querySelectorAll("figure[data-figure]")) {
+    const init = FIGURES[fig.dataset.figure];
+    const body = document.createElement("div");
+    body.className = "fig-body";
+    fig.prepend(body);
+    try {
+      init(body);
+    } catch (err) {
+      // one broken figure must not take the rest of the page down
+      console.error(`Figure "${fig.dataset.figure}" failed:`, err);
+      body.textContent = "This figure could not be loaded.";
+    }
+  }
+}
+
+typesetMath();
+buildFigures();

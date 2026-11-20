@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Positive Geometries for Barycentric Interpolation — an interactive introduction</title>
+  <meta name="description" content="Interactive companion to M. Vaitkus, 'Positive Geometries for Barycentric Interpolation' (IGS 2019): barycentric and Wachspress coordinates as ratios of canonical forms.">
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX typesets the formulas (elements with class "tex", see js/main.js). -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+
+<!-- =====================================================================
+     Page structure
+       header            title and one-paragraph summary
+       nav               links to the sections
+       section#…         text + <figure class="fig" data-figure="NAME">
+     Every figure is built by the module js/figures/NAME.js (see js/main.js).
+     Formulas: <span class="tex">…</span> (inline) / <div class="tex block">.
+     ===================================================================== -->
+
+<header class="hero">
+  <p class="kicker">Interactive companion to an IGS 2019 poster paper</p>
+  <h1>Positive Geometries for Barycentric Interpolation</h1>
+  <p class="byline">after Márton Vaitkus, Budapest University of Technology and Economics</p>
+  <p class="lead">
+    Linear interpolation on a segment, barycentric coordinates on a triangle and Wachspress
+    coordinates on a convex polygon are all <strong>ratios of rational functions whose poles sit
+    on the boundary</strong> of the domain. <em>Positive geometries</em>, a notion from
+    theoretical physics, explain where these functions come from and why the recipe works.
+    All figures on this page are interactive.
+  </p>
+</header>
+
+<nav class="toc" aria-label="Sections">
+  <a href="#segment">1 Segment</a>
+  <a href="#triangle">2 Triangle</a>
+  <a href="#polygon">3 Polygons</a>
+  <a href="#positive">4 Positive geometries</a>
+  <a href="#coordinates">5 Coordinates from forms</a>
+  <a href="#adjoint">6 Adjoint</a>
+  <a href="#open">7 Open problems</a>
+</nav>
+
+<main>
+
+<section class="note-box" aria-label="How to read this page">
+  <h2 class="plain">Two ways into this page</h2>
+  <div class="two-col">
+    <p><strong>Coming from geometric modelling or graphics?</strong> You know barycentric
+      coordinates; Sections 1–3 only rewrite them in an unusual way. The new material is in
+      Section 4, where the grey “background” boxes introduce the few notions needed about
+      differential forms and residues.</p>
+    <p><strong>Coming from pure mathematics or physics?</strong> You may know forms, residues
+      and perhaps the amplituhedron. Sections 1–3 explain what interpolation people want from
+      “barycentric coordinates”; Section 5 shows that canonical forms deliver exactly that.</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<section id="segment">
+  <h2><span class="num">1</span> Interpolation on a segment, written with poles</h2>
+
+  <p>Given values <span class="tex">f(a)</span> and <span class="tex">f(b)</span> at the two ends of a
+    segment, linear interpolation fills in the values in between:</p>
+  <div class="tex block">f(x)=\underbrace{\frac{b-x}{b-a}}_{\lambda_a(x)}\,f(a)+\underbrace{\frac{x-a}{b-a}}_{\lambda_b(x)}\,f(b).</div>
+  <p>The weights <span class="tex">\lambda_a,\lambda_b</span> are the <em>barycentric coordinates</em> of
+    <span class="tex">x</span>: they are positive inside the segment, sum to one, and
+    <span class="tex">\lambda_a=1</span> at <span class="tex">a</span>. Dividing numerator and
+    denominator by <span class="tex">(x-a)(b-x)</span> gives the same function in
+    <em>barycentric form</em>:</p>
+  <div class="tex block">f(x)=\frac{\dfrac{1}{x-a}\,f(a)+\dfrac{1}{b-x}\,f(b)}{\dfrac{1}{x-a}+\dfrac{1}{b-x}}
+    \qquad\text{with}\qquad \frac{1}{x-a}+\frac{1}{b-x}=\frac{b-a}{(x-a)(b-x)}.</div>
+  <p>Each data value is now weighted by a function that blows up at its own point. Near
+    <span class="tex">a</span> the term <span class="tex">1/(x-a)</span> dominates both numerator and
+    denominator, the ratio tends to “<span class="tex">\infty/\infty</span>”, and what survives is
+    <span class="tex">f(a)</span>. This is the idea of <strong>Shepard interpolation</strong>,
+    <span class="tex">f(x)=\sum_i w_i(x)f(x_i)\,/\sum_j w_j(x)</span> with weights such as
+    <span class="tex">w_i=1/\operatorname{dist}(x,x_i)</span>.</p>
+
+  <figure class="fig" data-figure="segment">
+    <figcaption><strong>Figure 1.</strong> Drag the two data points and the point
+      <span class="tex">x</span>. The lower plot shows the two pole weights; their sum (the upper curve) is a
+      rational function with simple poles exactly at the boundary of
+      <span class="tex">[a,b]</span>. Remember its shape: it will return as the
+      <em>canonical function</em> of the segment.</figcaption>
+  </figure>
+</section>
+
+<!-- ================================================================== -->
+<section id="triangle">
+  <h2><span class="num">2</span> The same trick on a triangle</h2>
+
+  <p>On a triangle <span class="tex">\mathbf p_0\mathbf p_1\mathbf p_2</span> the barycentric coordinates
+    of a point <span class="tex">\mathbf x</span> are ratios of areas. Writing
+    <span class="tex">A_i</span> for the area of the small triangle spanned by
+    <span class="tex">\mathbf x</span> and the side opposite to <span class="tex">\mathbf p_i</span>, and
+    <span class="tex">A=A_0+A_1+A_2</span>,</p>
+  <div class="tex block">f(\mathbf x)=\frac{A_0\,f(\mathbf p_0)+A_1\,f(\mathbf p_1)+A_2\,f(\mathbf p_2)}{A}
+    \;=\;\frac{\dfrac{1}{A_1A_2}f(\mathbf p_0)+\dfrac{1}{A_2A_0}f(\mathbf p_1)+\dfrac{1}{A_0A_1}f(\mathbf p_2)}{\dfrac{A}{A_0A_1A_2}}.</div>
+  <p>The second expression is obtained by dividing through by <span class="tex">A_0A_1A_2</span>.
+    Each area <span class="tex">A_i</span> is a linear function of <span class="tex">\mathbf x</span> that
+    vanishes on one side of the triangle. So the weight of <span class="tex">\mathbf p_0</span> has
+    poles along the <em>two sides that meet at</em> <span class="tex">\mathbf p_0</span>, and the
+    denominator has poles along all three sides.</p>
+
+  <figure class="fig" data-figure="triangle">
+    <figcaption><strong>Figure 2.</strong> Drag the vertices or the point
+      <span class="tex">\mathbf x</span>. The table evaluates both expressions for each
+      <span class="tex">\lambda_i</span>; they always agree. The denominator
+      <span class="tex">A/(A_0A_1A_2)</span> is, up to a constant factor, the canonical function of the
+      triangle.</figcaption>
+  </figure>
+</section>
+
+<!-- ================================================================== -->
+<section id="polygon">
+  <h2><span class="num">3</span> Convex polygons: Wachspress coordinates</h2>
+
+  <p>For a convex polygon with vertices <span class="tex">\mathbf p_0,\dots,\mathbf p_{n-1}</span> one
+    wants <em>generalised barycentric coordinates</em>: functions
+    <span class="tex">\lambda_i(\mathbf x)\ge 0</span> with</p>
+  <div class="tex block">\sum_i\lambda_i(\mathbf x)=1\quad\text{(partition of unity)},\qquad
+    \sum_i\lambda_i(\mathbf x)\,\mathbf p_i=\mathbf x\quad\text{(linear precision)}.</div>
+  <p>For <span class="tex">n&gt;3</span> they are no longer unique. Wachspress found the simplest
+    rational choice. With <span class="tex">A_i</span> the area of the triangle
+    <span class="tex">\mathbf x\,\mathbf p_i\,\mathbf p_{i+1}</span> and <span class="tex">C_i</span> the area
+    of the corner triangle <span class="tex">\mathbf p_{i-1}\mathbf p_i\,\mathbf p_{i+1}</span> (indices
+    modulo <span class="tex">n</span>),</p>
+  <div class="tex block">\lambda_i(\mathbf x)=\frac{w_i(\mathbf x)}{\sum_k w_k(\mathbf x)},\qquad
+    w_i(\mathbf x)=\frac{C_i}{A_{i-1}(\mathbf x)\,A_i(\mathbf x)}.</div>
+  <p>Once more the weight of a vertex has poles along the two edges through that vertex, and
+    the normalising sum has poles along the whole boundary. You can experiment with these
+    coordinates in <a href="#coordinates">Figure 5</a>.</p>
+
+  <p class="pattern"><strong>The common pattern.</strong> In all three cases numerator and
+    denominator are rational functions with singularities along the “boundaries” of some
+    region, and interpolation happens because they blow up together. Positive geometries
+    make this precise.</p>
+</section>
+
+<!-- ================================================================== -->
+<section id="positive">
+  <h2><span class="num">4</span> Positive geometries and canonical forms</h2>
+
+  <p>Positive geometries were introduced by Arkani-Hamed, Bai and Lam in the study of particle
+    scattering. Informally, a <strong>positive geometry</strong> is a region
+    <span class="tex">X_{\ge0}</span> (a segment, a polygon, a region bounded by lines and conics, …)
+    that comes with a unique <strong>canonical form</strong>
+    <span class="tex">\Omega(X_{\ge0})</span>: a rational differential form that</p>
+  <ul>
+    <li>has simple poles along the boundary of the region and no other singularities, and</li>
+    <li>is <em>recursive</em>: its residue along each boundary component is the canonical form
+      of that component, which is again a positive geometry of one dimension less. The
+      recursion ends at points, whose canonical form is <span class="tex">\pm1</span>.</li>
+  </ul>
+
+  <details class="aside">
+    <summary>Background: differential forms and residues, in two paragraphs</summary>
+    <p>On this page a differential form on a planar region is simply an expression
+      <span class="tex">\Omega=C(x,y)\,dx\,dy</span> — a density that could be integrated — and all
+      the information is in the function <span class="tex">C</span>, called the
+      <strong>canonical function</strong>. On a segment the form is <span class="tex">C(x)\,dx</span>.
+      We always draw and compute <span class="tex">C</span>.</p>
+    <p>If <span class="tex">C</span> blows up like <span class="tex">1/h</span> near a boundary line,
+      where <span class="tex">h</span> is the distance to that line, the <strong>residue</strong>
+      along the line is what remains after removing the pole:
+      <span class="tex">\lim_{h\to0}h\,C</span>, a function on the line. It is the
+      several-variable version of the residue of complex analysis.</p>
+  </details>
+
+  <details class="aside">
+    <summary>Background: the precise definition, and a remark on normalisation</summary>
+    <p>A positive geometry is a pair <span class="tex">(X,X_{\ge0})</span>, where
+      <span class="tex">X</span> is a <span class="tex">d</span>-dimensional complex projective variety
+      and <span class="tex">X_{\ge0}</span> an oriented semi-algebraic subset of its real part,
+      together with a unique rational <span class="tex">d</span>-form
+      <span class="tex">\Omega(X,X_{\ge0})</span> such that: for <span class="tex">d=0</span>,
+      <span class="tex">X</span> is a point and <span class="tex">\Omega=\pm1</span> according to
+      orientation; for <span class="tex">d&gt;0</span>, every boundary component is a positive
+      geometry whose canonical form is the residue of <span class="tex">\Omega</span> along it.
+      The same ambient space <span class="tex">X</span> carries many positive geometries.</p>
+    <p>In projective space with homogeneous coordinates the paper writes
+      <span class="tex">\Omega=C(\mathbf x)\,\omega(\mathbf x)</span> with a projectively invariant
+      measure <span class="tex">\omega</span>. This page works in an affine chart and writes
+      <span class="tex">\Omega=C\,dx\,dy</span>. The two normalisations of
+      <span class="tex">C</span> differ by a constant factor, which cancels in every ratio below.</p>
+  </details>
+
+  <h3>The basic examples</h3>
+  <p><strong>Segment.</strong> The function met in Section 1 is the canonical function of
+    <span class="tex">[a,b]</span>:</p>
+  <div class="tex block">\Omega([a,b])=\frac{(b-a)\,dx}{(x-a)(b-x)}=\left(\frac{1}{x-a}+\frac{1}{b-x}\right)dx,</div>
+  <p>with residues <span class="tex">+1</span> at <span class="tex">a</span> and
+    <span class="tex">-1</span> at <span class="tex">b</span> (the two end points with opposite
+    orientations).</p>
+  <p><strong>Triangle.</strong> With <span class="tex">\langle\mathbf u,\mathbf v,\mathbf w\rangle</span>
+    the determinant of the homogeneous coordinates <span class="tex">[x:y:1]</span> of three points
+    (twice the signed area of their triangle),</p>
+  <div class="tex block">\Omega(\triangle)=\frac{\langle\mathbf p_0,\mathbf p_1,\mathbf p_2\rangle^{2}}
+    {\langle\mathbf x,\mathbf p_0,\mathbf p_1\rangle\,\langle\mathbf x,\mathbf p_1,\mathbf p_2\rangle\,\langle\mathbf x,\mathbf p_2,\mathbf p_0\rangle}\;dx\,dy
+    \;=\;\frac{A^{2}}{2\,A_0A_1A_2}\;dx\,dy ,</div>
+  <p>which is the denominator of Section 2 up to the constant <span class="tex">A/2</span>. For the
+    triangle with vertices <span class="tex">(0,0),(1,0),(0,1)</span> this is
+    <span class="tex">dx\,dy/\big(xy(1-x-y)\big)</span>.</p>
+
+  <figure class="fig" data-figure="surface">
+    <figcaption><strong>Figure 3.</strong> The canonical function is positive inside the region
+      and rises to infinity along its whole boundary (the graph is cut off at an adjustable
+      height). The last two regions have curved sides: positive geometries are not restricted
+      to polytopes.</figcaption>
+  </figure>
+
+  <h3>Residues: the boundary of a boundary</h3>
+  <p>The defining property is the recursion. Approach an edge of a polygon and strip off the
+    pole by multiplying with the distance <span class="tex">\varepsilon</span> to the edge: in the
+    limit one finds the canonical function of that edge, the segment formula
+    <span class="tex">L/\big(s(L-s)\big)</span> for an edge of length <span class="tex">L</span>.
+    Taking residues once more, at the two ends of the edge, leaves <span class="tex">+1</span> and
+    <span class="tex">-1</span>.</p>
+
+  <figure class="fig" data-figure="residue">
+    <figcaption><strong>Figure 4.</strong> Choose an edge (buttons, or click near it) and move the
+      sampling line towards it. The coloured curve
+      <span class="tex">\varepsilon\,C</span> converges to the dashed curve, the canonical
+      function of the edge. For interpolation this is the statement that the construction on a
+      polygon restricts to linear interpolation along each edge.</figcaption>
+  </figure>
+
+  <h3>Triangulations and a small zoo</h3>
+  <p>Canonical forms are <strong>additive</strong>: if a region is cut into pieces, its
+    canonical form is the sum of the forms of the pieces. Along an interior cut the two
+    neighbouring pieces have poles with opposite residues, which cancel. Hence the canonical
+    form of any convex polygon can be found by triangulating it, and convex polytopes are
+    positive geometries.</p>
+  <div class="two-col">
+    <div>
+      <p><strong>Generalised simplices</strong> — constant numerator:</p>
+      <ul>
+        <li>simplices in projective space;</li>
+        <li>regions bounded by a conic and a line (the half disc in Figure 3);</li>
+        <li>positive parts of toric varieties;</li>
+        <li>positive Grassmannians (totally positive matrices).</li>
+      </ul>
+    </div>
+    <div>
+      <p><strong>Generalised polytopes</strong> — non-constant numerator:</p>
+      <ul>
+        <li>convex polytopes;</li>
+        <li>polycons: convex regions bounded by lines and conics (the pizza slice);</li>
+        <li>Grassmann polytopes, in particular amplituhedra.</li>
+      </ul>
+    </div>
+  </div>
+
+  <details class="aside">
+    <summary>Background: why physicists care</summary>
+    <p>In the study of particle scattering, probabilities are computed from rational functions
+      of the particle momenta whose poles correspond to physical particles. For certain
+      theories these functions turn out to be canonical forms of positive geometries such as
+      the amplituhedron: roughly, “probability ≈ volume”. Different ways of organising the
+      calculation correspond to different triangulations of the same shape, in the same way
+      that Section 5 obtains one set of coordinates from different decompositions.</p>
+  </details>
+</section>
+
+<!-- ================================================================== -->
+<section id="coordinates">
+  <h2><span class="num">5</span> Barycentric coordinates as ratios of canonical forms</h2>
+
+  <p>Here is the proposal of the paper. To get the weight of a vertex, keep only the boundary
+    components that meet at that vertex, close them up with one extra side that depends on the
+    evaluation point, and divide by the canonical form of the whole shape.</p>
+
+  <p><strong>Segment.</strong> The only boundary component at <span class="tex">a</span> is the point
+    <span class="tex">a</span> itself. The extra “side” is the point
+    <span class="tex">x^*</span> dual to <span class="tex">x</span>; in coordinates centred at
+    <span class="tex">x</span> it is the point at infinity. So the numerator is the canonical form of
+    the half line <span class="tex">[a,\infty]</span>, which is <span class="tex">dx/(x-a)</span>:</p>
+  <div class="tex block">\lambda_a(x)=\frac{\Omega([a,x^*])}{\Omega([a,b])}
+    =\frac{1}{x-a}\cdot\frac{(x-a)(b-x)}{b-a}=\frac{b-x}{b-a}.</div>
+
+  <p><strong>Triangle and polygon.</strong> Let <span class="tex">l_{i-1}</span> and
+    <span class="tex">l_i</span> be the lines of the two edges through
+    <span class="tex">\mathbf p_i</span>, and <span class="tex">\mathbf x^*</span> the line dual to
+    <span class="tex">\mathbf x</span>. Then</p>
+  <div class="tex block">\lambda_i(\mathbf x)=\frac{\Omega\big(\triangle(l_{i-1},\,l_i,\,\mathbf x^*)\big)}{\Omega(P)} .</div>
+  <p>In the affine picture <span class="tex">\mathbf x^*</span> is the line at infinity, so the
+    triangle <span class="tex">\triangle(l_{i-1},l_i,\mathbf x^*)</span> is the infinite
+    <strong>wedge</strong> between the two edge lines. If
+    <span class="tex">h_k(\mathbf x)</span> is the distance from <span class="tex">\mathbf x</span> to the
+    line <span class="tex">l_k</span> and <span class="tex">\mathbf n_k</span> its inward unit normal,
+    the canonical function of the wedge is</p>
+  <div class="tex block">w_i(\mathbf x)=\frac{\det(\mathbf n_{i-1},\mathbf n_i)}{h_{i-1}(\mathbf x)\,h_i(\mathbf x)},
+    \qquad\text{and}\qquad \Omega(P)=\sum_i w_i(\mathbf x)\;dx\,dy .</div>
+  <p>These <span class="tex">w_i</span> are exactly the Wachspress weights of Section 3 (up to a
+    common factor 2), so the ratios <span class="tex">\lambda_i=w_i/\sum_k w_k</span> are the
+    barycentric coordinates of a triangle and the Wachspress coordinates of a convex polygon.</p>
+
+  <figure class="fig" data-figure="wachspress">
+    <figcaption><strong>Figure 5.</strong> Left: the wedge of the selected vertex; its canonical
+      function depends only on the two distances <span class="tex">h_{i-1},h_i</span>. Right: the
+      polar dual of the polygon with respect to <span class="tex">\mathbf x</span>. Each edge line
+      <span class="tex">l_k</span> becomes the dual vertex
+      <span class="tex">\mathbf d_k=\mathbf n_k/h_k</span>, and each vertex
+      <span class="tex">\mathbf p_i</span> becomes the dual edge
+      <span class="tex">\mathbf d_{i-1}\mathbf d_i</span> in the same colour. The coordinate
+      <span class="tex">\lambda_i</span> is the share of the dual polygon’s area taken by the
+      triangle on that edge.</figcaption>
+  </figure>
+
+  <h3>Why the weights sum to one</h3>
+  <p>The wedges of all vertices overlap in a complicated way, yet their canonical forms add
+    up to <span class="tex">\Omega(P)</span>: every wedge form has an additional pole along
+    <span class="tex">\mathbf x^*</span>, and these poles cancel in the sum. In the language of
+    positive geometries the wedges form a <em>signed triangulation</em> of
+    <span class="tex">P</span>, and additivity gives
+    <span class="tex">\sum_i\lambda_i=1</span> without any computation.</p>
+  <p>The dual picture makes this visible. The canonical function of a convex polytope at
+    <span class="tex">\mathbf x</span> is the volume of its polar dual
+    <span class="tex">P^*_{\mathbf x}</span>, taken with <span class="tex">\mathbf x</span> as origin:</p>
+  <div class="tex block">\operatorname{Vol}(P^*_{\mathbf x})=\frac{1}{d!}\int_{\mathbf y\in P^*_{\mathbf x}}\frac{\omega(\mathbf y)}{(\mathbf x^{T}\mathbf y)^{d+1}}
+    \qquad\text{(in the plane: } C_P(\mathbf x)=2\operatorname{Area}(P^*_{\mathbf x})\text{)}.</div>
+  <p>The wedge at <span class="tex">\mathbf p_i</span> corresponds to the triangle
+    <span class="tex">\mathbf 0\,\mathbf d_{i-1}\mathbf d_i</span>, and these triangles tile the dual
+    polygon in the ordinary sense. This recovers the description of Wachspress coordinates as
+    ratios of polar dual volumes by Ju, Schaefer, Warren and Desbrun, and it works the same
+    way for simplicial polytopes in any dimension.</p>
+</section>
+
+<!-- ================================================================== -->
+<section id="adjoint">
+  <h2><span class="num">6</span> The numerator: the adjoint polynomial</h2>
+
+  <p>Putting the canonical function of an <span class="tex">n</span>-gon over a common denominator
+    gives</p>
+  <div class="tex block">C_P(\mathbf x)=\frac{\operatorname{adj}_P(\mathbf x)}{h_0(\mathbf x)\,h_1(\mathbf x)\cdots h_{n-1}(\mathbf x)},
+    \qquad \operatorname{adj}_P(\mathbf x)=\sum_i\det(\mathbf n_{i-1},\mathbf n_i)\!\!\prod_{k\ne i-1,\,i}\!\!h_k(\mathbf x).</div>
+  <p>The numerator has degree <span class="tex">n-3</span>. It is the <strong>adjoint
+    polynomial</strong> introduced by Wachspress and later defined through triangulations by
+    Warren. Its job is to remove unwanted poles: the denominator vanishes on all edge
+    <em>lines</em>, which also cross each other outside the polygon, but the residue along an edge line may
+    have poles only at the two end points of that edge. So the adjoint curve passes through every
+    intersection point of two non-adjacent edge lines — and this determines it up to a
+    constant factor.</p>
+
+  <figure class="fig" data-figure="adjoint">
+    <figcaption><strong>Figure 6.</strong> The adjoint curve of a quadrilateral is a line, of a
+      pentagon a conic, of a hexagon a cubic. However the polygon is deformed, the curve keeps
+      passing through all external intersection points and never enters the polygon.</figcaption>
+  </figure>
+</section>
+
+<!-- ================================================================== -->
+<section id="open">
+  <h2><span class="num">7</span> Open problems</h2>
+
+  <p>The framework unifies the adjoint, dual-volume and Shepard-like descriptions of
+    Wachspress coordinates. Its real promise is that positive geometries exist well beyond
+    polytopes. The paper ends with three directions.</p>
+
+  <h3>Interpolation in line space</h3>
+  <p>The lines of 3D space form the Grassmannian <span class="tex">G(2,4)</span>, a
+    four-dimensional quadric hypersurface in <span class="tex">\mathbb P^5</span> (Plücker
+    coordinates). Its positive part is a positive geometry, so it has a canonical form with
+    poles along its boundary. A natural analogue of a simplex is bounded by the
+    <em>tetrahedral line complex</em>, built from the lines determined by the vertices of a
+    tetrahedron; its combinatorics is that of an octahedron, the hypersimplex. Can barycentric
+    coordinates for lines be defined as ratios of canonical forms?</p>
+
+  <figure class="fig" data-figure="linespace">
+    <figcaption><strong>Figure 7.</strong> Each vertex of the octahedron is an edge line
+      <span class="tex">l_{ij}</span> of the tetrahedron. Its eight faces are of two kinds: lines
+      through a common vertex, and lines in a common face plane.</figcaption>
+  </figure>
+
+  <h3>Mean value coordinates</h3>
+  <p>Mean value coordinates are transcendental, so they cannot be ratios of rational forms.
+    They can, however, be written as Shepard-like interpolants after deforming the boundary
+    into a circle around the current point. A disc is not a positive geometry — it has no
+    zero-dimensional boundary components to end the recursion — but there is still a natural
+    projectively well-defined function singular along a conic
+    <span class="tex">\mathbf x^{T}Q\,\mathbf x=0</span>:</p>
+  <div class="tex block">\Omega(\mathbb P^2,\mathcal C)=\frac{\pi\,\det(Q)^{3/4}}{(\mathbf x^{T}Q\,\mathbf x)^{3/2}}\;\omega(\mathbf x),
+    \qquad\text{for the unit disc: } C\;\propto\;\frac{1}{(1-x^2-y^2)^{3/2}} .</div>
+  <p>It is again the dual volume (the polar dual of a disc is an ellipse), but its singularity
+    on the circle is a branch point of order <span class="tex">3/2</span> and not a simple pole.
+    This suggests looking for generalised positive geometries on branched covers of projective
+    space.</p>
+
+  <figure class="fig" data-figure="disc">
+    <figcaption><strong>Figure 8.</strong> Regular polygons circumscribed about the unit circle
+      converge to the disc, and so do their canonical functions at any fixed point. Close to
+      the boundary, however, every polygon eventually shows its simple pole (slope −1 in this
+      log–log plot), while the disc has slope −3/2.</figcaption>
+  </figure>
+
+  <h3>Splines and integral geometry</h3>
+  <p>The dual-volume integral of Section 5 also appears in the theory of multivariate
+    simplex, box and cone splines, as a Laplace transform of indicator functions. Splines and
+    barycentric interpolants might therefore be two faces of one theory based on integral
+    geometry.</p>
+</section>
+
+<!-- ================================================================== -->
+<section id="references">
+  <h2 class="plain">Sources</h2>
+  <p>This page illustrates: M. Vaitkus, <em>Positive Geometries for Barycentric
+    Interpolation</em>, poster paper, IGS 2019. Equation and figure conventions follow that
+    paper except for the normalisation remark in Section 4.</p>
+  <ol class="refs">
+    <li>N. Arkani-Hamed, Y. Bai, T. Lam. Positive geometries and canonical forms. <em>Journal of
+      High Energy Physics</em> 2017(11):39. <a href="https://arxiv.org/abs/1703.04541">arXiv:1703.04541</a></li>
+    <li>M. S. Floater. Generalized barycentric coordinates and applications. <em>Acta
+      Numerica</em> 24:161–214, 2015.</li>
+    <li>K. Hormann. Barycentric interpolation. In <em>Approximation Theory XIV: San Antonio
+      2013</em>. Springer, 2014.</li>
+    <li>T. Ju, S. Schaefer, J. Warren, M. Desbrun. A geometric construction of coordinates for
+      convex polyhedra using polar duals. <em>Symposium on Geometry Processing</em>, 2005.</li>
+    <li>K. Kohn, K. Ranestad. Projective geometry of Wachspress coordinates.
+      <a href="https://arxiv.org/abs/1904.02123">arXiv:1904.02123</a>, 2019.</li>
+    <li>S. Schaefer, T. Ju, J. Warren. A unified, integral construction for coordinates over
+      closed curves. <em>Computer Aided Geometric Design</em> 24(8–9):481–493, 2007.</li>
+    <li>E. Wachspress. <em>Rational Bases and Generalized Barycentrics</em>. Springer, 2016.</li>
+    <li>J. Warren. Barycentric coordinates for convex polytopes. <em>Advances in Computational
+      Mathematics</em> 6(1):97–108, 1996.</li>
+  </ol>
+</section>
+
+</main>
+
+<footer>
+  <p>Built with plain HTML, CSS and JavaScript modules; formulas by KaTeX.
+    <a href="https://github.com/VaitkusM/positive-geometry-interpolation">Source code on GitHub</a>.</p>
+</footer>
+
+<noscript><p class="noscript">The interactive figures need JavaScript.</p></noscript>
+</body>
+</html>

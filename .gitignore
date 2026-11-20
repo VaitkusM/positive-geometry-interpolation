@@ -1,0 +1,5 @@
+# Source material and task notes are kept locally, not published.
+*.pdf
+tasks.md
+.DS_Store
+.claude/
