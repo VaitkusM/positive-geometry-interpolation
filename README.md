@@ -5,6 +5,7 @@
 An interactive, self-contained introduction to the ideas of
 
 > M. Vaitkus, *Positive Geometries for Barycentric Interpolation*, poster paper, IGS 2019.
+> [arXiv:2101.08589](https://arxiv.org/abs/2101.08589)
 
 The thesis of the paper: linear interpolation on a segment, barycentric
 coordinates on a triangle and Wachspress coordinates on a convex polygon are
@@ -13,7 +14,10 @@ with poles on the boundary of the domain.
 
 The page is written for a mixed audience (geometric modelling people who have
 not met positive geometries, and mathematicians / physicists who have not met
-barycentric coordinates) and contains eight interactive figures:
+barycentric coordinates) and contains ten interactive figures. Sections 1–7 follow
+the 2019 paper; material published since then is collected in Section 8 and marked
+"Later development" on the page, and figures that go beyond the paper's own are
+marked "Added illustration".
 
 | # | Figure | Shows |
 |---|--------|-------|
@@ -22,9 +26,11 @@ barycentric coordinates) and contains eight interactive figures:
 | 3 | Canonical function | 3D graph over polygons and regions with curved sides |
 | 4 | Residues | the residue along an edge is the canonical function of the edge |
 | 5 | Coordinates from forms | wedge / whole-shape ratio, and the polar dual polygon |
-| 6 | Adjoint | the adjoint curve through the external intersection points |
-| 7 | Line space | tetrahedral line complex and the octahedron (hypersimplex) |
-| 8 | Disc | simple pole (polygons) versus branch point (disc) |
+| 6 | Polyhedra *(added illustration)* | the same construction in 3D, with the dual polyhedron and its pyramids |
+| 7 | Adjoint | the adjoint curve through the external intersection points |
+| 8 | Line space | tetrahedral line complex and the octahedron (hypersimplex) |
+| 9 | Disc | simple pole (polygons) versus branch point (disc) |
+| 10 | Polycons *(later development)* | adjoint curves of regions with curved sides; Brüser's 2026 counterexample to Wachspress' conjecture |
 
 ## Running locally
 
@@ -43,7 +49,7 @@ is unreachable, the raw TeX is shown instead and everything else still works).
 All identities stated on the page are checked numerically (partition of unity,
 linear precision, wedge ratios = classic Wachspress formula, canonical function
 = 2 × dual area, residues, adjoint zeros, the published formulas of
-Arkani-Hamed–Bai–Lam, …):
+Arkani-Hamed–Bai–Lam, 3D linear precision, Brüser's counterexample, …):
 
 ```sh
 deno test tests/
@@ -58,11 +64,14 @@ js/main.js            typesets formulas, starts every figure
 js/math/              pure mathematics, no DOM — the part worth reusing
   polygon.js            conventions (CCW polygons, edge lines {n, p}), helpers
   canonical.js          canonical functions: segment, triangle, wedge, polygon,
-                        adjoint, half disc, pizza slice, disc
+                        adjoint, half disc, pizza slice, disc; polycon data
+                        (pizza slice, Brüser's counterexample)
   barycentric.js        coordinates as ratios of forms, classic formulas, polar dual
+  polytope3d.js         simple polyhedra from face planes, 3D Wachspress, 3D dual
 js/ui/
   stage.js              canvas wrapper: world coordinates, hi-DPI, draggable handles
   ramp.js               sequential colour ramp (heat map, 3D surface)
+  contour.js            marching squares for implicit curves
   widgets.js            buttons, sliders, bar chart, number formatting
 js/figures/           one module per figure, each exporting init…(rootElement)
   common.js             default polygons, convexity-preserving vertex dragging

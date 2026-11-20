@@ -1,5 +1,5 @@
 /**
- * disc.js — Figure 8: why a disc is not a positive geometry (open problem 5.2).
+ * disc.js — Figure 9: why a disc is not a positive geometry (open problem 5.2).
  *
  * Log–log plot of the canonical function against the distance h to the
  * boundary, for

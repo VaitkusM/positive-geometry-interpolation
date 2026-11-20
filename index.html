@@ -36,6 +36,9 @@
     theoretical physics, explain where these functions come from and why the recipe works.
     All figures on this page are interactive.
   </p>
+  <p class="lead small">Sections 1–7 follow the 2019 paper. Material marked
+    <span class="badge">Later development</span> reports results published since then, and
+    <span class="badge alt">Added illustration</span> marks figures that go beyond the paper’s own.</p>
 </header>
 
 <nav class="toc" aria-label="Sections">
@@ -46,6 +49,7 @@
   <a href="#coordinates">5 Coordinates from forms</a>
   <a href="#adjoint">6 Adjoint</a>
   <a href="#open">7 Open problems</a>
+  <a href="#later">8 Since 2019</a>
 </nav>
 
 <main>
@@ -330,8 +334,29 @@
   <p>The wedge at <span class="tex">\mathbf p_i</span> corresponds to the triangle
     <span class="tex">\mathbf 0\,\mathbf d_{i-1}\mathbf d_i</span>, and these triangles tile the dual
     polygon in the ordinary sense. This recovers the description of Wachspress coordinates as
-    ratios of polar dual volumes by Ju, Schaefer, Warren and Desbrun, and it works the same
-    way for simplicial polytopes in any dimension.</p>
+    ratios of polar dual volumes by Ju, Schaefer, Warren and Desbrun.</p>
+
+  <h3>One dimension up <span class="badge alt">Added illustration</span></h3>
+  <p>The paper notes that the generalisation to higher dimensions is straightforward. In
+    <span class="tex">d</span> dimensions the recipe applies verbatim to polytopes in which every
+    vertex lies on exactly <span class="tex">d</span> facets (<em>simple</em> polytopes; their polar
+    duals are simplicial). For a polyhedron with outward unit face normals
+    <span class="tex">\mathbf n_f</span> and distances <span class="tex">h_f(\mathbf x)</span> from
+    <span class="tex">\mathbf x</span> to the face planes, the wedge at a vertex on the faces
+    <span class="tex">a,b,c</span> is the cone bounded by those three planes, and</p>
+  <div class="tex block">w_v(\mathbf x)=\frac{|\det(\mathbf n_a,\mathbf n_b,\mathbf n_c)|}{h_a(\mathbf x)\,h_b(\mathbf x)\,h_c(\mathbf x)},
+    \qquad C_P(\mathbf x)=\sum_v w_v(\mathbf x)=3!\,\operatorname{Vol}(P^*_{\mathbf x}),
+    \qquad \lambda_v=\frac{w_v}{C_P}.</div>
+
+  <figure class="fig" data-figure="polytope3d">
+    <figcaption><strong>Figure 6.</strong> <span class="badge alt">Added illustration</span>
+      Wachspress coordinates of a polyhedron. In the dual, each face of
+      <span class="tex">P</span> becomes a vertex <span class="tex">\mathbf n_f/h_f</span> and each vertex of
+      <span class="tex">P</span> a triangle; the pyramid over that triangle with apex
+      <span class="tex">\mathbf x</span> (dashed for the selected vertex) has volume
+      <span class="tex">w_v/3!</span>. The pyramids fill the dual exactly once, which is the
+      partition of unity.</figcaption>
+  </figure>
 </section>
 
 <!-- ================================================================== -->
@@ -351,7 +376,7 @@
     constant factor.</p>
 
   <figure class="fig" data-figure="adjoint">
-    <figcaption><strong>Figure 6.</strong> The adjoint curve of a quadrilateral is a line, of a
+    <figcaption><strong>Figure 7.</strong> The adjoint curve of a quadrilateral is a line, of a
       pentagon a conic, of a hexagon a cubic. However the polygon is deformed, the curve keeps
       passing through all external intersection points and never enters the polygon.</figcaption>
   </figure>
@@ -373,9 +398,12 @@
     <em>tetrahedral line complex</em>, built from the lines determined by the vertices of a
     tetrahedron; its combinatorics is that of an octahedron, the hypersimplex. Can barycentric
     coordinates for lines be defined as ratios of canonical forms?</p>
+  <p class="update"><span class="badge">Later development</span> While preparing this page (November
+    2026) we found no published follow-up on barycentric coordinates in line space; as far as we
+    can tell the question is still open.</p>
 
   <figure class="fig" data-figure="linespace">
-    <figcaption><strong>Figure 7.</strong> Each vertex of the octahedron is an edge line
+    <figcaption><strong>Figure 8.</strong> Each vertex of the octahedron is an edge line
       <span class="tex">l_{ij}</span> of the tetrahedron. Its eight faces are of two kinds: lines
       through a common vertex, and lines in a common face plane.</figcaption>
   </figure>
@@ -393,9 +421,12 @@
     on the circle is a branch point of order <span class="tex">3/2</span> and not a simple pole.
     This suggests looking for generalised positive geometries on branched covers of projective
     space.</p>
+  <p class="update"><span class="badge">Later development</span> Transforms of regions with curved
+    boundaries that are no longer rational, including exactly this function for the disc, have
+    since been studied; see <a href="#later-transforms">Section 8.2</a>.</p>
 
   <figure class="fig" data-figure="disc">
-    <figcaption><strong>Figure 8.</strong> Regular polygons circumscribed about the unit circle
+    <figcaption><strong>Figure 9.</strong> Regular polygons circumscribed about the unit circle
       converge to the disc, and so do their canonical functions at any fixed point. Close to
       the boundary, however, every polygon eventually shows its simple pole (slope −1 in this
       log–log plot), while the disc has slope −3/2.</figcaption>
@@ -406,14 +437,109 @@
     simplex, box and cone splines, as a Laplace transform of indicator functions. Splines and
     barycentric interpolants might therefore be two faces of one theory based on integral
     geometry.</p>
+  <p class="update"><span class="badge">Later development</span> The dual-volume and Laplace-transform
+    side of this question has been developed considerably
+    (<a href="#later-transforms">Section 8.2</a>); we found no work that makes the link to
+    splines explicit.</p>
+</section>
+
+<!-- ================================================================== -->
+<section id="later">
+  <h2><span class="num">8</span> Since the poster <span class="badge">Later developments, 2020–2026</span></h2>
+
+  <p>Nothing in this section is part of the 2019 paper. It reports work published afterwards
+    that bears directly on its questions. The summaries are ours; please consult the cited
+    papers for the precise statements.</p>
+
+  <h3 id="later-polypols">8.1 Curved boundaries: polypols, and the fall of Wachspress’ conjecture</h3>
+  <p>The paper left out regions with curved sides for lack of space. They have since been
+    treated systematically. Kohn, Piene, Ranestad, Rydell, Shapiro, Sinn, Sorea and Telen study
+    <em>polypols</em>: planar regions bounded by arcs of algebraic curves, of which Wachspress’
+    <em>polycons</em> (lines and conics) are the first case. They prove that every quasi-regular
+    rational polypol is a positive geometry and that its canonical form is, as for polygons,</p>
+  <div class="tex block">\Omega(P)=\frac{\operatorname{adj}_P(x,y)}{f_1(x,y)\,f_2(x,y)\cdots f_k(x,y)}\;dx\,dy ,</div>
+  <p>where <span class="tex">f_i=0</span> are the boundary curves and the numerator is an equation
+    of the <strong>adjoint curve</strong>, normalised so that the residues at the vertices are
+    <span class="tex">\pm1</span>. The adjoint has degree <span class="tex">d-3</span> for a boundary
+    of total degree <span class="tex">d</span> and passes through the <em>residual points</em>: the
+    points where boundary curves meet (or are singular) other than the vertices. The pizza
+    slice of Figure 3 is the simplest example: <span class="tex">d=4</span>, and the adjoint is the
+    line <span class="tex">1+2y=0</span>.</p>
+  <p>Wachspress defined rational basis functions on polycons with the adjoint as common
+    denominator. For them to make sense the adjoint must not vanish inside the element, and he
+    conjectured that for a <em>regular</em> polycon it never does. For convex polygons this is
+    true (Figure 7). Kohn et al. classified the 44 topological configurations of three
+    ellipses and proved the conjecture in 33 of them. In March 2026 Clemens Brüser settled the
+    question in the negative: he gave an explicit regular polycon bounded by arcs of three
+    ellipses whose adjoint cubic has an oval in the interior.</p>
+
+  <figure class="fig" data-figure="polycon">
+    <figcaption><strong>Figure 10.</strong> <span class="badge">Later development</span>
+      Polycons with their boundary curves continued, residual points and adjoint curves. The
+      counterexample uses the conics, vertices and adjoint printed in Brüser’s paper; the sign
+      change of the adjoint inside the polycon is re-checked in this project’s tests.</figcaption>
+  </figure>
+
+  <p>What does this mean for interpolation? At a vertex where two <em>lines</em> meet, the wedge
+    recipe of Section 5 still works as it stands: for the corner of the pizza slice it gives
+    <span class="tex">\lambda_O=(1-x^2-y^2)/(1+2y)</span>, shown in Figure 10. At vertices on a
+    curved side the recipe needs a third “side” to close up a line and a conic, and
+    Wachspress’ own elements add extra nodes on curved sides. A description of those weights
+    as ratios of canonical forms is, to our knowledge, not in the literature. And Brüser’s
+    example shows that positivity of the denominator cannot be taken for granted beyond
+    polygons.</p>
+
+  <h3 id="later-transforms">8.2 Dual volumes, Laplace transforms and non-rational forms</h3>
+  <p>The dual-volume formula of Section 5 has been developed in several directions that touch
+    the second and third open problems.</p>
+  <ul>
+    <li><strong>Dual mixed volumes.</strong> Gao, Lam and Xue (2024) define a dual version of
+      the mixed volume of several polytopes. It specialises to canonical forms and adjoints of
+      polytopes and is additive under mixed subdivisions.</li>
+    <li><strong>Canonical forms as Laplace transforms.</strong> Mazzucchelli and Raman (2025)
+      write the canonical function of a positive geometry in projective space as the Laplace
+      transform of a distribution on the convex dual, and call the geometry <em>completely
+      monotone</em> when that distribution is a non-negative measure. Convex polytopes are of
+      this kind. For planar regions bounded by lines and conics they compute the measures
+      explicitly and find transcendental functions (logarithms, or equivalently inverse
+      tangents).</li>
+    <li><strong>Moment-generating functions of polypols.</strong> Shapiro (2026) studies the
+      normalised Fantappiè transform of a planar region. For a polygon it is rational: it is
+      the canonical form of the polar polygon. For curved polypols it is in general a branched
+      function built from algebraic functions, logarithms and arctangents. For the unit disc
+      it equals <span class="tex">2\pi\,(1-u^2-v^2)^{-3/2}</span> — algebraic but not rational,
+      and precisely the function plotted for the disc in Figure 9. In agreement with Section 7,
+      that paper does not count the disc among the examples of canonical forms, because a
+      circle has no vertices.</li>
+  </ul>
+  <p>So the non-rational, branched objects that the paper anticipated for mean value
+    coordinates now have a concrete theory around them. Whether mean value coordinates
+    themselves are ratios of such generalised forms has, as far as we know, not been worked
+    out.</p>
+
+  <h3 id="later-reading">8.3 Where to read more</h3>
+  <ul>
+    <li>T. Lam, <em>An invitation to positive geometries</em> (2022): a short introduction for
+      mathematicians. <a href="https://arxiv.org/abs/2208.05407">arXiv:2208.05407</a></li>
+    <li>S. Telen, <em>Positive geometry of polytopes and polypols</em> (2025): lecture notes with
+      examples and exercises, close in spirit to this page.
+      <a href="https://arxiv.org/abs/2506.05510">arXiv:2506.05510</a></li>
+    <li>T. Lam, <em>The combinatorial geometry of particle physics</em> (2025): a survey from the
+      amplituhedron to positive geometries and polytopes.
+      <a href="https://arxiv.org/abs/2509.25372">arXiv:2509.25372</a></li>
+    <li>K. Kohn, K. Ranestad, <em>Projective geometry of Wachspress coordinates</em>, cited by the
+      paper as a preprint, appeared in <em>Foundations of Computational Mathematics</em> (2020).</li>
+  </ul>
 </section>
 
 <!-- ================================================================== -->
 <section id="references">
   <h2 class="plain">Sources</h2>
   <p>This page illustrates: M. Vaitkus, <em>Positive Geometries for Barycentric
-    Interpolation</em>, poster paper, IGS 2019. Equation and figure conventions follow that
-    paper except for the normalisation remark in Section 4.</p>
+    Interpolation</em>, poster paper, IGS 2019;
+    <a href="https://arxiv.org/abs/2101.08589">arXiv:2101.08589</a>. Equation and figure
+    conventions follow that paper except for the normalisation remark in Section 4.</p>
+  <p><strong>Cited by the paper</strong></p>
   <ol class="refs">
     <li>N. Arkani-Hamed, Y. Bai, T. Lam. Positive geometries and canonical forms. <em>Journal of
       High Energy Physics</em> 2017(11):39. <a href="https://arxiv.org/abs/1703.04541">arXiv:1703.04541</a></li>
@@ -430,6 +556,20 @@
     <li>E. Wachspress. <em>Rational Bases and Generalized Barycentrics</em>. Springer, 2016.</li>
     <li>J. Warren. Barycentric coordinates for convex polytopes. <em>Advances in Computational
       Mathematics</em> 6(1):97–108, 1996.</li>
+  </ol>
+  <p><strong>Later developments (Section 8)</strong></p>
+  <ol class="refs" start="9">
+    <li>K. Kohn, R. Piene, K. Ranestad, F. Rydell, B. Shapiro, R. Sinn, M.-Ş. Sorea, S. Telen.
+      Adjoints and canonical forms of polypols. <em>Documenta Mathematica</em> 30:275–346, 2025.
+      <a href="https://arxiv.org/abs/2108.11747">arXiv:2108.11747</a></li>
+    <li>C. Brüser. The geometry of polycons and a counterexample to Wachspress’ conjecture.
+      <a href="https://arxiv.org/abs/2603.18643">arXiv:2603.18643</a>, 2026.</li>
+    <li>Y. Gao, T. Lam, L. Xue. Dual mixed volume.
+      <a href="https://arxiv.org/abs/2410.21688">arXiv:2410.21688</a>, 2024.</li>
+    <li>E. Mazzucchelli, P. Raman. Canonical forms as dual volumes.
+      <a href="https://arxiv.org/abs/2509.02239">arXiv:2509.02239</a>, 2025.</li>
+    <li>B. Shapiro. Canonical forms and moment-generating functions of plane polypols.
+      <a href="https://arxiv.org/abs/2605.10864">arXiv:2605.10864</a>, 2026.</li>
   </ol>
 </section>
 

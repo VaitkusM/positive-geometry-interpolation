@@ -21,6 +21,8 @@ import { initWachspress } from "./figures/wachspress.js";
 import { initAdjoint } from "./figures/adjoint.js";
 import { initLineSpace } from "./figures/linespace.js";
 import { initDisc } from "./figures/disc.js";
+import { initPolytope3d } from "./figures/polytope3d.js";
+import { initPolycon } from "./figures/polycon.js";
 
 const FIGURES = {
   segment: initSegment,
@@ -31,6 +33,8 @@ const FIGURES = {
   adjoint: initAdjoint,
   linespace: initLineSpace,
   disc: initDisc,
+  polytope3d: initPolytope3d,
+  polycon: initPolycon,
 };
 
 /** Replace the TeX source inside every .tex element by its typeset form. */

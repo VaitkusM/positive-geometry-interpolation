@@ -238,3 +238,87 @@ Deno.test("default polygons of the figures are strictly convex", async () => {
     if (!isConvexCCW(defaultPolygon(n), 0.06, 0.25)) throw new Error(`n=${n} not convex`);
   }
 });
+
+/* ---------------- later developments & 3D ---------------- */
+
+Deno.test("3D: simple polyhedra, Wachspress coordinates and dual volume", async () => {
+  const { buildPolytope, wachspress3d, vertexWedges3d, polarDual3d, det3, SOLIDS } =
+    await import("../js/math/polytope3d.js");
+  const expected = { tetrahedron: [4, 6], cube: [8, 12], prism: [6, 9] };
+  const rand = rng(11);
+  for (const [name, planes] of Object.entries(SOLIDS)) {
+    const poly = buildPolytope(planes);
+    if (poly.vertices.length !== expected[name][0]) throw new Error(`${name}: vertex count`);
+    if (poly.edges.length !== expected[name][1]) throw new Error(`${name}: edge count`);
+    for (let t = 0; t < 20; t++) {
+      // random interior point: random convex combination of the vertices
+      const w = poly.vertices.map(() => 0.05 + rand());
+      const s = w.reduce((a, b) => a + b);
+      const x = [0, 1, 2].map((k) => poly.vertices.reduce((acc, v, i) => acc + (w[i] / s) * v.p[k], 0));
+      const lam = wachspress3d(poly, x);
+      close(lam.reduce((a, b) => a + b), 1);
+      for (let k = 0; k < 3; k++) {
+        close(poly.vertices.reduce((acc, v, i) => acc + lam[i] * v.p[k], 0), x[k], 1e-9, `${name} precision`);
+      }
+      // canonical function = 3! x volume of the dual (sum of the dual pyramids)
+      const d = polarDual3d(poly, x);
+      const vol = poly.vertices.reduce((acc, v) =>
+        acc + Math.abs(det3(d[v.faces[0]], d[v.faces[1]], d[v.faces[2]])) / 6, 0);
+      close(vertexWedges3d(poly, x).reduce((a, b) => a + b), 6 * vol);
+      // on the tetrahedron the coordinates are the ordinary barycentric ones:
+      // λ_v = (distance of x to the opposite face) / (distance of v to it)
+      if (name === "tetrahedron") {
+        poly.vertices.forEach((v, i) => {
+          const opp = [0, 1, 2, 3].find((f) => !v.faces.includes(f));
+          const hx = planes[opp].d - planes[opp].n.reduce((a, c, k) => a + c * x[k], 0);
+          const hv = planes[opp].d - planes[opp].n.reduce((a, c, k) => a + c * v.p[k], 0);
+          close(lam[i], hx / hv);
+        });
+      }
+    }
+  }
+});
+
+Deno.test("Brüser's polycon: data are consistent and the adjoint enters the interior", async () => {
+  const { BRUSER: B } = await import("../js/math/canonical.js");
+  const [v12, v23, v31] = B.vertices, [r12, r23, r31] = B.residual;
+  // vertices and residual points lie on the right pairs of conics
+  for (const [p, f, g] of [[v12, B.c1, B.c2], [v23, B.c2, B.c3], [v31, B.c3, B.c1],
+    [r12, B.c1, B.c2], [r23, B.c2, B.c3], [r31, B.c3, B.c1]]) {
+    close(f(...p), 0); close(g(...p), 0);
+  }
+  // the adjoint passes through the residual points but not through the vertices
+  for (const r of B.residual) close(B.adjoint(...r), 0);
+  for (const v of B.vertices) if (Math.abs(B.adjoint(...v)) < 1) throw new Error("adjoint at vertex");
+  // all three conics are ellipses (negative discriminant b² − 4ac)
+  for (const [a, b, c] of [[20, 0, 27], [80, 102, 57], [32, -26, 9]]) {
+    if (!(b * b - 4 * a * c < 0)) throw new Error("not an ellipse");
+  }
+  // sign change of the adjoint inside the polycon: counterexample to the conjecture
+  if (!B.inside(0, 4) || !B.inside(2.6, 2.5)) throw new Error("points must be inside");
+  if (!(B.adjoint(0, 4) > 0 && B.adjoint(2.6, 2.5) < 0)) throw new Error("no sign change");
+  // the whole segment between the two points stays inside the polycon
+  for (let t = 0; t <= 1; t += 0.01) {
+    if (!B.inside(2.6 * t, 4 - 1.5 * t)) throw new Error("segment leaves the polycon");
+  }
+});
+
+Deno.test("pizza slice as a polycon: adjoint, canonical function and the weight of the corner", async () => {
+  const { PIZZA: P } = await import("../js/math/canonical.js");
+  const s3 = Math.sqrt(3);
+  for (const r of P.residual) {
+    close(P.adjoint(...r), 0); close(P.circle(...r), 0);
+  }
+  for (const [x, y] of [[0, 0.5], [0.3, 0.6], [-0.2, 0.3]]) {
+    // canonical function = 2√3 · adjoint / (product of boundary polynomials)
+    const C = (2 * s3 * P.adjoint(x, y)) / (P.circle(x, y) * P.line1(x, y) * P.line2(x, y));
+    close(C, pizzaCanonical([x, y]));
+    // wedge of the two lines through the origin: det(n1, n2) / (h1 h2) = 2√3 / (L1 L2)
+    const wedge = (2 * s3) / (P.line1(x, y) * P.line2(x, y));
+    close(wedge / C, P.lambdaO(x, y));
+    if (!(P.lambdaO(x, y) > 0 && P.lambdaO(x, y) < 1)) throw new Error("0 < λ_O < 1 inside");
+  }
+  close(P.lambdaO(0, 0), 1);            // equals 1 at its own vertex
+  close(P.lambdaO(0, 1), 0);            // vanishes on the arc
+  close(P.lambdaO(0.6, 0.8), 0);
+});

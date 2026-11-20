@@ -143,3 +143,48 @@ export const pizzaCanonical = ([x, y]) => {
  * simple pole. This is eq. (5.14) of the paper in the present normalisation.
  */
 export const discCanonical = ([x, y]) => (2 * Math.PI) / Math.pow(1 - x * x - y * y, 1.5);
+
+/* ------------------------------------------------------------------ */
+/*  Later developments: polycons (regions bounded by lines and conics) */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The polycon of C. Brüser, "The Geometry of Polycons and a Counterexample to
+ * Wachspress' Conjecture", arXiv:2603.18643 (Example 2.10): three ellipses
+ * c1, c2, c3, vertices v12, v23, v31, residual points and the adjoint cubic.
+ * The polycon is the component of { c1 ≤ 0, c2 ≥ 0, c3 ≥ 0 } that contains
+ * the point (0, 4). Its adjoint has an oval INSIDE the polycon.
+ */
+export const BRUSER = {
+  c1: (x, y) => 20 * x * x + 27 * y * y - 120 * x + 108 * y - 864,
+  c2: (x, y) => 80 * x * x + 102 * x * y + 57 * y * y - 400 * x - 96 * y,
+  c3: (x, y) => 32 * x * x - 26 * x * y + 9 * y * y - 96 * x + 72 * y,
+  adjoint: (x, y) => 3440 * x ** 3 - 8400 * x * x * y - 762 * x * y * y + 1971 * y ** 3 +
+    20720 * x * x + 51168 * x * y - 1620 * y * y - 193248 * x - 96336 * y + 342144,
+  vertices: [[9, -6], [0, 0], [-3, -6]],
+  residual: [[6, -8], [2, -4], [0, -8]],
+  /** Membership test for the (closed) polycon. */
+  inside(x, y) {
+    if (!(this.c1(x, y) <= 0 && this.c2(x, y) >= 0 && this.c3(x, y) >= 0)) return false;
+    // the three inequalities also cut out a second, separate region between
+    // the residual points; it lies in the box below and is not part of the polycon
+    return !(x > 0 && x < 6 && y < -4);
+  },
+};
+
+/**
+ * Pizza slice as a polycon: boundary polynomials (positive inside), the
+ * adjoint line and the weight that the wedge construction of the paper gives
+ * for the vertex at the origin, where two LINES meet:
+ *     λ_O = Ω(wedge) / Ω(P) = (1 − x² − y²) / (1 + 2y).
+ */
+export const PIZZA = {
+  circle: (x, y) => 1 - x * x - y * y,
+  line1: (x, y) => Math.sqrt(3) * y - x,
+  line2: (x, y) => Math.sqrt(3) * y + x,
+  adjoint: (x, y) => 1 + 2 * y,
+  vertices: [[0, 0], [Math.sqrt(3) / 2, 0.5], [-Math.sqrt(3) / 2, 0.5]],
+  residual: [[Math.sqrt(3) / 2, -0.5], [-Math.sqrt(3) / 2, -0.5]],
+  inside(x, y) { return this.circle(x, y) >= 0 && this.line1(x, y) >= 0 && this.line2(x, y) >= 0; },
+  lambdaO: (x, y) => (1 - x * x - y * y) / (1 + 2 * y),
+};

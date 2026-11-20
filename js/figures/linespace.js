@@ -1,5 +1,5 @@
 /**
- * linespace.js — Figure 7: the tetrahedral line complex (open problem 5.1).
+ * linespace.js — Figure 8: the tetrahedral line complex (open problem 5.1).
  *
  * The six edge lines l_ij of a tetrahedron p0 p1 p2 p3 are the vertices of an
  * octahedron (the hypersimplex Δ(2,4)) that describes the boundary structure
