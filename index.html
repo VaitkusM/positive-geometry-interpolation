@@ -135,6 +135,10 @@
       <span class="tex">[a,b]</span>. Remember its shape: it will return as the
       <em>canonical function</em> of the segment.</figcaption>
   </figure>
+  <p class="update"><span class="badge alt">Added remark</span> With more than two data points
+    the same form of the formula gives polynomial and rational interpolation on a line. That
+    case, and its relation to residues and contour integrals, is taken up in
+    <a href="#later-contour">Section 8.2</a>.</p>
 </section>
 
 <!-- ================================================================== -->
@@ -1262,6 +1266,267 @@
     conifold and the del Pezzo cones; we did not find them stated in these terms in the
     literature we searched.</p>
 
+  <h4 id="later-contour">One variable again: the barycentric formula, residues and contour integrals <span class="badge alt">Added remark</span></h4>
+  <p class="gist"><strong>In short:</strong> with more than two nodes on a line, the formula of
+    Section 1 becomes the barycentric formula of approximation theory. It is the simplex
+    formula of Section 2 read along a curve. Its properties follow from the residue theorem,
+    and Hermite’s contour integral gives its error. Positivity is lost beyond two nodes; what
+    survives of the canonical form is the behaviour at the poles and at infinity.</p>
+
+  <p><strong>The formula.</strong> Take nodes <span class="tex">t_0&lt;\dots&lt;t_n</span> and their
+    node polynomial <span class="tex">\ell(x)=\prod_j(x-t_j)</span>. The barycentric formula
+    displayed above Figure 12e says that the polynomial of degree at most
+    <span class="tex">n</span> through the data is
+    <span class="tex">\sum_j\lambda_j(x)f(t_j)</span> with</p>
+  <div class="tex block">\lambda_j(x)=\frac{c_j}{x-t_j}\Big/\sum_k\frac{c_k}{x-t_k},\qquad
+    c_j=\frac{1}{\ell'(t_j)},\qquad \sum_k\frac{c_k}{x-t_k}=\frac{1}{\ell(x)} .</div>
+  <p>The weight <span class="tex">c_j</span> is the residue of <span class="tex">1/\ell</span> at the
+    node <span class="tex">t_j</span>, and the last identity is the partial fraction expansion of
+    <span class="tex">1/\ell</span>. For two nodes <span class="tex">a,b</span> this is Section 1:
+    there <span class="tex">1/\ell</span> equals <span class="tex">-1/(b-a)</span> times the
+    canonical function of the segment. Trefethen’s book, which we follow in this part, calls
+    it the second form of the barycentric interpolation formula and traces its origins to
+    Jacobi’s thesis of 1825.</p>
+
+  <p><strong>A simplex on a curve.</strong> Why should a formula with poles produce a
+    polynomial? Lift every node to the point
+    <span class="tex">(t_j,t_j^2,\dots,t_j^n)</span> of the <em>moment curve</em> in
+    <span class="tex">n</span> dimensions. The <span class="tex">n+1</span> lifted nodes are the
+    vertices of a simplex, and the barycentric coordinates of the point
+    <span class="tex">(x,x^2,\dots,x^n)</span> with respect to this simplex are exactly the
+    <span class="tex">\lambda_j(x)</span>: both sets of numbers sum to one and reproduce
+    <span class="tex">x,x^2,\dots,x^n</span>, and these conditions determine them. The facet
+    opposite the vertex <span class="tex">j</span> passes through the other
+    <span class="tex">n</span> lifted nodes, so along the curve its equation is
+    <span class="tex">\prod_{k\ne j}(x-t_k)</span>, up to a constant factor. Now apply the recipe of
+    Section 2, in which the weight of a vertex is one over the product of the volumes
+    <span class="tex">A_k</span> that belong to the other vertices, and so has its poles on the
+    facets through the vertex:</p>
+  <div class="tex block">\frac{1}{\prod_{k\ne j}A_k}\;\propto\;\frac{c_j}{(x-t_j)\,\ell(x)^{\,n-1}}
+    \qquad\text{and}\qquad
+    C_{\text{simplex}}\big(x,x^2,\dots,x^n\big)=\pm\frac{V}{\ell(x)^{\,n}},</div>
+  <p>where <span class="tex">V=\prod_{i&lt;k}(t_k-t_i)</span> is <span class="tex">n!</span> times the
+    volume of the simplex and the sign is <span class="tex">(-1)^{n(n+1)/2}</span>. The common
+    factor <span class="tex">\ell^{\,n-1}</span> cancels in the ratio, and what remains is the
+    barycentric formula. So the formula of approximation theory is the formula of Section 2,
+    restricted to a curve. The picture also shows what goes wrong. For more than two nodes
+    the curve never enters the simplex: it touches it at the vertices only. A point outside
+    a simplex has a negative coordinate, and this is why Lagrange’s basis polynomials change
+    sign.</p>
+
+  <figure class="fig" data-figure="momentcurve">
+    <figcaption><strong>Figure 12h.</strong> <span class="badge alt">Added remark</span>
+      Three nodes, lifted to the parabola <span class="tex">y=x^2</span>. The coordinates of the
+      point <span class="tex">(x,x^2)</span> with respect to the triangle are the three quadratic
+      basis polynomials on the right. Each dashed line is the edge on which the coordinate of
+      the same colour vanishes; the parabola crosses it at the other two nodes. The canonical
+      function of the triangle, taken along the parabola, is
+      <span class="tex">-V/\ell(x)^2</span>.</figcaption>
+  </figure>
+
+  <p><strong>Partition of unity from the residue theorem.</strong> Fix
+    <span class="tex">x</span>, take a polynomial <span class="tex">g</span>, and look at the
+    differential form</p>
+  <div class="tex block">\omega=\frac{\ell(x)}{\ell(t)}\,\frac{g(t)\,dt}{x-t}</div>
+  <p>in the variable <span class="tex">t</span>. It has a pole at every node, with residue
+    <span class="tex">\lambda_j(x)\,g(t_j)</span>, and a pole at <span class="tex">t=x</span> with
+    residue <span class="tex">-g(x)</span>. If the degree of <span class="tex">g</span> is at most
+    <span class="tex">n</span>, it has no pole at infinity. On the Riemann sphere the residues
+    of a rational form add up to zero, hence</p>
+  <div class="tex block">\sum_j\lambda_j(x)\,g(t_j)=g(x)\qquad\text{for every polynomial } g \text{ of degree at most } n .</div>
+  <p>With <span class="tex">g=1</span> this is the partition of unity, with
+    <span class="tex">g(t)=t</span> linear precision. The argument has the same shape as the
+    first answer in Section 5: the weights sum to the right thing because nothing is left
+    over at infinity.</p>
+
+  <p><strong>Other weights, and a one-variable adjoint.</strong> Replace the
+    <span class="tex">c_j</span> by any non-zero numbers <span class="tex">w_j</span> and write
+    <span class="tex">R(x)=\sum_j w_j/(x-t_j)</span>. The quotient
+    <span class="tex">\sum_j w_jf(t_j)/(x-t_j)\,\big/\,R(x)</span> still takes the value
+    <span class="tex">f(t_j)</span> at every node, for the reason given in Section 1, but it is
+    now a rational function. The residue argument goes through with
+    <span class="tex">R(t)/R(x)</span> in place of <span class="tex">\ell(x)/\ell(t)</span>, and it
+    shows what the weights decide:</p>
+  <ul>
+    <li>Constants are always reproduced. Polynomials of degree up to
+      <span class="tex">d</span> are reproduced exactly when <span class="tex">R</span> decays at
+      least as fast as <span class="tex">t^{-d-1}</span> at infinity, that is, when
+      <span class="tex">\sum_j w_jt_j^{\,k}=0</span> for <span class="tex">k=0,\dots,d-1</span>. In
+      particular the coordinates have linear precision exactly when
+      <span class="tex">\sum_jw_j=0</span>, which says that the form
+      <span class="tex">R\,dt</span> has no pole at infinity.</li>
+    <li>Clearing the poles gives a polynomial
+      <span class="tex">D(x)=\ell(x)R(x)=\sum_jw_j\prod_{k\ne j}(x-t_k)</span> of degree
+      <span class="tex">n-d</span> (for the largest such <span class="tex">d</span>), and
+      <span class="tex">\lambda_j=w_j\prod_{k\ne j}(x-t_k)/D(x)</span>. The zeros of
+      <span class="tex">D</span> are the poles of the interpolant. <span class="tex">D</span> is
+      constant exactly for the weights <span class="tex">c_j</span>, the polynomial case.</li>
+  </ul>
+  <p>The polynomial <span class="tex">D</span> plays the part that the adjoint plays for a
+    polygon:</p>
+  <table class="compare">
+    <thead>
+      <tr><th></th><th>Nodes on a line</th><th>Convex polygon</th></tr>
+    </thead>
+    <tbody>
+      <tr><th>Pole terms</th><td><span class="tex">w_j/(x-t_j)</span>, one node each</td>
+        <td>wedge functions <span class="tex">w_i</span>, two edges each</td></tr>
+      <tr><th>Their sum</th><td><span class="tex">R(x)</span></td>
+        <td>the canonical function <span class="tex">C_P</span></td></tr>
+      <tr><th>Sum, cleared of poles</th><td><span class="tex">D=\ell R</span>, of degree
+        <span class="tex">n-d</span></td>
+        <td>the adjoint, of degree (number of edges) <span class="tex">-\,3</span></td></tr>
+      <tr><th>Its zeros</th><td>poles of the interpolant; they must stay away from the interval</td>
+        <td>the adjoint curve; it stays outside the polygon</td></tr>
+      <tr><th>It is constant for</th><td>the polynomial weights <span class="tex">c_j</span></td>
+        <td>triangles and parallelograms, where the coordinates are polynomials</td></tr>
+      <tr><th>At infinity</th><td><span class="tex">R\,dt</span> has no pole exactly when
+        <span class="tex">\sum_j w_j=0</span> (linear precision)</td>
+        <td>the canonical form has no pole on the line at infinity</td></tr>
+      <tr><th>Positivity</th><td>only for two nodes</td><td>everywhere inside the polygon</td></tr>
+    </tbody>
+  </table>
+  <p>The last row is elementary. For <span class="tex">x</span> between two neighbouring nodes
+    all coordinates are non-negative only if the weights of the nodes to the left of
+    <span class="tex">x</span> have one sign and those to the right the other. That cannot hold
+    in every gap unless there are just two nodes. So with three or more nodes some coordinate
+    is negative somewhere, whatever the weights. Approximation theory measures the damage by
+    the <em>Lebesgue function</em> <span class="tex">\sum_j|\lambda_j(x)|</span>. It equals one
+    exactly where no coordinate is negative, as for Wachspress coordinates inside a polygon;
+    for polynomial interpolation at equally spaced nodes its maximum grows exponentially
+    with the number of nodes.</p>
+
+  <p><strong>A canonical form after all: Berrut’s interpolant.</strong> On a line, the positive
+    geometries are the finite unions of disjoint intervals, and the canonical form of such a
+    union has residues <span class="tex">+1</span> and <span class="tex">-1</span> in turn at the
+    end points. For an even number of nodes this is the form <span class="tex">R\,dt</span> with
+    the weights <span class="tex">w_j=(-1)^j</span>:</p>
+  <div class="tex block">\sum_{j=0}^{n}\frac{(-1)^j}{x-t_j}=C_A(x),\qquad A=[t_0,t_1]\cup[t_2,t_3]\cup\dots\cup[t_{n-1},t_n].</div>
+  <p>These are the weights of Berrut’s rational interpolant. In the language of this page its
+    coordinates are ratios of canonical functions, a half-line over a union of intervals,
+    and its two known properties can be read off. The weights sum to zero, so the
+    coordinates have linear precision. And <span class="tex">C_A</span> has no zero on the real
+    line (for <span class="tex">x</span> in a given gap, group the terms of the other nodes in
+    neighbouring pairs, starting next to the gap: every pair has the sign of the two terms
+    nearest to <span class="tex">x</span>), so the interpolant has no real poles, as Berrut
+    showed. With the
+    weights <span class="tex">c_j</span> of polynomial interpolation, by contrast, the residues
+    of <span class="tex">dt/\ell</span> are not <span class="tex">\pm1</span>, and the form is a
+    canonical form only for two nodes. Floater and Hormann found a family in between: for
+    each <span class="tex">d</span>, weights without real poles that reproduce polynomials of
+    degree <span class="tex">d</span>; <span class="tex">d=0</span> is Berrut’s interpolant and
+    <span class="tex">d=n</span> the polynomial.</p>
+
+  <figure class="fig" data-figure="baryrational">
+    <figcaption><strong>Figure 12i.</strong> <span class="badge alt">Added remark</span>
+      One formula, four choices of weights, for Runge’s function at equally spaced nodes.
+      The table reports the degree of the polynomials that are reproduced, the degree of the
+      denominator <span class="tex">D</span> and the Lebesgue constant. With the polynomial
+      weights the coordinates oscillate strongly near the ends as nodes are added; with the
+      other weights they stay small, at the price of a lower degree of precision.</figcaption>
+  </figure>
+
+  <p><strong>Hermite’s formula.</strong> Now let <span class="tex">f</span> be analytic inside a
+    closed curve <span class="tex">\Gamma</span> around the nodes and the point
+    <span class="tex">x</span>. The form of the residue argument, with
+    <span class="tex">f</span> in place of the polynomial <span class="tex">g</span>, has its only
+    poles inside <span class="tex">\Gamma</span> at the nodes and at <span class="tex">x</span>,
+    and the residue theorem turns into a formula for the error of the interpolating
+    polynomial <span class="tex">p</span>:</p>
+  <div class="tex block">f(x)-p(x)=\frac{1}{2\pi i}\oint_\Gamma\frac{\ell(x)}{\ell(t)}\,\frac{f(t)}{t-x}\,dt .</div>
+  <p>This is the Hermite integral formula; without the factor
+    <span class="tex">\ell(x)/\ell(t)</span> it is Cauchy’s integral formula. For other weights
+    the same holds with <span class="tex">R(t)/R(x)</span> as the factor. In particular, for the
+    two nodes of Section 1 the factor is a ratio of canonical functions of the segment,
+    <span class="tex">C_{[a,b]}(t)/C_{[a,b]}(x)</span>.</p>
+  <p>The formula is used to see where interpolation works. Everything depends on the size of
+    <span class="tex">\ell(x)</span>, at the point of interest, compared with
+    <span class="tex">\ell(t)</span> on a curve inside which <span class="tex">f</span> is
+    analytic. Since <span class="tex">\log|\ell(z)|=\sum_j\log|z-t_j|</span> is the potential of
+    equal charges placed at the nodes, this is a question of potential theory. If
+    <span class="tex">f</span> is itself rational, with simple poles
+    <span class="tex">\pi_k</span> and residues <span class="tex">\rho_k</span>, and vanishes at
+    infinity, the contour can be moved outwards until only the poles of
+    <span class="tex">f</span> contribute:</p>
+  <div class="tex block">f(x)-p(x)=\sum_k\rho_k\,\frac{\ell(x)}{\ell(\pi_k)\,(x-\pi_k)} .</div>
+  <p>The error at <span class="tex">x</span> is small where the potential at
+    <span class="tex">x</span> is lower than at the poles, and grows with the number of nodes
+    where it is higher. For equally spaced nodes the potential is lowest in the middle of
+    the interval. For Runge’s function <span class="tex">1/(1+25x^2)</span>, with poles at
+    <span class="tex">\pm i/5</span>, the interpolants therefore converge only for
+    <span class="tex">|x|&lt;0.7266\ldots</span> and diverge nearer the ends. For Chebyshev nodes
+    the limiting potential is constant on the interval, its level curves are ellipses with
+    foci <span class="tex">\pm1</span>, and the interpolants converge on the whole interval for
+    every function analytic in a neighbourhood of it.</p>
+
+  <figure class="fig" data-figure="hermite">
+    <figcaption><strong>Figure 12j.</strong> <span class="badge alt">Added remark</span>
+      Above, the complex plane, shaded by the size of the node polynomial; the nodes are the
+      dots on the real axis. The coloured curve is the level curve through the pole of
+      <span class="tex">f</span>: inside it the factor
+      <span class="tex">|\ell(x)/\ell(\text{pole})|</span> is smaller than one. Below, the function
+      and its interpolant; the band marks the part of the interval inside the level curve.
+      The table compares three ways of computing the error. Increase the number of equally
+      spaced nodes to see the error grow outside the band, then switch to Chebyshev
+      nodes.</figcaption>
+  </figure>
+
+  <p><strong>The real twin: divided differences and B-splines.</strong> The coefficients
+    <span class="tex">c_j</span> also define the divided difference
+    <span class="tex">f[t_0,\dots,t_n]=\sum_jc_jf(t_j)</span>, and this number has a complex and
+    a real integral formula,</p>
+  <div class="tex block">f[t_0,\dots,t_n]=\frac{1}{2\pi i}\oint\frac{f(t)}{\ell(t)}\,dt
+    =\frac{1}{n!}\int M(y)\,f^{(n)}(y)\,dy ,</div>
+  <p>where <span class="tex">M</span> is the B-spline of Figure 12e. The two kernels,
+    <span class="tex">1/\ell</span> and <span class="tex">M</span>, are related by the transform
+    displayed above that figure. The error of interpolation is
+    <span class="tex">\ell(x)</span> times a divided difference with <span class="tex">x</span> as
+    one more node, so Hermite’s formula has a real twin as well:</p>
+  <div class="tex block">f(x)-p(x)=\frac{\ell(x)}{(n+1)!}\int M(y\mid t_0,\dots,t_n,x)\,f^{(n+1)}(y)\,dy .</div>
+  <p>The evaluation point has become a knot of the spline. For the two nodes of Section 1 the
+    spline is the hat function with knots <span class="tex">a,x,b</span>, and the formula reads
+    <span class="tex">f(x)-p(x)=-\frac{b-a}{2\,C_{[a,b]}(x)}\int M(y\mid a,x,b)\,f''(y)\,dy</span>.
+    In one variable, then, the splines of the third open problem are the real kernels of the
+    contour formulas of interpolation.</p>
+
+  <p><strong>Contour integrals for canonical forms.</strong> Positive geometry has contour
+    formulas of its own. Arkani-Hamed, Bai and Lam write the canonical function of a polytope
+    with vertices <span class="tex">Z_1,\dots,Z_n</span> as an integral over real variables
+    <span class="tex">c_j</span>, one for each vertex, with a pole at each
+    <span class="tex">c_j=0</span> (moved slightly off the real axis) and the constraint
+    <span class="tex">Y=\sum_jc_jZ_j</span>. The residue at which all but
+    (dimension + 1) of the <span class="tex">c_j</span> vanish is the canonical
+    function of the simplex on the remaining vertices. For a quadrilateral, closing the
+    contour on one side or the other produces its two triangulations, and the authors
+    conclude that the independence of the canonical function from the triangulation is “a
+    consequence of Cauchy’s theorem”. A second formula of theirs uses the residue theorem
+    in several variables for the same purpose. They also note that the formula
+    <span class="tex">1/\prod_iA_i=m!\int d^m\alpha\,/(A_0+\sum_i\alpha_iA_i)^{m+1}</span>, known
+    in physics as Feynman parametrisation, is the dual-volume formula for a simplex; in one
+    variable it is the transform above Figure 12e. Shapiro (2026) shows that the same kind of
+    transform of a polygon, which he calls a Fantappiè transform, is the canonical form of
+    the polar polygon.</p>
+  <p>These formulas concern the canonical form itself. What we did not find is a counterpart
+    of Hermite’s formula for a polygon: a kernel in two complex variables, built from the
+    canonical form, whose residues at the vertices are the Wachspress coordinates, and which
+    would give the error of Wachspress interpolation for analytic functions. On the side of
+    interpolation, Hormann’s survey treats rational interpolation on a line and coordinates
+    on polygons under the common name “barycentric”, as blends of local linear interpolants;
+    Floater and Hormann describe their interpolant as a one-variable analogue of a
+    construction in the plane.</p>
+
+  <p class="update">The barycentric formula, Hermite’s formula, the potential theory and the
+    numbers for Runge’s example are taken from Trefethen’s book; the rational interpolants
+    are those of Berrut and of Floater and Hormann; the formulas for divided differences are
+    in de Boor’s survey. The following are elementary observations of ours, checked in the
+    project’s tests, which we did not find stated in this form: the barycentric formula as
+    the simplex formula on the moment curve, with <span class="tex">\pm V/\ell^{\,n}</span> as
+    the canonical function; the criterion for the degree of precision as a statement about
+    the pole at infinity (Hormann’s survey states that <span class="tex">\sum_jw_j=0</span>
+    gives linear precision); the comparison of the denominator with the adjoint; and the
+    denominator of Berrut’s interpolant as the canonical function of a union of
+    intervals.</p>
+
   <h3 id="later-meanvalue">8.3 Mean value coordinates in the dual picture: area versus perimeter</h3>
   <p class="gist"><strong>In short:</strong> Wachspress and mean value coordinates measure
     the same dual polygon in two ways. Wachspress weights add up to twice its area, mean value
@@ -1569,6 +1834,23 @@
     <li>M. S. Floater, K. Hormann, G. Kós. A general construction of barycentric coordinates
       over convex polygons. <em>Advances in Computational Mathematics</em> 24:311–331,
       2006.</li>
+    <li>L. N. Trefethen. <em>Approximation Theory and Approximation Practice</em>, extended
+      edition. SIAM, 2019. (Chapters 5 and 11–15.)</li>
+    <li>J.-P. Berrut, L. N. Trefethen. Barycentric Lagrange interpolation. <em>SIAM Review</em>
+      46(3):501–517, 2004.</li>
+    <li>C. Schneider, W. Werner. Some new aspects of rational interpolation. <em>Mathematics of
+      Computation</em> 47:285–299, 1986.</li>
+    <li>J.-P. Berrut. Rational functions for guaranteed and experimentally well-conditioned
+      global interpolation. <em>Computers &amp; Mathematics with Applications</em> 15(1):1–16,
+      1988.</li>
+    <li>M. S. Floater, K. Hormann. Barycentric rational interpolation with no poles and high
+      rates of approximation. <em>Numerische Mathematik</em> 107:315–331, 2007.</li>
+    <li>C. Hermite. Sur la formule d’interpolation de Lagrange. <em>Journal für die reine und
+      angewandte Mathematik</em> 84:70–79, 1878.</li>
+    <li>C. de Boor. Divided differences. <em>Surveys in Approximation Theory</em> 1:46–69, 2005.
+      <a href="https://arxiv.org/abs/math/0502036">arXiv:math/0502036</a></li>
+    <li>B. Shapiro. Canonical forms and moment-generating functions of plane polypols.
+      <a href="https://arxiv.org/abs/2605.10864">arXiv:2605.10864</a>, 2026.</li>
   </ol>
 </section>
 

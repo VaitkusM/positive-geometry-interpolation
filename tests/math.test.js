@@ -856,3 +856,232 @@ Deno.test("Newton polytopes: the stringy integral of a polynomial in one variabl
     close(stringy([1, k, 1], 0.7, 1, alpha), 2 / (0.7 * 1.3), 4e-3, "segment [0, 2c]");
   }
 });
+
+/* ------------------------------------------------------------------ */
+/*  Section 8.2: one variable — barycentric formula, residues, contours */
+/* ------------------------------------------------------------------ */
+
+/** n + 1 random nodes in [−1, 1], increasing and not too close to each other. */
+function randomNodes(n, rand) {
+  for (;;) {
+    const t = Array.from({ length: n + 1 }, () => -1 + 2 * rand()).sort((a, b) => a - b);
+    if (t.every((v, i) => i === 0 || v - t[i - 1] > 0.12)) return t;
+  }
+}
+
+Deno.test("moment curve: Lagrange's basis is the set of simplex coordinates of (x, x², …, xⁿ); the simplex's canonical function there is ±V/ℓⁿ", async () => {
+  const I = await import("../js/math/interp.js");
+  const rand = rng(61);
+  for (const n of [1, 2, 3, 4, 5]) {
+    for (let trial = 0; trial < 20; trial++) {
+      const t = randomNodes(n, rand), c = I.polynomialWeights(t), x = -1.3 + 2.6 * rand();
+      const beta = I.simplexCoordinates(t.map((tj) => I.momentCurve(n, tj)), I.momentCurve(n, x));
+      const lam = I.baryCoordinates(t, c, x);
+      beta.forEach((b, j) => close(b, lam[j], 1e-8, `n = ${n}`));
+      // Π_j ℓ'(t_j) = (−1)^{n(n+1)/2} V², V the Vandermonde determinant: the constant in 1/(n! Vol · Π β_j)
+      let V = 1;
+      for (let i = 0; i <= n; i++) for (let k = i + 1; k <= n; k++) V *= t[k] - t[i];
+      close(c.reduce((p, cj) => p / cj, 1), (-1) ** ((n * (n + 1)) / 2) * V * V, 1e-9, "discriminant");
+    }
+  }
+  // n = 2 with the page's own canonical function of a triangle: −V/ℓ(x)² on the parabola
+  for (let trial = 0; trial < 50; trial++) {
+    const t = randomNodes(2, rand), x = -1.3 + 2.6 * rand(), P = t.map((v) => [v, v * v]);
+    const V = (t[1] - t[0]) * (t[2] - t[0]) * (t[2] - t[1]), ell = I.nodePolynomial(t, x);
+    close(triangleCanonical(P[0], P[1], P[2], [x, x * x]), -V / (ell * ell), 1e-8, "triangle on the parabola");
+    close(2 * Math.abs(signedArea(P)), V, 1e-10, "V is twice the area");
+  }
+});
+
+Deno.test("barycentric formula: the degree of precision is the number of vanishing moments of the weights; the denominator has degree n − d", async () => {
+  const I = await import("../js/math/interp.js");
+  const rand = rng(62);
+  const reproduces = (t, w, k) => {
+    let e = 0;
+    for (let s = 0; s < 20; s++) {
+      const x = -0.97 + 1.94 * rand();
+      e = Math.max(e, Math.abs(I.baryEval(t, w, t.map((v) => v ** k), x) - x ** k));
+    }
+    return e < 1e-7;
+  };
+  // random weights whose first d moments vanish
+  for (const n of [4, 5, 6]) {
+    for (const d of [0, 1, 2, 3]) {
+      const t = randomNodes(n, rand), rows = [];
+      let w = t.map(() => rand() - 0.5);
+      for (let k = 0; k < d; k++) {
+        let r = t.map((v) => v ** k);
+        for (const q of rows) { const cq = r.reduce((s, v, i) => s + v * q[i], 0); r = r.map((v, i) => v - cq * q[i]); }
+        const L = Math.hypot(...r);
+        rows.push(r.map((v) => v / L));
+      }
+      for (const q of rows) { const cq = w.reduce((s, v, i) => s + v * q[i], 0); w = w.map((v, i) => v - cq * q[i]); }
+      if (I.precisionDegree(t, w) !== d) throw new Error(`moments: expected ${d}`);
+      for (let k = 0; k <= d; k++) if (!reproduces(t, w, k)) throw new Error(`degree ${k} not reproduced (d = ${d})`);
+      if (reproduces(t, w, d + 1)) throw new Error(`degree ${d + 1} reproduced although d = ${d}`);
+      // the interpolant always interpolates, whatever the weights
+      const data = t.map(() => rand());
+      t.forEach((tj, j) => close(I.baryEval(t, w, data, tj), data[j], 1e-12));
+      // D = ℓ·R is a polynomial of degree n − d with leading coefficient Σ w_j t_j^d
+      // (finite differences with step h: the m-th difference of a polynomial of degree m is m! hᵐ × its leading coefficient)
+      const lead = w.reduce((s, wj, j) => s + wj * t[j] ** d, 0), h = 0.4;
+      const difference = (m) => {
+        let sum = 0, binom = 1;
+        for (let i = 0; i <= m; i++) { sum += (-1) ** (m - i) * binom * I.denominator(t, w, -1 + i * h); binom = (binom * (m - i)) / (i + 1); }
+        return sum;
+      };
+      const fact = (k) => (k < 2 ? 1 : k * fact(k - 1));
+      close(difference(n - d) / (fact(n - d) * h ** (n - d)), lead, 1e-7, "leading coefficient of D");
+      close(difference(n - d + 1), 0, 1e-9, "degree of D");
+    }
+  }
+  // polynomial weights: all moments below n vanish, D ≡ 1, R = 1/ℓ
+  for (const n of [1, 3, 6, 9]) {
+    const t = randomNodes(n, rand), c = I.polynomialWeights(t);
+    if (I.precisionDegree(t, c) !== n) throw new Error("polynomial weights: precision n expected");
+    for (const x of [-2.5, -0.33, 0.41, 1.7]) {
+      close(I.denominator(t, c, x), 1, 1e-7, "D is constant");
+      close(I.poleSum(t, c, x) * I.nodePolynomial(t, x), 1, 1e-8, "R = 1/ℓ");
+    }
+  }
+  // two nodes: R is the canonical function of the segment up to the factor −1/(b − a)
+  close(I.poleSum([-0.4, 0.9], I.polynomialWeights([-0.4, 0.9]), 0.2) * -1.3, segmentCanonical(-0.4, 0.9, 0.2));
+});
+
+Deno.test("rational barycentric interpolants: Berrut and Floater–Hormann weights (no real poles, precision ≥ d); positivity only for two nodes", async () => {
+  const I = await import("../js/math/interp.js");
+  const rand = rng(63);
+  for (const n of [4, 7, 10]) {
+    for (const t of [I.equispaced(n), randomNodes(n, rand)]) {
+      const c = I.polynomialWeights(t);
+      // d = 0 is Berrut's interpolant, d = n the polynomial one
+      I.floaterHormannWeights(t, 0).forEach((v, j) => close(v, I.berrutWeights(t)[j], 1e-14));
+      I.floaterHormannWeights(t, n).forEach((v, j) => close(v / c[j], 1, 1e-8, "FH with d = n"));
+      for (let d = 0; d <= 3; d++) {
+        const w = I.floaterHormannWeights(t, d);
+        if (I.precisionDegree(t, w) < d) throw new Error(`Floater–Hormann d = ${d}: precision too low`);
+        // the denominator keeps one sign on the real line: no real poles
+        let sign = 0;
+        for (let x = -5; x <= 5; x += 0.004) {
+          const s = Math.sign(I.denominator(t, w, x));
+          if (sign && s !== sign) throw new Error(`Floater–Hormann d = ${d}: real pole near ${x}`);
+          sign = s;
+        }
+        // the interpolant is the quotient of two polynomial interpolants: of u_j f_j and of u_j = w_j / c_j
+        const u = w.map((v, j) => v / c[j]), data = t.map(Math.sin), x = -0.9 + 1.8 * rand();
+        close(I.baryEval(t, w, data, x), I.baryEval(t, c, data.map((v, j) => v * u[j]), x) / I.baryEval(t, c, u, x), 1e-7);
+        close(I.denominator(t, w, x), I.baryEval(t, c, u, x), 1e-7, "D interpolates w_j / c_j");
+      }
+    }
+  }
+  // Berrut's denominator for an even number of nodes: the canonical function of the union of the
+  // intervals [t_0, t_1], [t_2, t_3], …; it has the sign (−1)^k between t_k and t_{k+1} and no real zero
+  for (const n of [1, 3, 5, 9]) {
+    const t = randomNodes(n, rand), w = I.berrutWeights(t);
+    if (w.reduce((s, v) => s + v, 0) !== 0 || I.precisionDegree(t, w) < 1) throw new Error("Berrut, even number of nodes: linear precision");
+    for (let trial = 0; trial < 40; trial++) {
+      const x = -1.6 + 3.2 * rand();
+      if (t.some((tj) => Math.abs(x - tj) < 1e-3)) continue;
+      let union = 0;
+      for (let i = 0; i < n; i += 2) union += segmentCanonical(t[i], t[i + 1], x);
+      close(I.poleSum(t, w, x), union, 1e-9, "union of intervals");
+      const k = t.filter((tj) => tj < x).length - 1;           // x lies between t_k and t_{k+1} (k = −1 or n: outside)
+      const expected = k < 0 || k >= n ? -1 : (-1) ** k;
+      if (Math.sign(union) !== expected) throw new Error("sign of the canonical function of a union of intervals");
+    }
+  }
+  // Lebesgue function: identically 1 for two nodes, larger than 1 somewhere for more
+  const maxLebesgue = (t, w) => {
+    let m = 0;
+    for (let x = t[0] + 1e-3; x < t[t.length - 1]; x += 0.0017) m = Math.max(m, I.lebesgue(t, w, x));
+    return m;
+  };
+  close(maxLebesgue([-1, 1], I.polynomialWeights([-1, 1])), 1, 1e-12);
+  close(maxLebesgue(I.equispaced(2), I.polynomialWeights(I.equispaced(2))), 1.25, 1e-5);
+  for (const n of [2, 3, 5, 8]) {
+    for (let trial = 0; trial < 20; trial++) {
+      const t = randomNodes(n, rand), w = t.map(() => (rand() < 0.5 ? -1 : 1) * (0.2 + rand()));
+      if (!(maxLebesgue(t, w) > 1 + 1e-6)) throw new Error("more than two nodes: some coordinate must be negative");
+    }
+  }
+});
+
+Deno.test("Hermite's formula: the interpolation error as a contour integral and as a sum over the poles of the function", async () => {
+  const I = await import("../js/math/interp.js");
+  // f(t) = s² / ((t − a)² + s²): poles a ± i s with residues ∓ i s / 2
+  for (const [a, s] of [[0, 0.2], [0.4, 0.5], [-1.2, 0.15]]) {
+    const f = (x) => (s * s) / ((x - a) * (x - a) + s * s);
+    const fC = (z) => I.cdiv([s * s, 0], I.cadd(I.cmul([z[0] - a, z[1]], [z[0] - a, z[1]]), [s * s, 0]));
+    const poles = [{ at: [a, s], residue: [0, -s / 2] }, { at: [a, -s], residue: [0, s / 2] }];
+    const rho = 1 + 0.6 * (I.bernsteinRho([a, s]) - 1);
+    for (const nodes of [I.equispaced(4), I.equispaced(13), I.chebyshev(9), I.chebyshev(20)]) {
+      const c = I.polynomialWeights(nodes), data = nodes.map(f);
+      for (const x of [-0.71, 0.13, 0.55, 0.93]) {
+        const direct = f(x) - I.baryEval(nodes, c, data, x);
+        const res = I.hermiteResidues(nodes, poles, x), con = I.hermiteContour(nodes, fC, x, rho, 4000);
+        close(res[0], direct, 1e-7 + 1e-9 / Math.abs(direct), "residues");
+        close(res[1], 0, 1e-12);
+        close(con[0], direct, 1e-6 + 1e-9 / Math.abs(direct), "contour");
+      }
+    }
+  }
+  // the same formula for other weights, with R(t)/R(x) in place of ℓ(x)/ℓ(t)
+  {
+    const a = 0.3, s = 0.6, f = (x) => (s * s) / ((x - a) * (x - a) + s * s);
+    const fC = (z) => I.cdiv([s * s, 0], I.cadd(I.cmul([z[0] - a, z[1]], [z[0] - a, z[1]]), [s * s, 0]));
+    const rho = 1 + 0.6 * (I.bernsteinRho([a, s]) - 1);
+    for (const nodes of [I.equispaced(7), I.equispaced(10)]) {
+      for (const w of [I.berrutWeights(nodes), I.floaterHormannWeights(nodes, 2), I.polynomialWeights(nodes)]) {
+        const data = nodes.map(f);
+        for (const x of [-0.71, 0.13, 0.93]) {
+          const con = I.baryContour(nodes, w, fC, x, rho, 4000);
+          close(con[0], f(x) - I.baryEval(nodes, w, data, x), 1e-7, "contour, general weights");
+          close(con[1], 0, 1e-9);
+        }
+      }
+    }
+  }
+  // Bernstein parameter: ρ of a point on the ellipse with semi-axes (ρ ± 1/ρ)/2
+  for (const rho of [1.1, 1.7, 3]) {
+    close(I.bernsteinRho([((rho + 1 / rho) / 2) * Math.cos(0.7), ((rho - 1 / rho) / 2) * Math.sin(0.7)]), rho, 1e-10);
+  }
+});
+
+Deno.test("potentials: Runge's region for equally spaced nodes, a constant potential for Chebyshev nodes", async () => {
+  const I = await import("../js/math/interp.js");
+  const u = (z) => I.limitPotential("equispaced", z);
+  const bisect = (g, lo, hi) => { for (let i = 0; i < 80; i++) { const m = (lo + hi) / 2; if (g(m) < 0) lo = m; else hi = m; } return lo; };
+  close(u([0, 0]), -1, 1e-12);
+  close(u([1, 0]), -1 + Math.LN2, 1e-12);
+  // the level curve through ±1 meets the imaginary axis at 0.52552491457… (Trefethen, Chapter 13)
+  close(bisect((y) => u([0, y]) - u([1, 0]), 0.1, 1), 0.52552491457, 1e-10);
+  // Runge's function 1/(1 + 25x²): poles ±i/5; convergence only for |x| < 0.7266768…
+  close(bisect((x) => u([x, 0]) - u([0, 0.2]), 0.3, 0.99), 0.7266768, 1e-6);
+  // Chebyshev: the limiting potential is −log 2 on the whole interval
+  for (const x of [-1, -0.6, 0, 0.3, 0.99]) close(I.limitPotential("chebyshev", [x, 0]), -Math.LN2, 1e-10);
+  // the discrete potentials approach the limiting ones
+  const z = [0.3, 0.4];
+  close(I.discretePotential(I.equispaced(2000), z), u(z), 1e-3);
+  close(I.discretePotential(I.chebyshev(2000), z), I.limitPotential("chebyshev", z), 1e-3);
+  // |ℓ(z)| = exp((n + 1) u_n(z))
+  const t = I.equispaced(7);
+  close(Math.exp(8 * I.discretePotential(t, z)), I.cabs(I.nodePolynomialC(t, z)), 1e-10);
+});
+
+Deno.test("divided differences: the B-spline is the real kernel of the contour formulas; the evaluation point is one more knot", async () => {
+  const I = await import("../js/math/interp.js");
+  const { bspline } = await import("../js/math/splines.js");
+  const rand = rng(64);
+  const factorial = (k) => (k < 2 ? 1 : k * factorial(k - 1));
+  const integrate = (g, a, b, N = 20000) => { let s = 0; const h = (b - a) / N; for (let i = 0; i < N; i++) s += g(a + (i + 0.5) * h); return s * h; };
+  for (const n of [1, 2, 3, 4]) {
+    const t = randomNodes(n, rand), c = I.polynomialWeights(t), g = Math.exp;   // every derivative of exp is exp
+    // f[t_0 … t_n] = Σ c_j f(t_j) = (1/n!) ∫ M(y) f⁽ⁿ⁾(y) dy
+    close(c.reduce((s, cj, j) => s + cj * g(t[j]), 0), integrate((y) => bspline(t, y) * g(y), t[0], t[n]) / factorial(n), 1e-6);
+    // f(x) − p(x) = ℓ(x) f[t_0 … t_n, x] = ℓ(x)/(n+1)! ∫ M(y | t_0 … t_n, x) f⁽ⁿ⁺¹⁾(y) dy
+    const x = t[0] + (t[n] - t[0]) * (0.2 + 0.6 * rand()), knots = [...t, x].sort((p, q) => p - q);
+    if (knots.some((v, i) => i > 0 && v - knots[i - 1] < 1e-3)) continue;
+    const error = g(x) - I.baryEval(t, c, t.map(g), x);
+    close(error, (I.nodePolynomial(t, x) * integrate((y) => bspline(knots, y) * g(y), knots[0], knots[n + 1])) / factorial(n + 1), 1e-5);
+  }
+});

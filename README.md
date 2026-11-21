@@ -14,7 +14,7 @@ with poles on the boundary of the domain.
 
 The page is written for a mixed audience (geometric modelling people who have
 not met positive geometries, and mathematicians / physicists who have not met
-barycentric coordinates) and contains twenty-two interactive figures. Sections 1–7 follow
+barycentric coordinates) and contains twenty-five interactive figures. Sections 1–7 follow
 the 2019 paper; material published since then is collected in Section 8 and marked
 "Later development" on the page, and figures that go beyond the paper's own are
 marked "Added illustration".
@@ -40,6 +40,9 @@ marked "Added illustration".
 | 12e | One variable *(added remark)* | B-spline as the shadow of a simplex; 1/Π(x − tᵢ), its partial fractions and Lagrange's barycentric weights |
 | 12f | Fibre polytope *(added remark)* | Duistermaat–Heckman: the spline value is the volume of the fibre polytope (reduced space); sides disappear across the diagonals |
 | 12g | Volume minimisation *(added remark)* | the canonical function as the Martelli–Sparks–Yau volume of a toric cone; its minimum is the Santaló point; R-charges as Wachspress coordinates |
+| 12h | Moment curve *(added remark)* | quadratic Lagrange basis as the coordinates of a point of a parabola in a triangle on that parabola |
+| 12i | Rational barycentric interpolation *(added remark)* | polynomial, Berrut and Floater–Hormann weights: degree of precision, denominator, Lebesgue function |
+| 12j | Hermite's formula *(added remark)* | interpolation error as a contour integral and as a sum over poles; level curves of the node polynomial, Runge phenomenon |
 | 13 | Area vs perimeter *(later development)* | Wachspress and mean value normalisers as area and perimeter of the dual polygon |
 | 14 | Smooth limit *(later development)* | inscribed polygons → the kernel of Warren et al. for the circle |
 | 15 | Push-forward *(later development)* | quadrilateral from the unit square via the bilinear patch; parallelogram case |
@@ -84,6 +87,7 @@ js/math/              pure mathematics, no DOM — the part worth reusing
   pushforward.js        inverse bilinear map (complex roots), push-forward of the square's form
   splines.js            multivariate (cone) splines of a polygon, adjoint as an operator, B-splines
   toric.js              fibre polytopes (Duistermaat–Heckman), link volume and its minimiser (Santaló point)
+  interp.js             one variable: barycentric formula for any weights, Hermite contour integral, potentials, moment curve
 js/ui/
   stage.js              canvas wrapper: world coordinates, hi-DPI, draggable handles
   ramp.js               sequential colour ramp (heat map, 3D surface)
