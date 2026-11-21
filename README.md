@@ -3,6 +3,8 @@
 **Live page: <https://vaitkusm.github.io/positive-geometry-interpolation/>**
 · **[as slides](https://vaitkusm.github.io/positive-geometry-interpolation/slides.html)**
 
+![The canonical function of a pentagon over the whole plane: positive (blue) inside, infinite on the five edge lines, zero on the adjoint conic](img/teaser.png)
+
 An interactive, self-contained introduction to the ideas of
 
 > M. Vaitkus, *Positive Geometries for Barycentric Interpolation*, poster paper, IGS 2019.
@@ -22,6 +24,7 @@ marked "Added illustration".
 
 | # | Figure | Shows |
 |---|--------|-------|
+| — | Teaser | the canonical function of a pentagon over the whole plane (sign and size), its pole lines and adjoint conic, and a draggable point with its coordinates |
 | Map | Map of the topics | seventeen topics of the page and the relations between them; select a box for details |
 | 1 | Segment | linear interpolation as a ratio of two poles (Shepard form) |
 | 2 | Triangle | area coordinates = ratio-of-poles form |
@@ -133,6 +136,7 @@ js/ui/
   widgets.js            buttons, sliders, bar chart, number formatting
 js/figures/           one module per figure, each exporting init…(rootElement)
   common.js             default polygons, convexity-preserving vertex dragging
+img/teaser.png        still of the teaser figure (js/figures/hero.js), used as link preview and in this README
 tests/math.test.js    unit tests for js/math
 tests/slides.test.js  consistency of slides.html with index.html and js/build.js
 ```

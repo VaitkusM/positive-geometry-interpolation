@@ -179,6 +179,9 @@ section#later { border-top: 2px solid var(--accent); padding-top: 2rem; }
   background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
   font-family: var(--font-ui);
 }
+/* the teaser illustration below the title: the picture fills the card */
+.fig.hero-fig { padding: 0; overflow: hidden; margin: 0 0 1.6rem; }
+.fig.hero-fig figcaption { margin: 0; padding: 0.7rem 1.1rem 0.8rem; border-top: 1px solid var(--border); }
 .fig figcaption { margin-top: 0.9rem; padding-top: 0.8rem; border-top: 1px solid var(--border);
   font: 0.92rem/1.5 var(--font-text); color: var(--ink-2); }
 canvas.stage { display: block; width: 100%; touch-action: auto; }

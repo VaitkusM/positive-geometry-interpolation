@@ -7,6 +7,16 @@
   <meta name="description" content="Interactive companion to M. Vaitkus, 'Positive Geometries for Barycentric Interpolation' (IGS 2019): barycentric and Wachspress coordinates as ratios of canonical forms.">
   <meta name="color-scheme" content="light dark">
 
+  <!-- Preview shown when a link to this page is shared: img/teaser.png is a still of the teaser figure (js/figures/hero.js). -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Positive Geometries for Barycentric Interpolation — an interactive introduction">
+  <meta property="og:description" content="Barycentric and Wachspress coordinates as ratios of canonical forms of positive geometries. Interactive figures.">
+  <meta property="og:image" content="https://vaitkusm.github.io/positive-geometry-interpolation/img/teaser.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The canonical function of a pentagon drawn over the plane: blue where positive, orange where negative, with the edge lines, the adjoint conic and a point joined to the vertices.">
+  <meta name="twitter:card" content="summary_large_image">
+
   <!-- KaTeX typesets the formulas (elements with class "tex", see js/main.js). -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
@@ -38,6 +48,15 @@
   <p class="kicker">Interactive companion to an IGS 2019 poster paper</p>
   <h1>Positive Geometries for Barycentric Interpolation</h1>
   <p class="byline">after Márton Vaitkus, Budapest University of Technology and Economics</p>
+  <figure class="fig hero-fig" data-figure="hero">
+    <figcaption>The whole argument in one picture. The <em>canonical function</em> of a pentagon,
+      drawn over the entire plane: positive inside the pentagon and in the other blue regions,
+      negative in the orange ones, stronger colour for larger values. It is infinite on the
+      five edge lines and zero on the conic through the five outer crossing points
+      (<a href="#adjoint">Section 6</a>). The spokes from the point to the vertices show its
+      barycentric coordinates, which are ratios of such functions
+      (<a href="#coordinates">Section 5</a>); drag the point.</figcaption>
+  </figure>
   <p class="lead">
     To interpolate is to fill in values between given data. The three classical recipes —
     linear interpolation on a segment, barycentric coordinates on a triangle and Wachspress

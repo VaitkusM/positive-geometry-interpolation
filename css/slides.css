@@ -51,9 +51,13 @@ body.slides { overflow: hidden; font-size: 20px; line-height: 1.42; }
 
 /* the first slide and the slides that open a part */
 .slide.title, .slide.divider { justify-content: center; padding-left: 110px; padding-right: 110px; }
-.slide.title h1 { font-size: 62px; line-height: 1.08; margin: 0 0 18px; }
-.slide.title .byline { font-size: 24px; margin-bottom: 34px; }
-.slide.title .keys { font: 500 15px/1.6 var(--font-ui); color: var(--ink-2); margin: 34px 0 0; }
+.slide.title { padding-left: 64px; padding-right: 64px; }
+.title-grid { display: grid; grid-template-columns: minmax(0, 1fr) 500px; gap: 44px; align-items: center; }
+.slide.title h1 { font-size: 50px; line-height: 1.08; margin: 0 0 16px; }
+.slide.title .byline { font-size: 21px; margin-bottom: 26px; }
+.slide.title .big { font-size: 23px; margin: 0; }
+.slide.title .hero-fig { margin: 0; padding: 0; }
+.slide.title .keys { font: 500 15px/1.6 var(--font-ui); color: var(--ink-2); margin: 26px 0 0; }
 .slide.title kbd { font: 600 13px/1 var(--font-ui); padding: 3px 6px; border: 1px solid var(--axis); border-radius: 5px; }
 .slide.divider { border-left: 10px solid var(--accent); }
 .slide.divider h2 { font-size: 52px; margin-bottom: 14px; }

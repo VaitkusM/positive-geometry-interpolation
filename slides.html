@@ -7,6 +7,16 @@
   <meta name="description" content="Slide version of the interactive companion to M. Vaitkus, 'Positive Geometries for Barycentric Interpolation' (IGS 2019).">
   <meta name="color-scheme" content="light dark">
 
+  <!-- Preview shown when a link to this page is shared: img/teaser.png is a still of the teaser figure (js/figures/hero.js). -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Positive Geometries for Barycentric Interpolation — slides">
+  <meta property="og:description" content="Barycentric and Wachspress coordinates as ratios of canonical forms of positive geometries. Interactive figures.">
+  <meta property="og:image" content="https://vaitkusm.github.io/positive-geometry-interpolation/img/teaser.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The canonical function of a pentagon drawn over the plane: blue where positive, orange where negative, with the edge lines, the adjoint conic and a point joined to the vertices.">
+  <meta name="twitter:card" content="summary_large_image">
+
   <!-- KaTeX typesets the formulas (elements with class "tex", see js/build.js). -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
@@ -48,11 +58,17 @@
 
 <!-- ============================ opening ============================ -->
 <section class="slide title" id="title" data-part="Opening">
-  <p class="kicker">Interactive slides · companion to an IGS 2019 poster paper</p>
-  <h1>Positive Geometries for Barycentric Interpolation</h1>
-  <p class="byline">Márton Vaitkus, Budapest University of Technology and Economics</p>
-  <p class="big">Barycentric coordinates are ratios of functions that become infinite on the
-    boundary. Positive geometries say where these functions come from.</p>
+  <div class="title-grid">
+    <div>
+      <p class="kicker">Interactive slides · companion to an IGS 2019 poster paper</p>
+      <h1>Positive Geometries for Barycentric Interpolation</h1>
+      <p class="byline">Márton Vaitkus, Budapest University of Technology and Economics</p>
+      <p class="big">Barycentric coordinates are ratios of functions that become infinite on the
+        boundary. Positive geometries say where these functions come from.</p>
+    </div>
+    <!-- the teaser of the page: the canonical function of a pentagon over the whole plane -->
+    <figure class="fig hero-fig" data-figure="hero" data-aspect="0.95"></figure>
+  </div>
   <p class="keys"><kbd>→</kbd> <kbd>Space</kbd> next · <kbd>←</kbd> back · <kbd>O</kbd> list of slides ·
     <kbd>F</kbd> full screen · <kbd>D</kbd> light / dark · every figure can be dragged and switched</p>
 </section>

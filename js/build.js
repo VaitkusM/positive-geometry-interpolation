@@ -9,6 +9,7 @@
  * inserts its canvases and controls BEFORE the figure's <figcaption>.
  */
 
+import { initHero } from "./figures/hero.js";
 import { initConceptMap } from "./figures/conceptmap.js";
 import { initSegment } from "./figures/segment.js";
 import { initTriangle } from "./figures/triangle.js";
@@ -42,6 +43,7 @@ import { initSmooth } from "./figures/smooth.js";
 import { initQuad } from "./figures/quad.js";
 
 export const FIGURES = {
+  hero: initHero,
   segment: initSegment,
   triangle: initTriangle,
   surface: initSurface,
