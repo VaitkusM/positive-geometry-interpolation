@@ -1085,3 +1085,82 @@ Deno.test("divided differences: the B-spline is the real kernel of the contour f
     close(error, (I.nodePolynomial(t, x) * integrate((y) => bspline(knots, y) * g(y), knots[0], knots[n + 1])) / factorial(n + 1), 1e-5);
   }
 });
+
+Deno.test("residue theorem for the barycentric kernel: enclosed residues, the residue at infinity, poles of rational interpolants", async () => {
+  const I = await import("../js/math/interp.js");
+  const rand = rng(65);
+  for (const n of [2, 4, 5]) {
+    const t = randomNodes(n, rand), c = I.polynomialWeights(t);
+    let x = 0.37;
+    while (t.some((tj) => Math.abs(tj - x) < 0.05)) x += 0.031;
+    for (const degree of [0, 1, n, n + 1]) {
+      const poles = I.kernelResidues(t, c, x, degree), total = poles.reduce((s, p) => s + p.residue, 0);
+      // all residues add up to zero up to degree n; for degree n + 1 the residue at infinity is ℓ(x)
+      close(total, degree <= n ? 0 : -I.nodePolynomial(t, x), 1e-9, `degree ${degree}`);
+      // a circle: the integral is the sum of the residues inside
+      for (const [centre, radius] of [[[0, 0], 5], [[-0.6, 0.1], 0.5], [[0.5, -0.2], 0.45]]) {
+        const dist = poles.map((p) => Math.hypot(p.at - centre[0], centre[1]));
+        if (dist.some((d) => Math.abs(d - radius) < 0.04)) continue;
+        const inside = poles.filter((_, i) => dist[i] < radius).reduce((s, p) => s + p.residue, 0);
+        const integral = I.kernelCircleIntegral(t, c, x, degree, centre, radius, 4000);
+        close(integral[0], inside, 1e-7, "circle");
+        close(integral[1], 0, 1e-9);
+      }
+    }
+  }
+  // poles of the interpolant = roots of D
+  for (const n of [4, 7]) {
+    const t = randomNodes(n, rand);
+    if (I.interpolantPoles(t, I.polynomialWeights(t)).length !== 0) throw new Error("polynomial weights: no poles");
+    for (const [w, count] of [[I.berrutWeights(t), n - I.precisionDegree(t, I.berrutWeights(t))],
+      [I.floaterHormannWeights(t, 2), n - I.precisionDegree(t, I.floaterHormannWeights(t, 2))], [t.map(() => 1), n]]) {
+      const roots = I.interpolantPoles(t, w);
+      if (roots.length !== count) throw new Error(`number of poles: ${roots.length} instead of ${count}`);
+      const scale = Math.max(...w.map(Math.abs));
+      for (const z of roots) {
+        // D(z) = Σ w_j Π_{k≠j} (z − t_k) = 0
+        let D = [0, 0];
+        t.forEach((_, j) => { let p = [w[j], 0]; t.forEach((tk, k) => { if (k !== j) p = I.cmul(p, [z[0] - tk, z[1]]); }); D = I.cadd(D, p); });
+        close(I.cabs(D) / scale, 0, 1e-7, "root of D");
+      }
+    }
+    // equal weights: R = ℓ'/ℓ, so the poles are the critical points of ℓ, one in every gap between nodes
+    const crit = I.interpolantPoles(t, t.map(() => 1)).sort((p, q) => p[0] - q[0]);
+    crit.forEach((z, i) => {
+      close(z[1], 0, 1e-8, "real");
+      if (!(z[0] > t[i] && z[0] < t[i + 1])) throw new Error("critical points interlace the nodes");
+    });
+    // Berrut and Floater–Hormann: no pole on the real axis
+    for (const w of [I.berrutWeights(t), I.floaterHormannWeights(t, 1), I.floaterHormannWeights(t, 2)]) {
+      for (const z of I.interpolantPoles(t, w)) if (Math.abs(z[1]) < 1e-6) throw new Error("real pole");
+    }
+  }
+});
+
+Deno.test("a quadrilateral's canonical function as a contour integral: closing above or below gives its two triangulations", async () => {
+  const Q = await import("../js/math/contour.js");
+  const rand = rng(66);
+  for (let trial = 0; trial < 25; trial++) {
+    const pts = randomPolygon(4, rand), x = clampIntoConvex(pts, [0.3 + 0.5 * (rand() - 0.5), -0.2 + 0.5 * (rand() - 0.5)], 0.1);
+    const k = Q.quadKernel(pts), lam = wachspress(pts, x);
+    // k is a linear relation among the homogeneous vertices, with alternating signs
+    for (let r = 0; r < 3; r++) close(k.reduce((s, kj, j) => s + kj * [1, pts[j][0], pts[j][1]][r], 0), 0, 1e-12);
+    if (!(k[0] * k[1] < 0 && k[1] * k[2] < 0 && k[2] * k[3] < 0)) throw new Error("signs of the relation alternate");
+    const C = polygonCanonical(pts, x);
+    // any positive coefficients of x will do: the Wachspress coordinates, or these moved along the relation
+    const shift = 0.4 * Math.min(...lam.map((l, j) => l / Math.abs(k[j])));
+    for (const c of [lam, lam.map((l, j) => l + shift * k[j]), lam.map((l, j) => l - shift * k[j])]) {
+      const poles = Q.quadPoles(pts, c);
+      // each pole contributes the canonical function of the triangle without its vertex
+      poles.forEach((p) => close(p.value, Q.quadTriangleCanonical(pts, p.vertex, x), 1e-8, "triangle"));
+      const upper = poles.filter((p) => p.upper), lower = poles.filter((p) => !p.upper);
+      if (upper.length !== 2 || lower.length !== 2) throw new Error("two poles on each side");
+      if (!upper.every((p) => p.s > 0) || !lower.every((p) => p.s < 0)) throw new Error("position of the poles");
+      close(upper[0].value + upper[1].value, C, 1e-8, "closing above");
+      close(lower[0].value + lower[1].value, C, 1e-8, "closing below");
+      // the two triangles of each pair share a diagonal: vertices {1, 3} left out ↔ diagonal 0–2
+      if (upper.map((p) => p.vertex).join() !== "1,3" || lower.map((p) => p.vertex).join() !== "0,2") throw new Error("which poles lie where");
+      close(Q.quadLineIntegral(pts, c), C, 1e-5, "integral along the real axis");
+    }
+  }
+});

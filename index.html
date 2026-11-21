@@ -1358,6 +1358,17 @@
     first answer in Section 5: the weights sum to the right thing because nothing is left
     over at infinity.</p>
 
+  <figure class="fig" data-figure="residuecircle">
+    <figcaption><strong>Figure 12i.</strong> <span class="badge alt">Added remark</span>
+      The residue theorem at work, for five nodes. The poles of the form
+      <span class="tex">\omega</span> are the nodes and the point <span class="tex">x</span>; the
+      number above each pole is its residue. The integral over the circle, divided by
+      <span class="tex">2\pi i</span>, is the sum of the residues inside. With all six poles
+      inside, the sum is zero as long as <span class="tex">g</span> has degree at most four. For
+      <span class="tex">g(t)=t^5</span> it is <span class="tex">-\ell(x)</span>: the form now has a
+      pole at infinity too, and polynomials of degree five are not reproduced.</figcaption>
+  </figure>
+
   <p><strong>Other weights, and a one-variable adjoint.</strong> Replace the
     <span class="tex">c_j</span> by any non-zero numbers <span class="tex">w_j</span> and write
     <span class="tex">R(x)=\sum_j w_j/(x-t_j)</span>. The quotient
@@ -1437,12 +1448,31 @@
     <span class="tex">d=n</span> the polynomial.</p>
 
   <figure class="fig" data-figure="baryrational">
-    <figcaption><strong>Figure 12i.</strong> <span class="badge alt">Added remark</span>
+    <figcaption><strong>Figure 12j.</strong> <span class="badge alt">Added remark</span>
       One formula, four choices of weights, for Runge’s function at equally spaced nodes.
       The table reports the degree of the polynomials that are reproduced, the degree of the
       denominator <span class="tex">D</span> and the Lebesgue constant. With the polynomial
       weights the coordinates oscillate strongly near the ends as nodes are added; with the
       other weights they stay small, at the price of a lower degree of precision.</figcaption>
+  </figure>
+
+  <p><strong>Where the poles are.</strong> The zeros of <span class="tex">D</span> are points of
+    the complex plane, and what matters is whether they stay away from the interval. If two
+    neighbouring weights have the same sign, <span class="tex">R</span> changes sign between
+    the two nodes, so the interpolant has a pole there (Schneider and Werner). With all
+    weights equal, <span class="tex">D</span> is the derivative of <span class="tex">\ell</span>
+    and there is a pole in every gap. Weights of alternating sign are therefore necessary for
+    an interpolant without poles in the interval, though not sufficient. For Berrut’s weights,
+    and for those of Floater and Hormann, the poles come in conjugate pairs off the real
+    axis, wherever the nodes are. This is the one-variable picture of an adjoint curve that
+    passes outside the polygon.</p>
+
+  <figure class="fig" data-figure="barypoles">
+    <figcaption><strong>Figure 12k.</strong> <span class="badge alt">Added remark</span>
+      The poles of the interpolant in the complex plane, for six nodes that can be dragged
+      along the real axis. Polynomial weights: no poles. Berrut’s and Floater and Hormann’s
+      weights: pairs of conjugate poles away from the real axis. Equal weights: a pole in
+      every gap between two nodes.</figcaption>
   </figure>
 
   <p><strong>Hermite’s formula.</strong> Now let <span class="tex">f</span> be analytic inside a
@@ -1479,7 +1509,7 @@
     every function analytic in a neighbourhood of it.</p>
 
   <figure class="fig" data-figure="hermite">
-    <figcaption><strong>Figure 12j.</strong> <span class="badge alt">Added remark</span>
+    <figcaption><strong>Figure 12l.</strong> <span class="badge alt">Added remark</span>
       Above, the complex plane, shaded by the size of the node polynomial; the nodes are the
       dots on the real axis. The coloured curve is the level curve through the pole of
       <span class="tex">f</span>: inside it the factor
@@ -1525,6 +1555,38 @@
     variable it is the transform above Figure 12e. Shapiro (2026) shows that the same kind of
     transform of a polygon, which he calls a Fantappiè transform, is the canonical form of
     the polar polygon.</p>
+  <p>For a quadrilateral the contour formula can be written out in the notation of this page.
+    The four vertices satisfy one linear relation
+    <span class="tex">\sum_jk_j\,(1,\mathbf p_j)=0</span>, where
+    <span class="tex">|k_j|</span> is twice the area of the triangle on the other three vertices
+    and the signs alternate around the quadrilateral. Take positive coefficients
+    <span class="tex">c_j</span> with <span class="tex">\sum_jc_j=1</span> and
+    <span class="tex">\sum_jc_j\mathbf p_j=\mathbf x</span>, for instance the Wachspress
+    coordinates of <span class="tex">\mathbf x</span>. Every other way of writing
+    <span class="tex">\mathbf x</span> is <span class="tex">c+s\,k</span>, and</p>
+  <div class="tex block">C_P(\mathbf x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}\frac{ds}{\prod_{j=0}^{3}\,(c_j-i\,s\,k_j)} .</div>
+  <p>The integrand has four poles, at <span class="tex">s_j=-i\,c_j/k_j</span> on the imaginary
+    axis: two above the real axis and two below. At the pole <span class="tex">s_j</span> the
+    coefficient of <span class="tex">\mathbf p_j</span> vanishes, so that
+    <span class="tex">\mathbf x</span> is written in terms of the other three vertices, and the
+    pole contributes the canonical function of that triangle. Closing the contour above
+    collects two triangles that share one diagonal; closing it below gives the two triangles
+    on the other diagonal. That the two triangulations give the same function is Cauchy’s
+    theorem. The boundary shows up in the integral as well. When
+    <span class="tex">\mathbf x</span> approaches an edge, the coefficients of the two vertices
+    off that edge tend to zero; their poles lie on opposite sides of the real axis and close
+    in on it, the contour is pinched between them, and the integral grows without
+    bound.</p>
+
+  <figure class="fig" data-figure="quadcontour">
+    <figcaption><strong>Figure 12m.</strong> <span class="badge alt">Added remark</span>
+      Two triangulations from one contour. On the right, the four poles of the integrand;
+      each is coloured like the vertex whose coefficient vanishes there. Closing the contour
+      above or below selects two of them, and on the left the corresponding two triangles
+      are shaded, each in the colour of the vertex that it leaves out. The table adds their
+      canonical functions and compares the sum with the integral along the real axis and
+      with the canonical function of the quadrilateral.</figcaption>
+  </figure>
   <p>These formulas concern the canonical form itself. What we did not find is a counterpart
     of Hermite’s formula for a polygon: a kernel in two complex variables, built from the
     canonical form, whose residues at the vertices are the Wachspress coordinates, and which
@@ -1544,7 +1606,10 @@
     the pole at infinity (Hormann’s survey states that <span class="tex">\sum_jw_j=0</span>
     gives linear precision); the comparison of the denominator with the adjoint; and the
     denominator of Berrut’s interpolant as the canonical function of a union of
-    intervals.</p>
+    intervals. The integral for the quadrilateral is the case of four vertices of a formula
+    of Arkani-Hamed, Bai and Lam (their eq. 7.271, which they attribute to Batyrev and
+    Tschinkel), rewritten in the normalisation of this page and checked in the tests; the
+    remark on the pinched contour is ours.</p>
 
   <h3 id="later-meanvalue">8.3 Mean value coordinates in the dual picture: area versus perimeter</h3>
   <p class="gist"><strong>In short:</strong> Wachspress and mean value coordinates measure

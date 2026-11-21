@@ -1,5 +1,5 @@
 /**
- * baryrational.js — Figure 12i (added remark): other weights in the same formula.
+ * baryrational.js — Figure 12j (added remark): other weights in the same formula.
  *
  * The barycentric formula
  *     r(x) = Σ w_j f_j / (x − t_j)  /  Σ w_j / (x − t_j)

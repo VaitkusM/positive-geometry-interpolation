@@ -1,5 +1,5 @@
 /**
- * hermite.js — Figure 12j (added remark): Hermite's contour integral.
+ * hermite.js — Figure 12l (added remark): Hermite's contour integral.
  *
  * Polynomial interpolation of
  *     f(t) = s² / ((t − a)² + s²),      poles at π = a + i s and its mirror image,

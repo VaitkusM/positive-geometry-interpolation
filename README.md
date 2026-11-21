@@ -42,8 +42,11 @@ marked "Added illustration".
 | 12f | Fibre polytope *(added remark)* | Duistermaat–Heckman: the spline value is the volume of the fibre polytope (reduced space); sides disappear across the diagonals |
 | 12g | Volume minimisation *(added remark)* | the canonical function as the Martelli–Sparks–Yau volume of a toric cone; its minimum is the Santaló point; R-charges as Wachspress coordinates |
 | 12h | Moment curve *(added remark)* | quadratic Lagrange basis as the coordinates of a point of a parabola in a triangle on that parabola |
-| 12i | Rational barycentric interpolation *(added remark)* | polynomial, Berrut and Floater–Hormann weights: degree of precision, denominator, Lebesgue function |
-| 12j | Hermite's formula *(added remark)* | interpolation error as a contour integral and as a sum over poles; level curves of the node polynomial, Runge phenomenon |
+| 12i | Residue theorem *(added remark)* | poles of the barycentric kernel with their residues and a movable circle: the integral is the sum of the enclosed residues |
+| 12j | Rational barycentric interpolation *(added remark)* | polynomial, Berrut and Floater–Hormann weights: degree of precision, denominator, Lebesgue function |
+| 12k | Poles of the interpolant *(added remark)* | zeros of the denominator in the complex plane for polynomial, Berrut, Floater–Hormann and equal weights; draggable nodes |
+| 12l | Hermite's formula *(added remark)* | interpolation error as a contour integral and as a sum over poles; level curves of the node polynomial, Runge phenomenon |
+| 12m | Triangulations from a contour *(added remark)* | canonical function of a quadrilateral as an integral with four poles; closing the contour above or below gives its two triangulations |
 | 13 | Area vs perimeter *(later development)* | Wachspress and mean value normalisers as area and perimeter of the dual polygon |
 | 14 | Smooth limit *(later development)* | inscribed polygons → the kernel of Warren et al. for the circle |
 | 15 | Push-forward *(later development)* | quadrilateral from the unit square via the bilinear patch; parallelogram case |
@@ -88,7 +91,8 @@ js/math/              pure mathematics, no DOM — the part worth reusing
   pushforward.js        inverse bilinear map (complex roots), push-forward of the square's form
   splines.js            multivariate (cone) splines of a polygon, adjoint as an operator, B-splines
   toric.js              fibre polytopes (Duistermaat–Heckman), link volume and its minimiser (Santaló point)
-  interp.js             one variable: barycentric formula for any weights, Hermite contour integral, potentials, moment curve
+  interp.js             one variable: barycentric formula for any weights, Hermite contour integral, potentials, moment curve, residues, poles of rational interpolants
+  contour.js            canonical function of a quadrilateral as a contour integral with four poles
 js/ui/
   stage.js              canvas wrapper: world coordinates, hi-DPI, draggable handles
   ramp.js               sequential colour ramp (heat map, 3D surface)

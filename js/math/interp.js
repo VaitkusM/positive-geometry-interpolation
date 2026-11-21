@@ -235,3 +235,88 @@ export function simplexCoordinates(v, q) {
 
 /** The point (x, x², …, xⁿ) of the moment curve in R^n. */
 export const momentCurve = (n, x) => Array.from({ length: n }, (_, k) => x ** (k + 1));
+
+/* ---------------- residues and poles ---------------- */
+
+/** g(z) = z^k for a complex z. */
+export const cpow = (z, k) => { let p = [1, 0]; for (let i = 0; i < k; i++) p = cmul(p, z); return p; };
+
+/**
+ * The poles of the form  R(t) g(t) dt / (R(x) (x − t)),  g(t) = t^degree, in the
+ * finite plane: the nodes, with residue λ_j(x) g(t_j), and the point x, with
+ * residue −g(x). Returns [{ at, residue, node }] (node = index, or −1 for x).
+ * If the degree is at most the degree of precision the residues add up to zero.
+ */
+export function kernelResidues(t, w, x, degree) {
+  const lam = baryCoordinates(t, w, x);
+  return [...t.map((tj, j) => ({ at: tj, residue: lam[j] * tj ** degree, node: j })),
+    { at: x, residue: -(x ** degree), node: -1 }];
+}
+
+/** (1/2πi) ∮ R(t) t^degree / (R(x) (x − t)) dt over the circle |t − centre| = radius (trapezoidal rule). */
+export function kernelCircleIntegral(t, w, x, degree, centre, radius, m = 2000) {
+  let sum = [0, 0];
+  const Rx = poleSum(t, w, x);
+  for (let k = 0; k < m; k++) {
+    const th = (2 * Math.PI * k) / m, e = [Math.cos(th), Math.sin(th)];
+    const z = [centre[0] + radius * e[0], centre[1] + radius * e[1]];
+    const Rz = t.reduce((s, tj, j) => cadd(s, cdiv([w[j], 0], [z[0] - tj, z[1]])), [0, 0]);
+    const integrand = cdiv(cmul(Rz, cpow(z, degree)), [Rx * (x - z[0]), -Rx * z[1]]);
+    // dt = i·radius·e^{iθ} dθ, and the factor 1/(2πi) · 2π/m leaves radius·e^{iθ}/m
+    sum = cadd(sum, cmul(integrand, [radius * e[0], radius * e[1]]));
+  }
+  return [sum[0] / m, sum[1] / m];
+}
+
+/** Coefficients (lowest degree first) of D(x) = Σ_j w_j Π_{k≠j} (x − t_k). */
+export function denominatorCoefficients(t, w) {
+  const out = new Array(t.length).fill(0);
+  t.forEach((_, j) => {
+    let p = [1];
+    t.forEach((tk, k) => {
+      if (k === j) return;
+      const q = new Array(p.length + 1).fill(0);
+      p.forEach((c, i) => { q[i + 1] += c; q[i] -= c * tk; });
+      p = q;
+    });
+    p.forEach((c, i) => { out[i] += w[j] * c; });
+  });
+  return out;
+}
+
+/**
+ * All complex roots of a real polynomial (coefficients lowest degree first, the
+ * last one non-zero), by the Durand–Kerner iteration. Meant for small degrees.
+ */
+export function polynomialRoots(coeffs) {
+  const n = coeffs.length - 1;
+  if (n < 1) return [];
+  const a = coeffs.map((c) => c / coeffs[n]);
+  const value = (z) => { let p = [1, 0]; for (let i = n - 1; i >= 0; i--) p = cadd(cmul(p, z), [a[i], 0]); return p; };
+  const bound = 1 + Math.max(...a.slice(0, n).map(Math.abs));
+  let roots = Array.from({ length: n }, (_, k) => {
+    const th = (2 * Math.PI * k) / n + 0.4;
+    return [0.5 * bound * Math.cos(th), 0.5 * bound * Math.sin(th)];
+  });
+  for (let iter = 0; iter < 500; iter++) {
+    let move = 0;
+    roots = roots.map((z, i) => {
+      let den = [1, 0];
+      roots.forEach((u, k) => { if (k !== i) den = cmul(den, csub(z, u)); });
+      const step = cdiv(value(z), den);
+      move = Math.max(move, cabs(step));
+      return csub(z, step);
+    });
+    if (move < 1e-14 * bound) break;
+  }
+  return roots;
+}
+
+/**
+ * The poles of the barycentric interpolant with weights w: the roots of its
+ * denominator D, which has degree n − d (d = degree of precision).
+ */
+export function interpolantPoles(t, w) {
+  const d = precisionDegree(t, w), n = t.length - 1;
+  return polynomialRoots(denominatorCoefficients(t, w).slice(0, n - d + 1));
+}

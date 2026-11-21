@@ -40,6 +40,9 @@ import { initReebPoint } from "./figures/reebpoint.js";
 import { initMomentCurve } from "./figures/momentcurve.js";
 import { initHermite } from "./figures/hermite.js";
 import { initBaryRational } from "./figures/baryrational.js";
+import { initResidueCircle } from "./figures/residuecircle.js";
+import { initBaryPoles } from "./figures/barypoles.js";
+import { initQuadContour } from "./figures/quadcontour.js";
 import { initMeanValue } from "./figures/meanvalue.js";
 import { initSmooth } from "./figures/smooth.js";
 import { initQuad } from "./figures/quad.js";
@@ -68,6 +71,9 @@ const FIGURES = {
   momentcurve: initMomentCurve,
   hermite: initHermite,
   baryrational: initBaryRational,
+  residuecircle: initResidueCircle,
+  barypoles: initBaryPoles,
+  quadcontour: initQuadContour,
   meanvalue: initMeanValue,
   smooth: initSmooth,
   quad: initQuad,
