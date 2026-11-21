@@ -1,7 +1,8 @@
 /**
  * main.js — entry point of the applet.
  *
- * 0. Activates the light / dark switch in the navigation bar (ui/theme.js).
+ * 0. Activates the light / dark switch in the navigation bar (ui/theme.js) and
+ *    builds the contents panel, heading links and cross-references (ui/nav.js).
  * 1. Typesets every element with class "tex" using KaTeX (if it loaded).
  * 2. Builds each interactive figure: an element
  *        <figure class="fig" data-figure="NAME">
@@ -15,6 +16,8 @@
  */
 
 import { initThemeToggle } from "./ui/theme.js";
+import { initNavigation, linkReferences, restoreHash } from "./ui/nav.js";
+import { initConceptMap } from "./figures/conceptmap.js";
 import { initSegment } from "./figures/segment.js";
 import { initTriangle } from "./figures/triangle.js";
 import { initSurface } from "./figures/surface.js";
@@ -61,6 +64,7 @@ const FIGURES = {
   bsplinepoles: initBsplinePoles,
   fibre: initFibre,
   reebpoint: initReebPoint,
+  conceptmap: initConceptMap,
   momentcurve: initMomentCurve,
   hermite: initHermite,
   baryrational: initBaryRational,
@@ -97,5 +101,8 @@ function buildFigures() {
 }
 
 initThemeToggle(document.getElementById("theme-toggle"));
+initNavigation();          // before the formulas are typeset: the contents list uses the plain heading texts
 typesetMath();
 buildFigures();
+linkReferences();
+restoreHash();

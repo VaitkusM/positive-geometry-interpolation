@@ -14,13 +14,14 @@ with poles on the boundary of the domain.
 
 The page is written for a mixed audience (geometric modelling people who have
 not met positive geometries, and mathematicians / physicists who have not met
-barycentric coordinates) and contains twenty-five interactive figures. Sections 1–7 follow
+barycentric coordinates) and contains more than twenty interactive figures. Sections 1–7 follow
 the 2019 paper; material published since then is collected in Section 8 and marked
 "Later development" on the page, and figures that go beyond the paper's own are
 marked "Added illustration".
 
 | # | Figure | Shows |
 |---|--------|-------|
+| Map | Map of the topics | sixteen topics of the page and the relations between them; select a box for details |
 | 1 | Segment | linear interpolation as a ratio of two poles (Shepard form) |
 | 2 | Triangle | area coordinates = ratio-of-poles form |
 | 3 | Canonical function | 3D graph over polygons and regions with curved sides |
@@ -92,6 +93,7 @@ js/ui/
   stage.js              canvas wrapper: world coordinates, hi-DPI, draggable handles
   ramp.js               sequential colour ramp (heat map, 3D surface)
   theme.js              light / dark switch: follows the system until the reader chooses
+  nav.js                contents panel, heading links, scroll tracking, links for "Figure N" / "Section N", back to top
   contour.js            marching squares for implicit curves
   widgets.js            buttons, sliders, bar chart, number formatting
 js/figures/           one module per figure, each exporting init…(rootElement)
@@ -117,6 +119,12 @@ tests/math.test.js    unit tests for js/math
 2. Register it in the `FIGURES` table of `js/main.js`.
 3. Put `<figure class="fig" data-figure="myfigure"><figcaption>…</figcaption></figure>`
    in `index.html`.
+
+Navigation is generated from the page (`js/ui/nav.js`): the contents panel lists every
+`h2`–`h4`, and "Figure 5" or "Section 8.2" in the text becomes a link automatically, so
+new sections and figures need no extra markup beyond a caption that starts with
+`<strong>Figure N.</strong>`. The map of topics is the pair of tables at the top of
+`js/figures/conceptmap.js`.
 
 Colours come from CSS custom properties in `css/style.css`; never hard-code a
 colour in a figure, or it will not follow the theme. The page follows the system's
