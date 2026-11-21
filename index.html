@@ -11,6 +11,13 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 
+  <!-- Apply a stored light / dark choice before the first paint (the switch itself: js/ui/theme.js). -->
+  <script>
+    try {
+      var storedTheme = localStorage.getItem("theme");
+      if (storedTheme === "light" || storedTheme === "dark") document.documentElement.dataset.theme = storedTheme;
+    } catch (e) { /* storage blocked: follow the system */ }
+  </script>
   <link rel="stylesheet" href="css/style.css">
   <script type="module" src="js/main.js"></script>
 </head>
@@ -52,6 +59,7 @@
   <a href="#adjoint">6 Adjoint</a>
   <a href="#open">7 Open problems</a>
   <a href="#later">8 Since 2019</a>
+  <button type="button" class="theme-toggle" id="theme-toggle" hidden>Dark mode</button>
 </nav>
 
 <main>

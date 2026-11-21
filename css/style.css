@@ -2,6 +2,8 @@
    style.css — all styling of the applet.
 
    1. Design tokens (colours, fonts) for the light and the dark theme.
+      The theme follows the system unless the reader picks one with the
+      switch in the navigation bar (js/ui/theme.js).
       The canvas figures read these same custom properties (js/ui/stage.js),
       so changing a colour here changes it everywhere.
    2. Page layout and typography.
@@ -28,8 +30,11 @@
   --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-text: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
 }
+/* Dark tokens: used when the system asks for dark and the reader has not chosen
+   light, or when the reader has chosen dark (data-theme is set by js/ui/theme.js).
+   The two blocks must stay identical. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #131312;
     --surface: #1c1c1a;
     --ink: #f0efec;
@@ -44,6 +49,22 @@
     --series-5: #d55181; --series-6: #0ca30c; --series-7: #9085e9; --series-8: #e66767;
   }
 }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #131312;
+  --surface: #1c1c1a;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --grid: #2e2d2a;
+  --axis: #5d5c56;
+  --border: #34332f;
+  --fill-soft: #37321c;
+  --accent: #3987e5;
+  --aside: #232320;
+  --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70; --series-4: #c98500;
+  --series-5: #d55181; --series-6: #0ca30c; --series-7: #9085e9; --series-8: #e66767;
+}
+:root[data-theme="light"] { color-scheme: light; }
 
 /* ---------- 2. page ---------- */
 * { box-sizing: border-box; }
@@ -77,6 +98,14 @@ h1 { font-size: clamp(2rem, 5.2vw, 3.1rem); line-height: 1.12; margin: 0 0 0.6re
 }
 .toc a { color: var(--ink-2); text-decoration: none; white-space: nowrap; }
 .toc a:hover, .toc a:focus-visible { color: var(--accent); }
+/* light / dark switch (js/ui/theme.js); stays visible when the links scroll sideways */
+.theme-toggle {
+  position: sticky; right: 0; flex: none;
+  font: inherit; line-height: 1.2; color: var(--ink-2); cursor: pointer; white-space: nowrap;
+  padding: 0.15rem 0.6rem; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--bg);
+}
+.theme-toggle:hover, .theme-toggle:focus-visible { color: var(--accent); border-color: var(--accent); }
 
 section { margin: 3.2rem 0; }
 h2 { font-size: 1.7rem; line-height: 1.2; margin: 0 0 1rem; text-wrap: balance; }
@@ -181,7 +210,8 @@ canvas.stage { display: block; width: 100%; touch-action: auto; }
 .key { display: inline-flex; align-items: center; gap: 0.4rem; }
 .key i { display: inline-block; width: 18px; height: 3px; border-radius: 2px; }
 .key i.ramp { width: 46px; height: 10px; background: linear-gradient(90deg, #cde2fb, #2a78d6, #0d366b); }
-@media (prefers-color-scheme: dark) { .key i.ramp { background: linear-gradient(90deg, #0d366b, #2a78d6, #cde2fb); } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .key i.ramp { background: linear-gradient(90deg, #0d366b, #2a78d6, #cde2fb); } }
+:root[data-theme="dark"] .key i.ramp { background: linear-gradient(90deg, #0d366b, #2a78d6, #cde2fb); }
 .bar-row.double .bar-track { height: 14px; display: grid; grid-template-rows: 1fr 1fr; gap: 2px; }
 .bar-row.double { grid-template-columns: 2.2rem 1fr 7.2rem; }
 .fig-split.reverse { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.25fr); }
@@ -212,5 +242,7 @@ canvas.stage { display: block; width: 100%; touch-action: auto; }
   .fig { padding: 0.8rem 0.7rem; margin-left: -0.5rem; margin-right: -0.5rem; }
   .fig-split, .fig-split:has(.wide), .fig-split.reverse, .fig-pair, .two-col { grid-template-columns: minmax(0, 1fr); }
   .toc { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; }
+  /* the links scroll underneath the switch: hide them beside it as well */
+  .theme-toggle { box-shadow: 1.5rem 0 0 var(--bg), -0.5rem 0 0 var(--bg); }
   .control input[type="range"] { width: 9rem; }
 }

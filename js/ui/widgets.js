@@ -10,7 +10,6 @@
  *   sub()           "p" + 3 → "p₃" (Unicode subscripts for canvas labels)
  */
 
-import { seriesColor } from "./stage.js";
 
 /** Create an element: el("div", {class: "x", onclick: fn}, child1, "text", …). */
 export function el(tag, attrs = {}, ...children) {
@@ -103,7 +102,7 @@ export function makeBars(container, name = "λ") {
     }
     lambda.forEach((l, i) => {
       rows[i].fill.style.width = (100 * Math.max(0, Math.min(1, l))).toFixed(2) + "%";
-      rows[i].fill.style.background = seriesColor(i);
+      rows[i].fill.style.background = `var(--series-${(i % 8) + 1})`;
       rows[i].value.textContent = fmt(l);
       rows[i].row.classList.toggle("selected", i === selected);
     });

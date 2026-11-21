@@ -72,7 +72,7 @@ deno test tests/
 ```
 index.html            all text; each figure is <figure data-figure="NAME">
 css/style.css         design tokens (light + dark theme), layout, components
-js/main.js            typesets formulas, starts every figure
+js/main.js            typesets formulas, starts every figure, activates the theme switch
 js/math/              pure mathematics, no DOM — the part worth reusing
   polygon.js            conventions (CCW polygons, edge lines {n, p}), helpers
   canonical.js          canonical functions: segment, triangle, wedge, polygon,
@@ -87,6 +87,7 @@ js/math/              pure mathematics, no DOM — the part worth reusing
 js/ui/
   stage.js              canvas wrapper: world coordinates, hi-DPI, draggable handles
   ramp.js               sequential colour ramp (heat map, 3D surface)
+  theme.js              light / dark switch: follows the system until the reader chooses
   contour.js            marching squares for implicit curves
   widgets.js            buttons, sliders, bar chart, number formatting
 js/figures/           one module per figure, each exporting init…(rootElement)
@@ -114,4 +115,7 @@ tests/math.test.js    unit tests for js/math
    in `index.html`.
 
 Colours come from CSS custom properties in `css/style.css`; never hard-code a
-colour in a figure, or it will not follow the dark theme.
+colour in a figure, or it will not follow the theme. The page follows the system's
+light or dark setting until the reader uses the switch in the navigation bar; the
+choice is kept in `localStorage`. In the DOM use `var(--name)`; on a canvas use
+`s.color("name")` inside `draw`, which is called again when the theme changes.

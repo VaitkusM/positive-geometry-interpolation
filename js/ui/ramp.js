@@ -6,7 +6,7 @@
  * small values still recede towards the page background.
  */
 
-import { isDark } from "./stage.js";
+import { isDark } from "./theme.js";
 
 const STEPS = ["#cde2fb", "#b7d3f6", "#9ec5f4", "#86b6ef", "#6da7ec", "#5598e7",
   "#3987e5", "#2a78d6", "#256abf", "#1c5cab", "#184f95", "#104281", "#0d366b"]

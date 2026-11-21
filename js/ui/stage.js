@@ -17,8 +17,10 @@
  *     stage.redraw();          // call after changing any state
  *
  * Colours are read from CSS custom properties (see css/style.css), so figures
- * follow the light / dark theme automatically.
+ * follow the light / dark theme automatically (see ui/theme.js).
  */
+
+import { onThemeChange } from "./theme.js";
 
 const allStages = new Set();
 
@@ -32,15 +34,11 @@ export function cssColor(name) {
   return colorCache[name];
 }
 
-/** True when the page is currently shown with the dark colour scheme. */
-export const isDark = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-if (typeof window !== "undefined") {
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    colorCache = {};
-    allStages.forEach((s) => s.redraw());
-  });
-}
+// the colours changed (system setting or the switch in the navigation bar): redraw everything
+onThemeChange(() => {
+  colorCache = {};
+  allStages.forEach((s) => s.redraw());
+});
 
 /** Colour of vertex / series number i (0-based); the palette has 8 slots. */
 export const seriesColor = (i) => cssColor("series-" + ((i % 8) + 1));

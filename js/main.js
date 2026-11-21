@@ -1,6 +1,7 @@
 /**
  * main.js — entry point of the applet.
  *
+ * 0. Activates the light / dark switch in the navigation bar (ui/theme.js).
  * 1. Typesets every element with class "tex" using KaTeX (if it loaded).
  * 2. Builds each interactive figure: an element
  *        <figure class="fig" data-figure="NAME">
@@ -9,10 +10,11 @@
  *
  * Project layout
  *   js/math/     pure mathematics (no DOM) — unit-tested in tests/
- *   js/ui/       canvas stage, colour ramp, DOM widgets
+ *   js/ui/       canvas stage, colour ramp, DOM widgets, light / dark theme
  *   js/figures/  one module per figure
  */
 
+import { initThemeToggle } from "./ui/theme.js";
 import { initSegment } from "./figures/segment.js";
 import { initTriangle } from "./figures/triangle.js";
 import { initSurface } from "./figures/surface.js";
@@ -88,5 +90,6 @@ function buildFigures() {
   }
 }
 
+initThemeToggle(document.getElementById("theme-toggle"));
 typesetMath();
 buildFigures();
