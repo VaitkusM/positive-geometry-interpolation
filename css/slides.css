@@ -1,0 +1,167 @@
+/* ==========================================================================
+   slides.css — the slide version (slides.html). Loaded after style.css, whose
+   colour tokens, figure cards, controls and badges it reuses.
+
+   The deck is a sheet of 1280 × 720 CSS pixels. js/slides.js scales it as a
+   whole to fit the window (custom property --k), so all sizes below are
+   plain pixels on that sheet and every slide looks the same on every screen.
+
+   1. The sheet and the slides.
+   2. Slide layouts: title, text, text beside a figure, text above a figure.
+   3. Text on slides.
+   4. Figures on slides.
+   5. The bar at the bottom and the list of slides.
+   6. Printing (slides.html?print).
+   ========================================================================== */
+
+/* ---------- 1. sheet ---------- */
+html, body.slides { height: 100%; }
+body.slides { overflow: hidden; font-size: 20px; line-height: 1.42; }
+
+.deck {
+  position: fixed; left: 50%; top: 50%;
+  width: 1280px; height: 720px; max-width: none; margin: 0; padding: 0;
+  transform: translate(-50%, -50%) scale(var(--k, 1));
+  background: var(--bg);
+}
+.slide {
+  position: absolute; inset: 0 0 38px 0;      /* 38px: the bar */
+  margin: 0; padding: 30px 56px 12px;
+  display: none; flex-direction: column;
+}
+.slide.active { display: flex; }
+
+/* ---------- 2. layouts ---------- */
+.slide > h2 { flex: none; font-size: 34px; line-height: 1.15; margin: 0 0 14px; }
+.slide > h2 .badge { font-size: 12px; margin-left: 8px; }
+.slide-body { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; display: grid; gap: 14px 30px; align-content: start; }
+
+/* text beside a figure; --text-w sets the width of the text column */
+.slide.side .slide-body { grid-template-columns: var(--text-w, 400px) minmax(0, 1fr); }
+.slide.side .slide-text { align-self: start; min-width: 0; }
+/* "flip": the figure on the left, the text column on the right */
+.slide.side.flip .slide-body { grid-template-columns: minmax(0, 1fr) var(--text-w, 400px); }
+.slide.side.flip .slide-text { order: 2; }
+/* text above a figure; --fig-w limits the width (and with it the height) of the figure */
+.slide.stack .slide-body { grid-template-columns: minmax(0, 1fr); }
+.slide.stack .fig { width: 100%; max-width: var(--fig-w, none); justify-self: center; }
+/* text only */
+.slide.text .slide-body { grid-template-columns: minmax(0, 1fr); padding-right: 40px; }
+.slide.text.two .slide-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px 44px; padding-right: 0; }
+
+/* the first slide and the slides that open a part */
+.slide.title, .slide.divider { justify-content: center; padding-left: 110px; padding-right: 110px; }
+.slide.title h1 { font-size: 62px; line-height: 1.08; margin: 0 0 18px; }
+.slide.title .byline { font-size: 24px; margin-bottom: 34px; }
+.slide.title .keys { font: 500 15px/1.6 var(--font-ui); color: var(--ink-2); margin: 34px 0 0; }
+.slide.title kbd { font: 600 13px/1 var(--font-ui); padding: 3px 6px; border: 1px solid var(--axis); border-radius: 5px; }
+.slide.divider { border-left: 10px solid var(--accent); }
+.slide.divider h2 { font-size: 52px; margin-bottom: 14px; }
+.slide.divider p { font-size: 24px; color: var(--ink-2); max-width: 900px; }
+
+/* ---------- 3. text ---------- */
+.slide p { margin: 0 0 12px; }
+.slide ul, .slide ol { margin: 0 0 12px; padding-left: 26px; }
+.slide li { margin-bottom: 8px; }
+.slide li li { margin-bottom: 3px; font-size: 0.9em; }
+.slide .tex.block { margin: 6px 0 14px; }
+.slide .small { font-size: 17px; }
+.slide .muted { color: var(--ink-2); }
+.slide .big { font-size: 26px; line-height: 1.35; }
+.slide .pattern, .slide .gist { margin-bottom: 12px; }
+.slide .pattern { padding: 12px 16px; }
+.slide .source { font: 13px/1.4 var(--font-ui); color: var(--ink-2); margin: 0; }
+.slide table.compare { font-size: 17px; margin: 0 0 12px; }
+.slide table.compare th, .slide table.compare td { padding: 6px 10px; }
+/* the formulas of a text slide may be wider than a column: let them shrink a little */
+.slide.side .slide-text .tex.block { font-size: 0.9em; }
+
+/* ---------- 4. figures ---------- */
+.slide .fig { margin: 0; padding: 12px 14px; min-width: 0; align-self: start; }
+.slide .fig figcaption { display: none; }
+/* The page stacks the two halves of a figure on phones (a media query on the
+   window width). On the sheet the layout must not depend on the window. */
+.deck .fig-split { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+.deck .fig-split:has(.wide) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+.deck .fig-split.reverse { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.25fr); }
+.deck .fig-pair, .deck .two-col { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.deck .control input[type="range"] { width: 11rem; }
+/* figure-internal text is set in rem on the page (18px); keep that size here */
+.slide .fig { font-size: 18px; }
+/* a tall figure can be shown smaller: style="--fig-zoom: 0.8" on the slide */
+.slide .fig { zoom: var(--fig-zoom, 1); }
+/* "drag the points" hints: the presenter knows, and the room is needed */
+.slide .fig .hint { display: none; }
+/* read-outs that a slide shows beside its figure (data-notes, see js/slides.js) */
+.fig-notes {
+  margin-top: 14px; padding: 10px 14px; font-family: var(--font-ui);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+}
+.fig-notes > :first-child { margin-top: 0; }
+.fig-notes > :last-child, .fig-notes .readout p:last-child, .fig-notes .readout table:last-child { margin-bottom: 0; }
+.fig-notes .readout table:first-child { margin-top: 0; }
+.fig-notes .readout { font-size: 14px; line-height: 1.55; }
+.fig-notes .formula { min-height: 0; }
+.slide.compact .fig-notes .readout { font-size: 13px; line-height: 1.4; }
+.slide.compact .fig-notes .readout th, .slide.compact .fig-notes .readout td { padding-top: 2px; padding-bottom: 2px; }
+/* the map of topics always fits its column (on the page it may scroll sideways) */
+.deck .cmap { min-width: 0; }
+/* the details of the map of topics: small, and scrolling if a topic has many relations */
+.fig-notes .cmap-detail { font-size: 14px; }
+.slide.flip .fig-notes { margin-top: 0; max-height: 570px; overflow-y: auto; }
+
+/* ---------- 5. bar and list of slides ---------- */
+.deck-bar {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 38px;
+  display: flex; align-items: center; gap: 10px; padding: 0 18px 0 56px;
+  border-top: 1px solid var(--border);
+  font: 500 13px/1 var(--font-ui); color: var(--ink-2);
+}
+.deck-bar .progress { position: absolute; left: 0; top: -2px; height: 3px; background: var(--accent); }
+.deck-bar .part { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.deck-bar button, .deck-bar a.bar-link {
+  font: inherit; color: var(--ink-2); background: var(--bg); cursor: pointer; text-decoration: none; white-space: nowrap;
+  padding: 5px 10px; border: 1px solid var(--border); border-radius: 999px;
+}
+.deck-bar button:hover:not(:disabled), .deck-bar a.bar-link:hover,
+.deck-bar button:focus-visible, .deck-bar a.bar-link:focus-visible { color: var(--accent); border-color: var(--accent); }
+.deck-bar button:disabled { opacity: 0.35; cursor: default; }
+.deck-bar .count { min-width: 58px; text-align: center; font-variant-numeric: tabular-nums; color: var(--ink); }
+.deck-bar .theme-toggle { position: static; }
+
+.overview {
+  position: absolute; z-index: 10; inset: 0 0 38px 0; overflow-y: auto;
+  background: var(--surface); padding: 26px 56px 30px;
+  font: 400 15px/1.3 var(--font-ui);
+}
+.overview-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.overview-head h2 { font: 700 22px/1.2 var(--font-ui); margin: 0; }
+.overview-head button { font: 500 13px/1 var(--font-ui); color: var(--ink-2); background: var(--bg); cursor: pointer;
+  padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; }
+.overview-list { column-count: 3; column-gap: 40px; }
+.overview-list h3 { font: 700 12px/1.3 var(--font-ui); letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--ink-2); margin: 14px 0 5px; break-after: avoid; }
+.overview-list h3:first-child { margin-top: 0; }
+.overview-list ol { margin: 0; padding-left: 30px; }
+.overview-list li { margin: 0 0 3px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.overview-list a { color: var(--ink); text-decoration: none; }
+.overview-list a:hover, .overview-list a:focus-visible { color: var(--accent); }
+.overview-list a.current { color: var(--accent); font-weight: 700; }
+.overview-foot { margin: 16px 0 0; font-size: 13px; color: var(--ink-2); }
+
+/* ---------- 6. printing ---------- */
+@page { size: 1280px 720px; margin: 0; }
+body.slides.print { overflow: auto; height: auto; }
+body.print .deck { position: static; transform: none; height: auto; margin: 0 auto; }
+body.print .slide {
+  position: relative; inset: auto; display: flex; width: 1280px; height: 720px;
+  padding-bottom: 50px;                       /* the room that the bar takes on the screen */
+  break-after: page; break-inside: avoid; border-bottom: 1px solid var(--border);
+}
+body.print .slide::after { content: attr(data-number); position: absolute; right: 22px; bottom: 12px;
+  font: 500 13px/1 var(--font-ui); color: var(--ink-2); }
+body.print .deck-bar, body.print .overview { display: none; }
+@media print {
+  body.print .slide { border-bottom: none; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

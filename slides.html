@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Positive Geometries for Barycentric Interpolation — slides</title>
+  <meta name="description" content="Slide version of the interactive companion to M. Vaitkus, 'Positive Geometries for Barycentric Interpolation' (IGS 2019).">
+  <meta name="color-scheme" content="light dark">
+
+  <!-- KaTeX typesets the formulas (elements with class "tex", see js/build.js). -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+
+  <!-- Apply a stored light / dark choice before the first paint (js/ui/theme.js). -->
+  <script>
+    try {
+      var storedTheme = localStorage.getItem("theme");
+      if (storedTheme === "light" || storedTheme === "dark") document.documentElement.dataset.theme = storedTheme;
+    } catch (e) { /* storage blocked: follow the system */ }
+  </script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/slides.css">
+  <script type="module" src="js/slides.js"></script>
+</head>
+<body class="slides">
+
+<!-- =====================================================================
+     Slide version of index.html. The same figures, one idea per slide.
+
+     A slide:
+       <section class="slide LAYOUT" id="NAME" data-part="PART" data-more="#ANCHOR">
+         <h2>title</h2>
+         <div class="slide-body"> text and / or one <figure> </div>
+       </section>
+     LAYOUT   side    text beside a figure  (style="--text-w: 360px" sets the text width)
+                      data-notes="readout" moves the read-outs of the figure into the text
+                      column, style="--fig-zoom: 0.8" shows the figure smaller, "flip" puts
+                      the figure on the left, "compact" sets the read-outs smaller
+              stack   text above a figure   (style="--fig-w: 900px" limits the figure)
+              text    text only             (add "two" for two columns)
+              title / divider               first slide / first slide of a part
+     PART     shown in the bar at the bottom and used to group the list of slides
+     ANCHOR   where the "Full text" link of the bar leads to in index.html
+     Keys, the list of slides and printing: see js/slides.js.
+     ===================================================================== -->
+
+<main class="deck" id="deck">
+
+<!-- ============================ opening ============================ -->
+<section class="slide title" id="title" data-part="Opening">
+  <p class="kicker">Interactive slides · companion to an IGS 2019 poster paper</p>
+  <h1>Positive Geometries for Barycentric Interpolation</h1>
+  <p class="byline">Márton Vaitkus, Budapest University of Technology and Economics</p>
+  <p class="big">Barycentric coordinates are ratios of functions that become infinite on the
+    boundary. Positive geometries say where these functions come from.</p>
+  <p class="keys"><kbd>→</kbd> <kbd>Space</kbd> next · <kbd>←</kbd> back · <kbd>O</kbd> list of slides ·
+    <kbd>F</kbd> full screen · <kbd>D</kbd> light / dark · every figure can be dragged and switched</p>
+</section>
+
+<section class="slide text" id="plan" data-part="Opening" data-title="The argument in five steps">
+  <h2>The argument in five steps</h2>
+  <div class="slide-body">
+    <ol class="steps big">
+      <li><strong>Rewrite</strong> the classical formulas: each weight is a function with poles near
+        its own vertex, divided by a function with poles on the whole boundary.</li>
+      <li><strong>The denominator</strong> is the <em>canonical function</em> of the domain, which
+        positive geometries attach to a region by one rule.</li>
+      <li><strong>The numerators</strong> are canonical functions too, of an infinite wedge at
+        each vertex. That the weights sum to one then needs no computation.</li>
+      <li><strong>The adjoint</strong> is the polynomial that appears over a common denominator.</li>
+      <li><strong>How far does it reach?</strong> Three open problems of the paper, and what has
+        been published since 2019.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide side flip" id="map" data-part="Opening" data-more="#map" data-notes="cmap-detail" style="--text-w: 380px">
+  <h2>A map of the topics</h2>
+  <div class="slide-body">
+    <div class="slide-text"></div>
+    <figure class="fig" data-figure="conceptmap"></figure>
+  </div>
+</section>
+
+<!-- ============================ part 1 ============================ -->
+<section class="slide divider" id="part-pattern" data-part="1 · The pattern" data-more="#segment" data-title="Part 1 · The pattern">
+  <p class="kicker">Part 1</p>
+  <h2>The pattern</h2>
+  <p>Segment, triangle, convex polygon: three classical recipes, written so that their poles
+    show.</p>
+</section>
+
+<section class="slide side" id="segment" data-notes="readout" data-part="1 · The pattern" data-more="#segment" style="--text-w: 470px">
+  <h2>Interpolation on a segment, written with poles</h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p>Linear interpolation, divided above and below by <span class="tex">(x-a)(b-x)</span>:</p>
+      <div class="tex block">f(x)=\frac{\dfrac{1}{x-a}\,f(a)+\dfrac{1}{b-x}\,f(b)}{\dfrac{1}{x-a}+\dfrac{1}{b-x}}</div>
+      <ul>
+        <li>Each data value is weighted by a function with a <strong>pole at its own
+          point</strong>.</li>
+        <li>The denominator has simple poles at both ends:
+          <span class="tex">\frac{1}{x-a}+\frac{1}{b-x}=\frac{b-a}{(x-a)(b-x)}</span>.</li>
+        <li>Interpolation happens <em>because</em> the weights blow up, as in Shepard
+          interpolation.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="segment"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="triangle" data-part="1 · The pattern" data-more="#triangle" style="--text-w: 440px">
+  <h2>The same trick on a triangle</h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p><span class="tex">\lambda_i=A_i/A</span>, with <span class="tex">A_i</span> the area of the
+        small triangle opposite <span class="tex">\mathbf p_i</span>. Divide by
+        <span class="tex">A_0A_1A_2</span>:</p>
+      <div class="tex block">f(\mathbf x)=\frac{\dfrac{f(\mathbf p_0)}{A_1A_2}+\dfrac{f(\mathbf p_1)}{A_2A_0}+\dfrac{f(\mathbf p_2)}{A_0A_1}}{\dfrac{A}{A_0A_1A_2}}</div>
+      <ul>
+        <li>Each <span class="tex">A_i</span> is linear in <span class="tex">\mathbf x</span> and
+          vanishes on the side opposite <span class="tex">\mathbf p_i</span>.</li>
+        <li>The weight of <span class="tex">\mathbf p_0</span> has poles on the
+          <strong>two sides that meet at</strong> <span class="tex">\mathbf p_0</span>.</li>
+        <li>The denominator has poles on all three sides.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="triangle"></figure>
+  </div>
+</section>
+
+<section class="slide text two" id="polygon" data-part="1 · The pattern" data-more="#polygon">
+  <h2>Convex polygons: Wachspress coordinates</h2>
+  <div class="slide-body">
+    <div>
+      <p>Generalised barycentric coordinates: <span class="tex">\lambda_i(\mathbf x)\ge0</span> with</p>
+      <div class="tex block">\sum_i\lambda_i(\mathbf x)=1,\qquad \sum_i\lambda_i(\mathbf x)\,\mathbf p_i=\mathbf x .</div>
+      <p>Three equations for <span class="tex">n</span> unknowns: unique for a triangle, a
+        choice for <span class="tex">n&gt;3</span>. Wachspress’ rational choice:</p>
+      <div class="tex block">\lambda_i=\frac{w_i}{\sum_k w_k},\qquad w_i(\mathbf x)=\frac{C_i}{A_{i-1}(\mathbf x)\,A_i(\mathbf x)}</div>
+      <p class="small muted"><span class="tex">A_i</span>: area of the triangle
+        <span class="tex">\mathbf x\,\mathbf p_i\,\mathbf p_{i+1}</span> on edge
+        <span class="tex">i</span>; <span class="tex">C_i</span>: area of the corner triangle
+        <span class="tex">\mathbf p_{i-1}\mathbf p_i\,\mathbf p_{i+1}</span>.</p>
+    </div>
+    <div>
+      <p class="pattern"><strong>The common pattern.</strong> A weight is a function with poles on
+        the part of the boundary through its vertex, divided by the sum of all such functions,
+        which has poles on the whole boundary.</p>
+      <p>Two questions are left open:</p>
+      <ul>
+        <li>Why these particular functions?</li>
+        <li>Why does their sum behave so well?</li>
+      </ul>
+      <p>Positive geometries answer both.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ part 2 ============================ -->
+<section class="slide divider" id="part-positive" data-part="2 · Positive geometries" data-more="#positive" data-title="Part 2 · Positive geometries">
+  <p class="kicker">Part 2</p>
+  <h2>Positive geometries and canonical forms</h2>
+  <p>A rule that assigns to a region a function with poles on its whole boundary.</p>
+</section>
+
+<section class="slide text" id="positive" data-part="2 · Positive geometries" data-more="#positive">
+  <h2>Positive geometries <span class="muted small">(Arkani-Hamed, Bai, Lam 2017)</span></h2>
+  <div class="slide-body">
+    <p class="big">A region <span class="tex">X_{\ge0}</span> with a unique rational
+      <strong>canonical form</strong> <span class="tex">\Omega(X_{\ge0})=C\,dx\,dy</span>. Its
+      <strong>canonical function</strong> <span class="tex">C</span> is singled out by two rules:</p>
+    <ul class="big">
+      <li><strong>Poles on the boundary, and only there.</strong> Near each boundary piece
+        <span class="tex">C</span> grows like 1/distance (a simple pole).</li>
+      <li><strong>Recursion.</strong> Multiply by the distance to a boundary piece. What is left
+        on that piece, the <em>residue</em>, is the canonical function of the piece itself. The
+        recursion ends at points, with <span class="tex">\pm1</span>.</li>
+    </ul>
+    <p>So the canonical function of a polygon is fixed by those of its edges, and those of the
+      edges by their end points.</p>
+    <p class="muted small">Origin: particle scattering. For certain theories the amplitudes are canonical forms
+      of positive geometries such as the amplituhedron.</p>
+  </div>
+</section>
+
+<section class="slide side" id="examples" data-notes="formula readout" data-part="2 · Positive geometries" data-more="#positive" style="--text-w: 420px">
+  <h2>The basic examples</h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p><strong>Segment</strong> — the function of Part 1:</p>
+      <div class="tex block">\Omega([a,b])=\frac{(b-a)\,dx}{(x-a)(b-x)}</div>
+      <p><strong>Triangle</strong> — the denominator of Part 1, times <span class="tex">A/2</span>:</p>
+      <div class="tex block">\Omega(\triangle)=\frac{A^{2}}{2\,A_0A_1A_2}\;dx\,dy</div>
+      <p class="small muted">Curved sides are allowed: half disc, pizza slice.</p>
+    </div>
+    <figure class="fig" data-figure="surface"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="residue" data-part="2 · Positive geometries" data-more="#positive" style="--text-w: 380px">
+  <h2>Residues: the boundary of a boundary</h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <ul>
+        <li>Sample <span class="tex">C</span> along a line at distance
+          <span class="tex">\varepsilon</span> from an edge: it grows like
+          <span class="tex">1/\varepsilon</span>.</li>
+        <li><span class="tex">\varepsilon\,C</span> converges to the canonical function of the
+          edge, <span class="tex">\dfrac{L}{s(L-s)}</span>.</li>
+        <li>One more residue, at the ends of the edge: <span class="tex">+1</span> and
+          <span class="tex">-1</span>.</li>
+      </ul>
+      <p class="pattern">For interpolation: the construction on a polygon restricts to linear
+        interpolation along each edge.</p>
+    </div>
+    <figure class="fig" data-figure="residue"></figure>
+  </div>
+</section>
+
+<section class="slide text" id="additivity" data-part="2 · Positive geometries" data-more="#positive">
+  <h2>Triangulations, and a small zoo</h2>
+  <div class="slide-body">
+    <p><strong>Additivity.</strong> Cut a region into pieces: the canonical forms of the pieces
+      add up. The poles at the cut have opposite residues and cancel:</p>
+    <div class="tex block">\underbrace{\frac{1}{x-a}+\frac{1}{c-x}}_{[a,c]}+\underbrace{\frac{1}{x-c}+\frac{1}{b-x}}_{[c,b]}
+      =\frac{1}{x-a}+\frac{1}{b-x}.</div>
+    <p>Hence convex polygons and polytopes are positive geometries: triangulate and add.</p>
+    <div class="two-col">
+      <div>
+        <p><strong>Generalised simplices</strong> — constant numerator</p>
+        <ul class="small">
+          <li>simplices in projective space</li>
+          <li>regions bounded by a conic and a line</li>
+          <li>positive parts of toric varieties</li>
+          <li>positive Grassmannians</li>
+        </ul>
+      </div>
+      <div>
+        <p><strong>Generalised polytopes</strong> — non-constant numerator</p>
+        <ul class="small">
+          <li>convex polytopes</li>
+          <li>polycons: convex regions bounded by lines and conics</li>
+          <li>Grassmann polytopes, in particular amplituhedra</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ part 3 ============================ -->
+<section class="slide divider" id="part-coordinates" data-part="3 · Ratios of canonical forms" data-more="#coordinates" data-title="Part 3 · Ratios of canonical forms">
+  <p class="kicker">Part 3</p>
+  <h2>Barycentric coordinates as ratios of canonical forms</h2>
+  <p>The denominators were canonical functions of the whole domain. The numerators are
+    canonical functions as well.</p>
+</section>
+
+<section class="slide text" id="recipe" data-part="3 · Ratios of canonical forms" data-more="#coordinates">
+  <h2>The recipe for the weight of a vertex</h2>
+  <div class="slide-body">
+    <ol class="steps big">
+      <li><strong>Keep</strong> only the pieces of the boundary that meet at the vertex.</li>
+      <li><strong>Close them up</strong> with one extra side, infinitely far away as seen from
+        the evaluation point: the point or line <span class="tex">x^*</span> dual to
+        <span class="tex">x</span>. It adds no pole at any finite point.</li>
+      <li><strong>Divide</strong> the canonical function of this region by that of the whole
+        shape.</li>
+    </ol>
+    <p><strong>Segment.</strong> The half line from <span class="tex">a</span> has canonical
+      function <span class="tex">1/(x-a)</span>, and</p>
+    <div class="tex block">\lambda_a(x)=\frac{\Omega([a,x^*])}{\Omega([a,b])}
+      =\frac{1}{x-a}\cdot\frac{(x-a)(b-x)}{b-a}=\frac{b-x}{b-a}.</div>
+  </div>
+</section>
+
+<section class="slide side" id="wedges" data-part="3 · Ratios of canonical forms" data-more="#coordinates" data-notes="readout" style="--text-w: 440px; --fig-zoom: 0.85">
+  <h2>Polygons: wedge over polygon</h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <div class="tex block">\lambda_i(\mathbf x)=\frac{\Omega\big(\triangle(l_{i-1},\,l_i,\,\mathbf x^*)\big)}{\Omega(P)}</div>
+      <div class="tex block">w_i=\frac{\det(\mathbf n_{i-1},\mathbf n_i)}{h_{i-1}(\mathbf x)\,h_i(\mathbf x)},\qquad C_P=\sum_i w_i</div>
+      <ul>
+        <li><span class="tex">h_k</span>: distance to the edge line <span class="tex">l_k</span>;
+          <span class="tex">\mathbf n_k</span>: its normal.</li>
+        <li>The Wachspress weights: <span class="tex">C_i/(A_{i-1}A_i)=2w_i</span>.</li>
+        <li>At <span class="tex">\mathbf p_i</span>, <span class="tex">w_i</span> outgrows all
+          others: <span class="tex">\lambda_i\to1</span>.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="wachspress"></figure>
+  </div>
+</section>
+
+<section class="slide text two" id="sum-to-one" data-part="3 · Ratios of canonical forms" data-more="#coordinates">
+  <h2>Why the weights sum to one</h2>
+  <div class="slide-body">
+    <div>
+      <p>The claim is <span class="tex">\sum_i w_i=C_P</span>. But the wedges are not a
+        subdivision: each contains the whole polygon, and they overlap.</p>
+      <p><strong>First answer: cancelling poles.</strong> Projectively, every wedge is a triangle
+        with a third side <span class="tex">\mathbf x^*</span> at infinity. In the sum these poles
+        at infinity cancel, like the poles at a cut. The wedges form a
+        <em>signed triangulation</em> of <span class="tex">P</span>.</p>
+      <p class="pattern">The partition of unity is the statement that the pieces of a tiling
+        add up to the whole.</p>
+    </div>
+    <div>
+      <p><strong>Second answer: a picture.</strong> Replace every edge line by the point</p>
+      <div class="tex block">\mathbf d_k=\frac{\mathbf n_k}{h_k(\mathbf x)}</div>
+      <p>The <span class="tex">\mathbf d_k</span> span the <strong>polar dual</strong>
+        <span class="tex">P^*_{\mathbf x}</span>, and the wedges become triangles that tile it:</p>
+      <div class="tex block">\operatorname{Area}(\mathbf 0,\mathbf d_{i-1},\mathbf d_i)=\frac{w_i}{2},\qquad
+        C_P(\mathbf x)=2\operatorname{Area}(P^*_{\mathbf x})</div>
+      <p class="small muted">This recovers Wachspress coordinates as ratios of polar dual
+        volumes (Ju, Schaefer, Warren, Desbrun). In dimension <span class="tex">d</span>:
+        <span class="tex">C_P=d!\operatorname{Vol}(P^*_{\mathbf x})</span>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide side" id="wheel" data-part="3 · Ratios of canonical forms" data-more="#wheel" data-notes="readout" style="--text-w: 380px; --fig-zoom: 0.8">
+  <h2>A mechanical reading: the wheel <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <ul>
+        <li>Edges = rim bars, <span class="tex">\mathbf x</span> = hub, spokes to the vertices.</li>
+        <li>One self-stress: spoke tension <span class="tex">w_i</span> per unit length, rim
+          compression <span class="tex">1/h_i</span>.</li>
+        <li>The dual polygon is Maxwell’s <strong>force diagram</strong>.</li>
+        <li>Only Wachspress coordinates are balanced by the rim alone.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="wheel"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="polytope" data-part="3 · Ratios of canonical forms" data-more="#coordinates" data-notes="bars" style="--text-w: 380px; --fig-zoom: 0.84">
+  <h2>One dimension up <span class="badge alt">Added illustration</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p>In a <em>simple</em> polyhedron three face planes meet at a vertex and bound an
+        infinite cone, which takes the place of the wedge:</p>
+      <div class="tex block">w_v=\frac{|\det(\mathbf n_a,\mathbf n_b,\mathbf n_c)|}{h_a\,h_b\,h_c},\qquad \lambda_v=\frac{w_v}{C_P}</div>
+      <div class="tex block">C_P=\sum_v w_v=3!\,\operatorname{Vol}(P^*_{\mathbf x})</div>
+    </div>
+    <figure class="fig" data-figure="polytope3d"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="adjoint" data-notes="readout" data-part="3 · Ratios of canonical forms" data-more="#adjoint" style="--text-w: 440px">
+  <h2>The numerator: the adjoint polynomial</h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <div class="tex block">C_P(\mathbf x)=\frac{\operatorname{adj}_P(\mathbf x)}{h_0(\mathbf x)\,h_1(\mathbf x)\cdots h_{n-1}(\mathbf x)}</div>
+      <ul>
+        <li>Degree <span class="tex">n-3</span>: the parts of highest degree cancel (the poles
+          at infinity again).</li>
+        <li>Two non-adjacent edge lines cross outside the polygon; there the numerator
+          must vanish.</li>
+        <li>There are <span class="tex">n(n-3)/2</span> such points, exactly as many as fix a
+          curve of degree <span class="tex">n-3</span>.</li>
+        <li>The adjoint curve never enters the polygon.</li>
+      </ul>
+      <p class="small muted">Wachspress; Warren’s definition through triangulations.</p>
+    </div>
+    <figure class="fig" data-figure="adjoint"></figure>
+  </div>
+</section>
+
+<!-- ============================ part 4 ============================ -->
+<section class="slide text" id="open" data-part="4 · Open problems" data-more="#open" data-title="Part 4 · Three open problems of the paper">
+  <h2>Three open problems of the paper</h2>
+  <div class="slide-body">
+    <p class="big">Positive geometries exist well beyond polytopes. How far does the recipe
+      reach?</p>
+    <ol class="steps big">
+      <li><strong>Line space.</strong> Can barycentric coordinates for <em>lines</em> be defined
+        as ratios of canonical forms on the Grassmannian <span class="tex">G(2,4)</span>?</li>
+      <li><strong>Mean value coordinates.</strong> They are not rational. Is there a
+        “canonical function” of a disc, and a wider class of geometries with non-rational
+        forms?</li>
+      <li><strong>Splines and integral geometry.</strong> The dual-volume integral is the
+        Laplace transform of an indicator function, as in the theory of simplex, box and cone
+        splines. One theory for splines and barycentric interpolants?</li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide side" id="linespace" data-part="4 · Open problems" data-more="#open" style="--text-w: 520px">
+  <h2>Open problem 1: interpolation in line space</h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <ul>
+        <li>Lines in 3D form a four-dimensional space, the Grassmannian
+          <span class="tex">G(2,4)</span>.</li>
+        <li>Plücker coordinates <span class="tex">p_{ij}</span>: six numbers up to scale, with
+          <span class="tex">p_{12}p_{34}-p_{13}p_{24}+p_{14}p_{23}=0</span>.</li>
+        <li>The part with positive Plücker coordinates is a positive geometry.</li>
+        <li>The role of the triangle: the <em>tetrahedral line complex</em>. The six edge lines
+          of a tetrahedron take the place of the vertices and form the pattern of an
+          octahedron.</li>
+      </ul>
+      <p class="update">As of November 2026 we found no published construction of barycentric
+        coordinates in line space.</p>
+    </div>
+    <figure class="fig" data-figure="linespace"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="disc" data-part="4 · Open problems" data-more="#open" style="--text-w: 440px">
+  <h2>Open problem 2: mean value coordinates and the disc</h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <ul>
+        <li>A disc is not a positive geometry: its boundary has no corners, so the recursion
+          never arrives at points.</li>
+        <li>Still, there is a natural function singular along a conic:</li>
+      </ul>
+      <div class="tex block">C\;\propto\;\frac{1}{(1-x^2-y^2)^{3/2}}</div>
+      <ul>
+        <li>It is a dual volume: the polar dual of a disc is an ellipse.</li>
+        <li>It is not rational, and grows like <span class="tex">1/h^{3/2}</span> at distance
+          <span class="tex">h</span> from the circle, not like <span class="tex">1/h</span>.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="disc"></figure>
+  </div>
+</section>
+
+<!-- ============================ part 5 ============================ -->
+<section class="slide text" id="since" data-part="5 · Since 2019" data-more="#later" data-title="Part 5 · Since the poster">
+  <h2>Since the poster <span class="badge">Later developments, 2020–2026</span></h2>
+  <div class="slide-body">
+    <table class="compare">
+      <tbody>
+        <tr><th>Curved boundaries</th><td>Polypols are positive geometries; Wachspress’ conjecture
+          on the adjoint is false in general (Kohn et al.; Brüser 2026).</td></tr>
+        <tr><th>Mixed Hodge theory</th><td>Existence and uniqueness of canonical forms from
+          topology: rank and genus (Brown, Dupont 2025).</td></tr>
+        <tr><th>Dual volumes</th><td>Canonical functions as Laplace transforms of measures;
+          non-rational transforms of curved regions (Gao–Lam–Xue; Mazzucchelli–Raman;
+          Shapiro).</td></tr>
+        <tr><th>Splines, toric geometry</th><td>The denominator of a canonical function is the
+          Laplace transform of a spline; the adjoint is a differential operator.</td></tr>
+        <tr><th>One variable</th><td>The barycentric formula of approximation theory, residues
+          and Hermite’s contour integral.</td></tr>
+        <tr><th>Mean value coordinates</th><td>Area versus perimeter of one dual polygon.</td></tr>
+        <tr><th>Push-forwards</th><td>The bilinear patch computes the canonical function of a
+          quadrilateral.</td></tr>
+        <tr><th>Line space</th><td>What is known about the canonical form of the positive
+          Grassmannian.</td></tr>
+      </tbody>
+    </table>
+    <p class="small muted">Nothing in this part is in the 2019 paper. The summaries are ours;
+      please consult the cited papers for the precise statements.</p>
+  </div>
+</section>
+
+<section class="slide side" id="polypols" data-part="5 · Since 2019" data-more="#later-polypols" data-notes="readout" style="--text-w: 460px">
+  <h2>Curved boundaries: polypols <span class="badge">Later development</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <div class="tex block">\Omega(P)=\frac{\operatorname{adj}_P(x,y)}{f_1(x,y)\cdots f_k(x,y)}\;dx\,dy</div>
+      <ul>
+        <li>Quasi-regular rational polypols are positive geometries (Kohn et al.).</li>
+        <li>The adjoint passes through the <em>residual points</em>.</li>
+        <li>Wachspress’ conjecture, that the adjoint of a regular polycon stays outside it, is
+          <strong>false</strong>: Brüser (2026), three ellipses.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="polycon"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="pizza" data-part="5 · Since 2019" data-more="#later-polypols" data-notes="readout" style="--text-w: 430px; --fig-zoom: 0.9">
+  <h2>Wachspress’ basis on a polycon <span class="badge">Later development</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p>Pizza slice: corner <span class="tex">O</span>, vertices <span class="tex">V_1,V_2</span>
+        on the circle, a side node <span class="tex">M</span> on the arc.</p>
+      <div class="tex block">W_O=\frac{Q}{D},\quad W_M=k_M\frac{L_1L_2}{D},\quad W_{V_1}=k_1\frac{L_2\,\ell_1}{D}</div>
+      <ul>
+        <li><span class="tex">Q=1-x^2-y^2</span>, adjoint <span class="tex">D=1+2y</span>.</li>
+        <li><span class="tex">W_O</span> is the wedge recipe of Part 3.</li>
+        <li>The others are not canonical forms of sub-regions in any obvious way, and depend on
+          the arbitrary position of <span class="tex">M</span>.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="pizzabasis"></figure>
+  </div>
+</section>
+
+<section class="slide text two" id="hodge" data-part="5 · Since 2019" data-more="#later-hodge">
+  <h2>Why a canonical form exists: mixed Hodge theory <span class="badge">Later development</span></h2>
+  <div class="slide-body">
+    <div>
+      <p><strong>Brown, Dupont (2025).</strong> A region whose boundary lies on
+        <span class="tex">Y\subset X</span> is a class in the relative homology group
+        <span class="tex">H_n(X,Y)</span>. Its mixed Hodge structure supplies two numbers:</p>
+      <div class="tex block">\operatorname{cr}=h^{0,0},\qquad g=\sum_{p&gt;0}h^{-p,0}</div>
+      <div class="tex block">\dim\Omega^n_{\log}(X\setminus Y)=\operatorname{cr}+g</div>
+      <ul>
+        <li>The <strong>combinatorial rank</strong> counts the canonical forms that exist.</li>
+        <li>The <strong>genus</strong> counts the ways in which they fail to be unique.</li>
+        <li>Genus zero: the canonical form is the only logarithmic form with residue
+          <span class="tex">\pm1</span> at the corners of the region and 0 at the others.</li>
+      </ul>
+    </div>
+    <div>
+      <p><strong>Theorems, not assumptions:</strong> additivity, residues (for boundary
+        pieces of genus zero), push-forwards, products.</p>
+      <p><strong>Polygons.</strong> With edge functions <span class="tex">f_i</span>:</p>
+      <div class="tex block">\varpi_P=-\sum_i d\log f_i\wedge d\log f_{i+1}</div>
+      <p>One term per corner: this is the wedge decomposition of Part 3, and the Wachspress
+        coordinate of a vertex is the share of its corner.</p>
+      <p class="small muted">Hodge theory is silent on positivity inside the domain; for
+        that the adjoint remains the tool. Genus zero is sufficient but not necessary
+        (Koefler, Pavlov, Sinn).</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide side" id="hodgecubic" data-part="5 · Since 2019" data-more="#later-hodge" style="--text-w: 360px; --fig-zoom: 0.78">
+  <h2>A corner makes the form, a handle destroys its uniqueness</h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <ul>
+        <li><span class="tex">\varepsilon=0</span>: a nodal cubic. The teardrop has one corner;
+          the residue of its form along the boundary has a simple pole at each end, the form
+          of a segment.</li>
+        <li><span class="tex">\varepsilon&gt;0</span>: a smooth cubic of genus one. The residue is
+          finite all the way round: it is the holomorphic form of the curve.</li>
+        <li>That form has become the ambiguity, and the oval has no canonical form.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="hodgecubic"></figure>
+  </div>
+</section>
+
+<section class="slide side compact" id="curverank" data-part="5 · Since 2019" data-more="#later-hodge" data-notes="readout" style="--text-w: 540px">
+  <h2>Rank and genus of plane curves</h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <div class="tex block">g=\sum_{\text{components}}\text{genus},\qquad \operatorname{cr}=\sum_{P}\big(r_P-1\big)-(k-1)</div>
+    </div>
+    <figure class="fig" data-figure="curverank"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="dualmeasure" data-notes="readout" data-part="5 · Since 2019" data-more="#later-transforms" style="--text-w: 400px">
+  <h2>Dual volumes become measures <span class="badge">Later development</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p>Take the polar dual <span class="tex">P^*</span> about the origin, once and for all:</p>
+      <div class="tex block">C(\mathbf x)=2\int_{P^*}\frac{\mu(\mathbf y)\,d\mathbf y}{(1+\mathbf x\cdot\mathbf y)^{3}}</div>
+      <ul>
+        <li>Polygon: <span class="tex">\mu\equiv1</span>, the dual-volume formula.</li>
+        <li>Disc cut by a line: the same formula with a density
+          <span class="tex">0\le\mu\le1</span> on the dual region (Mazzucchelli, Raman 2025).</li>
+        <li>For the unit disc the transform is
+          <span class="tex">2\pi(1-u^2-v^2)^{-3/2}</span>: algebraic, not rational
+          (Shapiro 2026).</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="dualmeasure"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="conecut" data-notes="readout" data-part="5 · Since 2019" data-more="#later-splines" style="--text-w: 420px">
+  <h2>The cone behind the dual polygon <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p>Write <span class="tex">h_i(\mathbf x)=\langle \mathbf a_i,(1,\mathbf x)\rangle</span>.
+        The vectors <span class="tex">\mathbf a_i</span> span a cone
+        <span class="tex">C\subset\mathbb R^3</span>, and</p>
+      <div class="tex block">C_P(\mathbf x)=\mathcal L\big[\mathbf 1_C\big](1,\mathbf x)</div>
+      <ul>
+        <li>The canonical function is the Laplace transform of the indicator function of the
+          cone: the third open problem.</li>
+        <li>The cone does not depend on <span class="tex">\mathbf x</span>. The point only
+          chooses the cutting plane; the cut is the dual polygon.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="conecut"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="splinedual" data-part="5 · Since 2019" data-more="#later-splines" style="--text-w: 420px; --fig-zoom: 0.82">
+  <h2>Splines: the same transform, read backwards <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p><span class="tex">T</span>: the multivariate spline (truncated power) of the vectors
+        <span class="tex">\mathbf a_i</span>, a second function on the same cone.</p>
+      <div class="tex block">\mathcal L\big[\mathbf 1_C\big](1,\mathbf x)=\frac{\operatorname{adj}_P(\mathbf x)}{\prod_i h_i(\mathbf x)}</div>
+      <div class="tex block">\mathcal L\big[T\big](1,\mathbf x)=\frac{1}{\prod_i h_i(\mathbf x)}</div>
+      <ul>
+        <li>Uniform density on the dual polygon: the canonical function.</li>
+        <li>Spline density: its denominator alone.</li>
+        <li>The adjoint is the ratio of the two measurements.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="splinedual"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="splineladder" data-notes="readout" data-part="5 · Since 2019" data-more="#later-splines" style="--text-w: 440px">
+  <h2>The adjoint as a differential operator <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p>Under the Laplace transform, multiplying by
+        <span class="tex">\langle\mathbf u,\mathbf a\rangle</span> is differentiating in the
+        direction <span class="tex">\mathbf a</span>, and</p>
+      <div class="tex block">D_{\mathbf a_k}T_{\{\mathbf a_i\}}=T_{\{\mathbf a_i\}\setminus\mathbf a_k}</div>
+      <div class="tex block">\operatorname{adj}(\partial)\,T=\sum_\sigma \mathbf 1_{\operatorname{cone}(\sigma)}=\mathbf 1_C</div>
+      <ul>
+        <li>Each derivative removes one vector.</li>
+        <li>The spline is a tent-like function of degree <span class="tex">n-3</span> on the
+          dual polygon; the adjoint is the operator of order <span class="tex">n-3</span> that
+          flattens it to the constant one.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="splineladder"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="bsplinepoles" data-part="5 · Since 2019" data-more="#later-splines" data-notes="readout" style="--text-w: 440px; --fig-zoom: 0.68">
+  <h2>One variable: B-splines and poles <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p>The B-spline <span class="tex">M</span> with knots <span class="tex">t_0,\dots,t_n</span>
+        is the density whose transform has a pole at every knot:</p>
+      <div class="tex block">\int M(y)\,\frac{dy}{(x-y)^{n+1}}=\frac{1}{\prod_{i=0}^{n}(x-t_i)}</div>
+      <div class="tex block">\frac{1}{\prod_i (x-t_i)}=\sum_i\frac{c_i}{x-t_i},\qquad c_i=\prod_{j\ne i}\frac{1}{t_i-t_j}</div>
+      <ul>
+        <li>The partial-fraction coefficients <span class="tex">c_i</span> are the weights of
+          Lagrange’s barycentric formula.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="bsplinepoles"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="fibre" data-notes="readout" data-part="5 · Since 2019" data-more="#later-toric" style="--text-w: 400px">
+  <h2>Toric and symplectic geometry <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <ul>
+        <li>Both functions on the cone are Duistermaat–Heckman measures.</li>
+        <li>The spline belongs to a torus acting on <span class="tex">\mathbb C^n</span>: its
+          moment map is <span class="tex">\mathbf z\mapsto\sum_k\tfrac12|z_k|^2\,\mathbf a_k</span>,
+          and the fixed-point formula gives
+          <span class="tex">1/\prod_k\langle\mathbf u,\mathbf a_k\rangle</span>.</li>
+        <li>The value of the spline is the volume of the fibre polytope
+          <span class="tex">\{\mathbf t\ge0:\ \sum_k t_k\mathbf a_k=\mathbf v\}</span>.</li>
+        <li>Crossing a diagonal of the dual polygon changes the shape of the fibre: this is why
+          the spline changes its formula there.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="fibre"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="reebpoint" data-part="5 · Since 2019" data-more="#later-toric" data-notes="readout" style="--text-w: 440px; --fig-zoom: 0.93">
+  <h2>Volume minimisation <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <ul>
+        <li>In toric geometry the canonical function is a volume that geometers and physicists
+          minimise:</li>
+      </ul>
+      <div class="tex block">\operatorname{vol}(\mathbf b)=\frac{\pi^3}{27}\,C_P(\mathbf x)</div>
+      <ul>
+        <li>The minimum is the Santaló point: there the centroid of the dual polygon is
+          <span class="tex">\mathbf x</span>.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="reebpoint"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="momentcurve" data-part="5 · Since 2019" data-more="#later-contour" style="--text-w: 430px; --fig-zoom: 0.84">
+  <h2>More nodes on a line: the barycentric formula <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p>Nodes <span class="tex">t_0&lt;\dots&lt;t_n</span>, node polynomial
+        <span class="tex">\ell(x)=\prod_j(x-t_j)</span>:</p>
+      <div class="tex block">\lambda_j(x)=\frac{c_j}{x-t_j}\Big/\sum_k\frac{c_k}{x-t_k},\qquad c_j=\frac{1}{\ell'(t_j)}</div>
+      <ul>
+        <li><span class="tex">\sum_k c_k/(x-t_k)=1/\ell(x)</span>: the weights are the residues
+          of <span class="tex">1/\ell</span>.</li>
+        <li>Lift the nodes to the moment curve: the <span class="tex">\lambda_j</span> are the
+          simplex coordinates of <span class="tex">(x,x^2,\dots,x^n)</span>.</li>
+        <li>The curve touches the simplex at the vertices only, so beyond two nodes some
+          coordinate is negative.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="momentcurve"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="residuecircle" data-notes="readout" data-part="5 · Since 2019" data-more="#later-contour" style="--text-w: 400px">
+  <h2>The residue theorem at work <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <div class="tex block">\omega=\frac{\ell(x)}{\ell(t)}\,\frac{g(t)\,dt}{x-t}</div>
+      <ul>
+        <li>Poles: the nodes and the point <span class="tex">x</span>.</li>
+        <li>If <span class="tex">g</span> has degree at most <span class="tex">n</span>, there
+          is no pole at infinity and the residues sum to zero:</li>
+      </ul>
+      <div class="tex block">\sum_j\lambda_j(x)\,g(t_j)=g(x)</div>
+    </div>
+    <figure class="fig" data-figure="residuecircle"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="baryrational" data-part="5 · Since 2019" data-more="#later-contour" data-notes="readout" style="--text-w: 400px; --fig-zoom: 0.83">
+  <h2>One formula, four choices of weights <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p>Weights <span class="tex">w_j</span> in place of <span class="tex">c_j</span>. Berrut’s
+        weights <span class="tex">(-1)^j</span> give a canonical form after all:</p>
+      <div class="tex block">\sum_{j=0}^{n}\frac{(-1)^j}{x-t_j}=C_A(x)</div>
+      <p class="small"><span class="tex">A=[t_0,t_1]\cup[t_2,t_3]\cup\dots\cup[t_{n-1},t_n]</span>,
+        every second interval.</p>
+    </div>
+    <figure class="fig" data-figure="baryrational"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="barypoles" data-part="5 · Since 2019" data-more="#later-contour" data-notes="readout" style="--text-w: 450px">
+  <h2>The poles of the interpolant <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <table class="compare">
+        <thead><tr><th>Nodes on a line</th><th>Convex polygon</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tex">w_j/(x-t_j)</span></td><td>wedge functions <span class="tex">w_i</span></td></tr>
+          <tr><td>their sum <span class="tex">R</span></td><td>canonical function <span class="tex">C_P</span></td></tr>
+          <tr><td><span class="tex">D=\ell R</span></td><td>the adjoint</td></tr>
+          <tr><td>zeros of <span class="tex">D</span> avoid the interval</td><td>adjoint curve stays outside</td></tr>
+          <tr><td>positive only for two nodes</td><td>positive inside</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figure class="fig" data-figure="barypoles"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="hermite" data-part="5 · Since 2019" data-more="#later-contour" data-notes="readout" style="--text-w: 400px; --fig-zoom: 0.69">
+  <h2>Hermite’s contour integral for the error <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <div class="tex block">f(x)-p(x)=\frac{1}{2\pi i}\oint_\Gamma\frac{\ell(x)}{\ell(t)}\,\frac{f(t)}{t-x}\,dt</div>
+      <p>For a rational <span class="tex">f</span> with poles <span class="tex">\pi_k</span> and
+        residues <span class="tex">\rho_k</span>:</p>
+      <div class="tex block">f(x)-p(x)=\sum_k\rho_k\,\frac{\ell(x)}{\ell(\pi_k)\,(x-\pi_k)}</div>
+      <p class="small">Small inside the level curve of <span class="tex">|\ell|</span> through
+        the pole; outside it, Runge’s phenomenon.</p>
+    </div>
+    <figure class="fig" data-figure="hermite"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="quadcontour" data-part="5 · Since 2019" data-more="#later-contour" data-notes="readout" style="--text-w: 480px">
+  <h2>Two triangulations from one contour <span class="badge alt">Added remark</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <div class="tex block">C_P(\mathbf x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}\frac{ds}{\prod_{j=0}^{3}\,(c_j-i\,s\,k_j)}</div>
+      <ul>
+        <li>Closing the contour above or below gives the two triangulations; that they agree
+          is Cauchy’s theorem (Arkani-Hamed, Bai, Lam).</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="quadcontour"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="meanvalue" data-part="5 · Since 2019" data-more="#later-meanvalue" data-notes="readout" style="--text-w: 420px; --fig-zoom: 0.85">
+  <h2>Mean value coordinates: area versus perimeter <span class="badge">Later development</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p>One dual polygon, two measurements (after Schaefer, Ju, Warren):</p>
+      <div class="tex block">\sum_i w_i^{\mathrm{W}}=\sum_i\frac{L_i}{r_i}=2\operatorname{Area}(P^*_{\mathbf x})</div>
+      <div class="tex block">\sum_i w_i^{\mathrm{MV}}=\sum_i L_i=\operatorname{Perimeter}(P^*_{\mathbf x})</div>
+      <ul>
+        <li><span class="tex">L_i</span>: length of the dual edge of
+          <span class="tex">\mathbf p_i</span>;
+          <span class="tex">r_i=|\mathbf p_i-\mathbf x|</span>.</li>
+        <li>On a triangle the two sets of coordinates coincide.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="meanvalue"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="smooth" data-part="5 · Since 2019" data-more="#later-meanvalue" style="--text-w: 420px">
+  <h2>The smooth limit: the disc <span class="badge">Later development</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <p>For the unit disc and a point at distance <span class="tex">r</span> from the centre,
+        the dual is an ellipse:</p>
+      <div class="tex block">2\operatorname{Area}=\frac{2\pi}{(1-r^2)^{3/2}},\qquad \operatorname{Perimeter}=\frac{4\,E(r)}{1-r^2}</div>
+      <ul>
+        <li>The disc function of open problem 2 is the continuous limit of the
+          <em>Wachspress</em> normaliser.</li>
+        <li>The mean value analogue is an elliptic integral.</li>
+        <li>Wachspress coordinates of inscribed regular polygons converge to the smooth
+          kernel <span class="tex">1/(1-\mathbf v\cdot\mathbf x)^2</span> (Warren, Schaefer,
+          Hirani, Desbrun).</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="smooth"></figure>
+  </div>
+</section>
+
+<section class="slide side" id="pushforward" data-part="5 · Since 2019" data-more="#later-pushforward" data-notes="readout" style="--text-w: 510px">
+  <h2>Push-forwards and the bilinear patch <span class="badge">Later development</span></h2>
+  <div class="slide-body">
+    <div class="slide-text">
+      <div class="tex block">C_{\text{quad}}(\mathbf x)=\!\!\sum_{B(u,v)=\mathbf x}\!\!\frac{1}{u(1-u)\,v(1-v)\,\det\!\big(\partial_uB,\partial_vB\big)}</div>
+      <ul>
+        <li>The bilinear patch <span class="tex">B</span> carries the unit square onto the
+          quadrilateral; both preimages of <span class="tex">\mathbf x</span> must be kept.</li>
+        <li>Each term contains a square root; only the sum is rational.</li>
+      </ul>
+    </div>
+    <figure class="fig" data-figure="quad"></figure>
+  </div>
+</section>
+
+<section class="slide text" id="lines" data-part="5 · Since 2019" data-more="#later-lines">
+  <h2>Line space: what is known <span class="badge">Later development</span></h2>
+  <div class="slide-body">
+    <div class="tex block">\Omega\big(G_{\ge0}(2,4)\big)=\frac{da\,db\,dc\,dd}{b\,c\,(ad-bc)},\qquad p_{12}=1,\;p_{23}=c,\;p_{34}=ad-bc,\;p_{14}=b .</div>
+    <ul>
+      <li><strong>Four facets, not six.</strong> The poles are where a cyclically consecutive
+        Plücker coordinate vanishes; <span class="tex">p_{13}</span> and
+        <span class="tex">p_{24}</span> cannot vanish inside. The symmetry is cyclic, not that
+        of a tetrahedron.</li>
+      <li><strong>The octahedron is a moment-map image.</strong> The six numbers
+        <span class="tex">p_{ij}/\sum p_{kl}</span> look like barycentric coordinates, but they
+        map a four-dimensional region onto a three-dimensional one: a point of the octahedron
+        does not determine a line.</li>
+      <li><strong>A first adjoint in line space.</strong> Pavlov and Ranestad (2025): one more
+        hyperplane cuts out a “positive pentahedron” with a unique adjoint,
+        <span class="tex">\sum\max(c_{ij},0)\,p_{ij}</span>. Loosely, the step from a triangle
+        to a quadrilateral.</li>
+    </ul>
+    <p class="small muted">The chart formula is our own evaluation of eq. (5.40) of Arkani-Hamed,
+      Bai and Lam.</p>
+  </div>
+</section>
+
+<!-- ============================ closing ============================ -->
+<section class="slide text" id="summary" data-part="Closing" data-title="Summary">
+  <h2>Summary</h2>
+  <div class="slide-body">
+    <ul class="big">
+      <li>Linear, triangular and Wachspress interpolation share one pattern: a weight with
+        poles at its vertex, over a function with poles on the whole boundary.</li>
+      <li>The denominator is the <strong>canonical function</strong> of the domain; the
+        numerators are canonical functions of <strong>wedges</strong>.</li>
+      <li>Partition of unity is additivity of canonical forms, or a tiling of the
+        <strong>polar dual</strong>.</li>
+      <li>The <strong>adjoint</strong> is what remains over a common denominator; it must stay
+        outside the domain.</li>
+      <li>Open: curved domains, non-rational coordinates, line space.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide text two" id="sources" data-part="Closing" data-more="#references" data-title="Sources and links">
+  <h2>Sources and links</h2>
+  <div class="slide-body">
+    <div>
+      <ul class="small">
+        <li>M. Vaitkus. Positive Geometries for Barycentric Interpolation. IGS 2019;
+          arXiv:2101.08589.</li>
+        <li>N. Arkani-Hamed, Y. Bai, T. Lam. Positive geometries and canonical forms. 2017.</li>
+        <li>E. Wachspress. Rational Bases and Generalized Barycentrics. 2016.</li>
+        <li>J. Warren. Barycentric coordinates for convex polytopes. 1996.</li>
+        <li>T. Ju, S. Schaefer, J. Warren, M. Desbrun. A geometric construction of coordinates
+          for convex polyhedra using polar duals. 2005.</li>
+        <li>K. Kohn, R. Piene, K. Ranestad, F. Rydell, B. Shapiro, R. Sinn, M.-Ş. Sorea, S. Telen.
+          Adjoints and canonical forms of polypols. 2025.</li>
+        <li>F. Brown, C. Dupont. Positive geometries and canonical forms via mixed Hodge
+          theory. 2025.</li>
+        <li>L. N. Trefethen. Approximation Theory and Approximation Practice. 2019.</li>
+      </ul>
+    </div>
+    <div>
+      <p><strong>The page with the full text and all references</strong></p>
+      <p><a href="https://vaitkusm.github.io/positive-geometry-interpolation/">vaitkusm.github.io/positive-geometry-interpolation</a></p>
+      <p><strong>Source code</strong></p>
+      <p><a href="https://github.com/VaitkusM/positive-geometry-interpolation">github.com/VaitkusM/positive-geometry-interpolation</a></p>
+      <p class="small muted">The “Full text” button below opens the section of the page that
+        belongs to the current slide.</p>
+    </div>
+  </div>
+</section>
+
+<!-- list of slides (filled by js/slides.js) -->
+<div class="overview" id="overview" hidden>
+  <div class="overview-head">
+    <h2>Slides</h2>
+    <button type="button" id="overview-close">Close</button>
+  </div>
+  <div class="overview-list" id="overview-list"></div>
+  <p class="overview-foot">To print the slides or save them as PDF, open
+    <a href="slides.html?print">slides.html?print</a> and use the print dialog of the browser.</p>
+</div>
+
+<!-- bar at the bottom -->
+<div class="deck-bar">
+  <span class="progress" id="slide-progress"></span>
+  <span class="part" id="slide-part"></span>
+  <a class="bar-link" id="slide-more" href="index.html" target="_blank" rel="noopener">Full text</a>
+  <button type="button" class="theme-toggle" id="theme-toggle" hidden>Dark mode</button>
+  <button type="button" id="slide-full">Full screen</button>
+  <button type="button" id="slide-list" aria-expanded="false" aria-controls="overview">Slides</button>
+  <button type="button" id="slide-prev" aria-label="Previous slide">‹</button>
+  <span class="count" id="slide-count"></span>
+  <button type="button" id="slide-next" aria-label="Next slide">›</button>
+</div>
+
+</main>
+
+<noscript><p class="noscript">The slides need JavaScript. The <a href="index.html">page</a> can be read without it.</p></noscript>
+</body>
+</html>

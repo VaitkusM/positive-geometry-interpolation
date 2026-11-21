@@ -40,6 +40,19 @@ onThemeChange(() => {
   allStages.forEach((s) => s.redraw());
 });
 
+/**
+ * The slide version (js/slides.js) shows the figures inside a container that is
+ * scaled with a CSS transform. It reports the scale here, so that the canvases
+ * are rendered with as many pixels as they cover on the screen.
+ */
+let pixelScale = 1;
+export function setStageScale(k) {
+  pixelScale = k > 0 ? k : 1;
+  allStages.forEach((s) => s._resize());
+}
+/** Canvas pixels per CSS pixel (capped: very large canvases are slow). */
+const density = () => Math.min(4, (window.devicePixelRatio || 1) * pixelScale);
+
 /** Colour of vertex / series number i (0-based); the palette has 8 slots. */
 export const seriesColor = (i) => cssColor("series-" + ((i % 8) + 1));
 
@@ -135,7 +148,7 @@ export class Stage {
   _resize() {
     const cssW = Math.max(120, this.canvas.parentElement.clientWidth);
     const cssH = Math.min(this.maxHeight, Math.round(cssW * this.aspect));
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = density();
     // nothing to do if neither the layout width nor the pixel density changed
     if (cssW === this.width && cssH === this.height && this._dpr === dpr) return;
     this._dpr = dpr;
@@ -155,7 +168,7 @@ export class Stage {
   }
 
   _draw() {
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = this._dpr;
     const c = this.ctx;
     c.setTransform(dpr, 0, 0, dpr, 0, 0);
     c.clearRect(0, 0, this.width, this.height);
@@ -168,7 +181,10 @@ export class Stage {
 
   _eventPos(e) {
     const r = this.canvas.getBoundingClientRect();
-    return [e.clientX - r.left, e.clientY - r.top];
+    // r is measured on the screen; inside a scaled container (the slides) it
+    // differs from the layout size by the scale factor k
+    const k = r.width > 0 ? this.width / r.width : 1;
+    return [(e.clientX - r.left) * k, (e.clientY - r.top) * k];
   }
 
   /** Nearest handle within `radius` CSS px of the screen point q, or null. */
@@ -215,9 +231,7 @@ export class Stage {
     // On touch screens, keep the page from scrolling only while a handle is
     // being grabbed; everywhere else on the canvas scrolling works normally.
     cv.addEventListener("touchstart", (e) => {
-      const t = e.touches[0];
-      const r = cv.getBoundingClientRect();
-      if (this._hit([t.clientX - r.left, t.clientY - r.top], 26)) e.preventDefault();
+      if (this._hit(this._eventPos(e.touches[0]), 26)) e.preventDefault();
     }, { passive: false });
   }
 

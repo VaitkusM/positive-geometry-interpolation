@@ -1,6 +1,7 @@
 # Positive Geometries for Barycentric Interpolation — interactive applet
 
 **Live page: <https://vaitkusm.github.io/positive-geometry-interpolation/>**
+· **[as slides](https://vaitkusm.github.io/positive-geometry-interpolation/slides.html)**
 
 An interactive, self-contained introduction to the ideas of
 
@@ -73,15 +74,42 @@ linear precision, wedge ratios = classic Wachspress formula, canonical function
 Arkani-Hamed–Bai–Lam, 3D linear precision, Brüser's counterexample, …):
 
 ```sh
-deno test tests/
+deno test --allow-read tests/
 ```
+
+(`--allow-read` lets `tests/slides.test.js` read the two HTML files; without it
+those checks are skipped.)
+
+## Slides
+
+`slides.html` presents the same material as a slide deck, with the same
+interactive figures. The deck is a 1280 × 720 sheet that is scaled to the window.
+
+| Key | |
+|---|---|
+| `→` `↓` `Space` `PageDown` | next slide |
+| `←` `↑` `PageUp` | previous slide |
+| `Home` / `End` | first / last slide |
+| `O` | list of slides |
+| `F` | full screen |
+| `D` | light / dark |
+
+While a slider of a figure has the focus, the arrow keys move the slider;
+`PageDown` / `PageUp` (the keys of a presenter remote) always turn the slide.
+`slides.html#wedges` opens the slide with that id, and `slides.html?print` lays
+all slides out one per page, for printing or saving as PDF. The *Full text*
+button opens the section of the page that belongs to the current slide.
 
 ## Code map
 
 ```
 index.html            all text; each figure is <figure data-figure="NAME">
+slides.html           the slide version: one <section class="slide"> per slide
 css/style.css         design tokens (light + dark theme), layout, components
-js/main.js            typesets formulas, starts every figure, activates the theme switch
+css/slides.css        the slide sheet, slide layouts, bar and list of slides, printing
+js/main.js            entry point of the page: formulas, figures, navigation, theme switch
+js/slides.js          entry point of the slides: scaling, keys, list of slides, printing
+js/build.js           the table of figures and the functions that build them (shared by both)
 js/math/              pure mathematics, no DOM — the part worth reusing
   polygon.js            conventions (CCW polygons, edge lines {n, p}), helpers
   canonical.js          canonical functions: segment, triangle, wedge, polygon,
@@ -106,6 +134,7 @@ js/ui/
 js/figures/           one module per figure, each exporting init…(rootElement)
   common.js             default polygons, convexity-preserving vertex dragging
 tests/math.test.js    unit tests for js/math
+tests/slides.test.js  consistency of slides.html with index.html and js/build.js
 ```
 
 ### Conventions (read `js/math/polygon.js` first)
@@ -123,7 +152,7 @@ tests/math.test.js    unit tests for js/math
 
 1. Create `js/figures/myfigure.js` exporting `initMyFigure(root)`; build the DOM
    inside `root` (use `Stage` for canvases, `widgets.js` for controls).
-2. Register it in the `FIGURES` table of `js/main.js`.
+2. Register it in the `FIGURES` table of `js/build.js`.
 3. Put `<figure class="fig" data-figure="myfigure"><figcaption>…</figcaption></figure>`
    in `index.html`.
 
@@ -132,6 +161,17 @@ Navigation is generated from the page (`js/ui/nav.js`): the contents panel lists
 new sections and figures need no extra markup beyond a caption that starts with
 `<strong>Figure N.</strong>`. The map of topics is the pair of tables at the top of
 `js/figures/conceptmap.js`.
+
+### Adding a slide
+
+Add a `<section class="slide …">` to `slides.html`; the comment at the top of that file
+lists the layouts and attributes. A figure is used exactly as on the page
+(`<figure class="fig" data-figure="NAME"></figure>`, without caption). Slides are 582 px
+high below the title, and most figures are taller than that, so a slide can move the
+read-outs of its figure into the text column (`data-notes="readout"`), show the figure
+smaller (`style="--fig-zoom: 0.8"`) or change the width of the text column
+(`--text-w`). `slides.html?print` shows all slides at once, which makes it easy to see
+whether everything fits.
 
 Colours come from CSS custom properties in `css/style.css`; never hard-code a
 colour in a figure, or it will not follow the theme. The page follows the system's
