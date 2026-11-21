@@ -259,6 +259,12 @@ canvas.stage { display: block; width: 100%; touch-action: auto; }
   .control input[type="range"] { width: 9rem; }
 }
 
+/* small grid of Hodge numbers (Figure 11c) */
+.readout table.hodge { width: auto; margin: 0.3rem 0 0.5rem; }
+.readout table.hodge td { text-align: center; min-width: 2.6rem; padding: 0.3rem 0.5rem; border: 1px solid var(--grid); color: var(--ink-2); }
+.readout table.hodge td.rank { border: 2px solid var(--accent); color: var(--ink); font-weight: 700; }
+.readout table.hodge td.genus { border: 2px dashed var(--series-2); color: var(--ink); font-weight: 700; }
+
 /* ---------- 5. navigation aids (js/ui/nav.js) ---------- */
 /* Contents panel: a drawer that the Contents button opens; pinned beside the text on wide screens. */
 .contents {

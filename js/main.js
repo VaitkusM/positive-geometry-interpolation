@@ -43,6 +43,8 @@ import { initBaryRational } from "./figures/baryrational.js";
 import { initResidueCircle } from "./figures/residuecircle.js";
 import { initBaryPoles } from "./figures/barypoles.js";
 import { initQuadContour } from "./figures/quadcontour.js";
+import { initHodgeCubic } from "./figures/hodgecubic.js";
+import { initCurveRank } from "./figures/curverank.js";
 import { initMeanValue } from "./figures/meanvalue.js";
 import { initSmooth } from "./figures/smooth.js";
 import { initQuad } from "./figures/quad.js";
@@ -74,6 +76,8 @@ const FIGURES = {
   residuecircle: initResidueCircle,
   barypoles: initBaryPoles,
   quadcontour: initQuadContour,
+  hodgecubic: initHodgeCubic,
+  curverank: initCurveRank,
   meanvalue: initMeanValue,
   smooth: initSmooth,
   quad: initQuad,

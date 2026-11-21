@@ -1,7 +1,7 @@
 /**
  * conceptmap.js — the map of topics at the top of the page.
  *
- * A node-link diagram (SVG): sixteen topics on a grid, joined where the page
+ * A node-link diagram (SVG): seventeen topics on a grid, joined where the page
  * relates them. Selecting a box shows what the topic is, where it is treated
  * and, for every line that leaves the box, the relation in one sentence.
  *
@@ -40,6 +40,9 @@ const TOPICS = {
   polypols: { at: [4, 1], kind: "later", name: "Curved boundaries", title: "Curved boundaries", sub: "polypols and polycons",
     where: [["Section 8.1", "later-polypols"]],
     text: "Regions bounded by arcs of curves. They have canonical forms and adjoint curves too, but not all properties of polygons survive." },
+  hodge: { at: [5, 1], kind: "later", name: "Mixed Hodge theory", title: "Mixed Hodge theory", sub: "genus and rank",
+    where: [["Section 8.1", "later-hodge"]],
+    text: "Canonical forms as images of homology classes: the rank counts the forms that exist, the genus the ways in which they fail to be unique." },
   onevar: { at: [1, 2], kind: "later", name: "More nodes on a line", title: "More nodes on a line", sub: "residues and contours",
     where: [["Section 8.2", "later-contour"]],
     text: "Polynomial and rational interpolation in barycentric form, the residue theorem, and Hermite’s contour integral for the error." },
@@ -82,6 +85,8 @@ const TOPICS = {
 const RELATIONS = [
   ["segment", "triangle", "The same step one dimension up: divide by the product of the areas, and the weights get poles on the sides."],
   ["triangle", "polygon", "A polygon has more edges than a triangle; Wachspress’ weights keep poles only on the two edges that meet at the vertex."],
+  ["polypols", "hodge", "For a region bounded by curves, the genus of the curves decides whether its canonical form is unique: lines, conics and singular cubics are fine, a smooth cubic is not."],
+  ["hodge", "push", "In this framework it is a theorem that canonical forms are carried along by maps, forwards and backwards."],
   ["polygon", "polypols", "Wachspress also treated regions with curved sides, the polycons."],
   ["segment", "onevar", "From two nodes to many: the same formula, with a pole at every node."],
   ["segment", "forms", "The sum of the two pole weights is the canonical function of the segment."],

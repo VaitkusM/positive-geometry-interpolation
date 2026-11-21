@@ -388,6 +388,10 @@
       calculation correspond to different triangulations of the same shape, in the same way
       that Section 5 obtains one set of coordinates from different decompositions.</p>
   </details>
+  <p class="update"><span class="badge">Later development</span> Why a form with these
+    properties exists, when it is unique, and why the forms of the pieces of a subdivision
+    add up has since been explained by Hodge theory; see
+    <a href="#later-hodge">the last part of Section 8.1</a>.</p>
 </section>
 
 <!-- ================================================================== -->
@@ -843,6 +847,201 @@
     part of Wachspress’ construction is, so far, explained by ratios of canonical forms; a full
     description is, to our knowledge, not in the literature. And Brüser’s example shows that
     positivity of the common denominator cannot be taken for granted beyond polygons.</p>
+
+  <h4 id="later-hodge">Why a canonical form exists, and when it is unique: mixed Hodge theory</h4>
+  <p class="gist"><strong>In short:</strong> Brown and Dupont (2025) replace the recursive
+    definition of Section 4 by a statement of topology. A region is an element of a homology
+    group; Hodge theory attaches a form with logarithmic poles to it. Two numbers decide the
+    outcome: the <em>combinatorial rank</em> counts the canonical forms that exist, and the
+    <em>genus</em> counts the ways in which they fail to be unique. Positive geometries are the
+    case of genus zero.</p>
+
+  <p><strong>The question.</strong> Section 4 defined a canonical form by its poles and
+    residues, and took three things for granted: that such a form exists, that there is only
+    one, and that the forms of the pieces of a subdivision add up. Arkani-Hamed, Bai and Lam
+    built the first two into the definition of a positive geometry and gave arguments for
+    the third. Brown and Dupont derive all three from one construction, and say exactly when
+    it works.</p>
+
+  <p><strong>Regions as homology classes.</strong> Let <span class="tex">X</span> be a compact
+    complex variety of dimension <span class="tex">n</span>, for instance the projective plane,
+    and <span class="tex">Y</span> a subvariety, for instance a union of lines and curves. A
+    region <span class="tex">\sigma</span> whose boundary lies on <span class="tex">Y</span>
+    defines a class in the <em>relative homology group</em>
+    <span class="tex">H_n(X,Y)</span>. This is a finite-dimensional vector space: regions can be
+    added (a subdivided region is the sum of its pieces), an orientation reversal changes the
+    sign, and a region may be deformed as long as its boundary stays on
+    <span class="tex">Y</span>. On the other side stands the space
+    <span class="tex">\Omega^n_{\log}(X\setminus Y)</span> of <span class="tex">n</span>-forms on the
+    complement with <em>logarithmic</em> poles: forms that look like
+    <span class="tex">d\log f_1\wedge\dots\wedge d\log f_k\wedge(\text{regular})</span> near
+    <span class="tex">Y</span>, after <span class="tex">Y</span> has been made into a union of
+    smooth pieces crossing transversally.</p>
+
+  <p><strong>Two numbers.</strong> By Deligne’s work the group
+    <span class="tex">H_n(X,Y)</span> carries a <em>mixed Hodge structure</em>. For the present
+    purpose this is a table of non-negative integers, the Hodge numbers
+    <span class="tex">h^{-p,-q}</span> with <span class="tex">0\le p,q\le n</span>, which add up
+    to the dimension of the group. Brown and Dupont single out two parts of the table:</p>
+  <div class="tex block">\operatorname{cr}(X,Y)=h^{0,0}\quad\text{(combinatorial rank)},\qquad
+    g(X,Y)=\sum_{p&gt;0}h^{-p,0}\quad\text{(genus)} .</div>
+  <p>Hodge theory provides a linear map <span class="tex">R</span>, an iterated residue, from
+    the logarithmic forms onto a space of dimension <span class="tex">\operatorname{cr}</span>,
+    the part of <span class="tex">H_n(X,Y)</span> of weight zero. Its kernel has dimension
+    <span class="tex">g</span>. Hence</p>
+  <div class="tex block">\dim\Omega^n_{\log}(X\setminus Y)=\operatorname{cr}(X,Y)+g(X,Y) .</div>
+  <p>If the genus is zero, <span class="tex">R</span> can be inverted, and the canonical form
+    of a class <span class="tex">\sigma</span> is defined as the form that
+    <span class="tex">R</span> sends to it. When <span class="tex">Y</span> is a union of smooth
+    pieces crossing transversally this has a concrete meaning. Call a point where
+    <span class="tex">n</span> pieces meet a <em>corner</em>. The canonical form of
+    <span class="tex">\sigma</span> is the only logarithmic form whose
+    <span class="tex">n</span>-fold residue at every corner is <span class="tex">\pm1</span> if
+    <span class="tex">\sigma</span> has that corner and <span class="tex">0</span> if not. So
+    existence of a non-zero canonical form means positive rank, and uniqueness means genus
+    zero. If the genus is positive, forms with the right residues still exist, but they are
+    determined only up to adding an element of the kernel of <span class="tex">R</span>.</p>
+
+  <p><strong>What follows at once.</strong> Because the canonical form is the image of a
+    homology class under a linear map defined by general principles, the properties used on
+    this page become theorems: the forms of the pieces of a subdivision add up, and reversing
+    the orientation changes the sign (Sections 4 and 5); the residue along a boundary piece
+    is the canonical form of that piece, whenever the piece has genus zero as well; canonical
+    forms are carried along by maps, both forwards and backwards (the push-forward of
+    Section 8.4); the form of a product is the product of the forms; and blowing up points
+    of <span class="tex">Y</span> changes nothing. The construction needs neither real numbers
+    nor positivity. In that respect it is more general than the original definition, and
+    in another too: the boundary of a genus zero pair need not have genus zero, so the
+    recursion can fail although the canonical form exists.</p>
+
+  <p><strong>One dimension.</strong> The first example in their paper is Section 1 of this
+    page. For the Riemann sphere and two points <span class="tex">a,b</span>, the homology group
+    is spanned by the class of a path from <span class="tex">a</span> to
+    <span class="tex">b</span> (all such paths give the same class), and its canonical form is
+    <span class="tex">d\log\frac{z-b}{z-a}</span>, the form of the segment. On a curve of genus
+    <span class="tex">g</span> a form with residues <span class="tex">-1</span> at
+    <span class="tex">a</span> and <span class="tex">+1</span> at <span class="tex">b</span> still
+    exists, but any of the <span class="tex">g</span> independent holomorphic forms may be
+    added to it. This is the oldest instance of the phenomenon, and the reason for the word
+    genus. With more marked points <span class="tex">t_0,\dots,t_n</span> the homology group has
+    dimension <span class="tex">n</span>, spanned by the intervals between neighbours, and every
+    logarithmic form is the canonical form of a combination of intervals. In the language of
+    the one-variable part of Section 8.2: Berrut’s form belongs to every second interval, and
+    the form <span class="tex">dt/\ell(t)</span> of polynomial interpolation is the canonical
+    form of the combination <span class="tex">\sum_jm_j\,[t_j,t_{j+1}]</span> with
+    <span class="tex">m_j=c_0+\dots+c_j</span>, whose coefficients are not integers.</p>
+
+  <p><strong>Polygons and polytopes.</strong> A union of hyperplanes in projective space
+    always has genus zero, by a theorem of Brieskorn, and the bounded regions of a real
+    arrangement form a basis of the homology group. For a convex polygon with edge functions
+    <span class="tex">f_1,\dots,f_n</span> in counter-clockwise order, Brown and Dupont obtain
+    from the corner residues</p>
+  <div class="tex block">\varpi_P=-\sum_i d\log f_i\wedge d\log f_{i+1},
+    \qquad\text{and for a simple polytope}\qquad
+    \varpi_P=\sum_{v}\ \pm\!\!\bigwedge_{F\ni v}d\log f_F ,</div>
+  <p>a sum over the vertices, each term being the wedge of the logarithmic forms of the
+    facets through that vertex. This is the decomposition of Section 5. In the notation of
+    this page <span class="tex">d\log h_{i-1}\wedge d\log h_i=w_i\,dx\wedge dy</span>, the wedge
+    function of the vertex <span class="tex">\mathbf p_i</span>. So the central formula of the
+    paper has a reading in this framework: the canonical form of a polygon is the form
+    with residue one at each of its corners, it splits into one term for each corner, and
+    the Wachspress coordinate of a vertex is the share of its corner. For a vertex where
+    more facets meet than the dimension, as at the apex of a pyramid, the corner term is
+    itself a sum, and Brown and Dupont compute it.</p>
+
+  <p><strong>Curves in the plane.</strong> For a curve <span class="tex">Y</span> in the
+    projective plane both numbers can be read off:</p>
+  <div class="tex block">g=\sum_{\text{components}}\text{genus},\qquad
+    \operatorname{cr}=\sum_{P}\big(r_P-1\big)-(k-1),</div>
+  <p>where <span class="tex">k</span> is the number of components and
+    <span class="tex">r_P</span> the number of branches of <span class="tex">Y</span> through the
+    point <span class="tex">P</span> (complex points and points at infinity included). If all
+    singular points are crossings of two branches, the rank is the number of independent
+    loops in the graph that has a dot for every component and a line for every crossing.
+    Lines, conics and singular cubics have genus zero, so the regions bounded by lines and
+    conics that this section is about have unique canonical forms. A smooth cubic has genus
+    one, and a region bounded by it alone has no canonical form: this was already observed by
+    Arkani-Hamed, Bai and Lam, for the reason shown in Figure 11b. A conic alone has rank zero. In this framework the canonical
+    form of a disc is therefore zero, and by additivity the forms of the two halves of a
+    disc cancel: the canonical function <span class="tex">2/\big((1-x^2-y^2)\,y\big)</span> of the
+    upper half disc changes sign with <span class="tex">y</span>. The non-rational function attached to
+    the disc in Section 8.2 is a different object: it comes from the dual volume and is not
+    a logarithmic form.</p>
+
+  <figure class="fig" data-figure="hodgecubic">
+    <figcaption><strong>Figure 11b.</strong> <span class="badge">Later development</span>
+      A corner makes the canonical form, a handle destroys its uniqueness. For
+      <span class="tex">\varepsilon=0</span> the cubic has a node, the teardrop has one corner,
+      and the residue of its canonical form along the boundary has a simple pole at each end:
+      it is the canonical form of a segment. For <span class="tex">\varepsilon&gt;0</span> the
+      curve is smooth of genus one. The same formula now has a finite residue all the way
+      round, which is the holomorphic form of the curve; it has become the ambiguity, and the
+      oval has no canonical form.</figcaption>
+  </figure>
+
+  <figure class="fig" data-figure="curverank">
+    <figcaption><strong>Figure 11c.</strong> <span class="badge">Later development</span>
+      Rank and genus for eight curves. The rank is the number of independent loops of the
+      graph on the right, and the genus is carried by the dots drawn as rings. The small
+      table shows where the two numbers sit among the Hodge numbers. In the examples with
+      genus zero the rank can also be seen on the left: it is the number of bounded regions
+      minus the number of relations among them (the halves of a disc, or its four sectors,
+      add up to the disc, whose form is zero).</figcaption>
+  </figure>
+
+  <p><strong>Developments since.</strong> The framework was taken up quickly.</p>
+  <ul>
+    <li><strong>As a definition.</strong> Telen’s lecture notes define a positive geometry as
+      a homology class of a genus zero pair, and discuss how this differs from the recursive
+      definition. Sturmfels and Telen add the real structure back (“positive arrangements”)
+      and show that the 130 curved polygons cut out by the 27 lines on a real cubic surface
+      are positive geometries, whose canonical forms span the logarithmic forms.</li>
+    <li><strong>The real picture.</strong> Yoshinaga (2026) proves, for arrangements of real
+      rational curves whose crossings are all real, that the oriented regions of the real
+      picture span the homology group, and describes the relations among them. This is the
+      statement behind the last sentence of the caption of Figure 11c.</li>
+    <li><strong>Amplituhedra.</strong> Koefler, Pavlov and Sinn show that the amplituhedra
+      known to be positive geometries give genus zero pairs, but that in general the
+      amplituhedron inside its Grassmannian gives a pair of positive genus. They exhibit a
+      region in projective three-space that is a positive geometry in the recursive sense
+      although its pair has genus one; after a blow-up the genus is zero. So genus zero is
+      sufficient but not necessary, and depends on the ambient variety. In a second paper
+      they turn this into a Hodge-theoretic criterion and prove with it that the
+      <span class="tex">m=2</span> amplituhedron is a positive geometry, a conjecture open
+      since 2017.</li>
+    <li><strong>Other uses.</strong> Hollering, Pavlov and Pratt show that canonical forms
+      give coordinates on a distinguished compactification of the complement (the log
+      canonical model). Pfister treats affine hyperplane arrangements, where the canonical
+      forms are the logarithmic forms without residue at infinity; compare the criterion
+      for linear precision in Section 8.2. Arundine, Calvo Cortes, Koefler and Rost find a
+      physical quantity that is the canonical form of a combination of regions with
+      half-integer coefficients, which only the homological definition accommodates.</li>
+    <li><strong>Neighbours.</strong> Eur and Lam construct canonical forms for oriented
+      matroids inside the Orlik–Solomon algebra, the combinatorial model of the cohomology
+      of an arrangement complement; for arrangements the two constructions describe the
+      same forms. Brown and Dupont’s own motivation comes from periods: the canonical form
+      is what turns an integral over <span class="tex">\sigma</span> into its
+      “single-valued” version.</li>
+  </ul>
+
+  <p><strong>What it means for interpolation.</strong> Three remarks in the spirit of this
+    page. First, the denominator of a set of barycentric coordinates in the sense of
+    Section 5 is a canonical form, so on a domain bounded by curves the first question is
+    whether one exists and is unique: the rank must be positive and the genus zero. Second,
+    the numerators are the corner terms of that form, and the framework says which corners
+    there are and with what sign each contributes. Third, Hodge theory is silent on the
+    property that interpolation needs most, positivity inside the domain. That is a
+    question about real points, for which the adjoint of Section 6 and the counterexample
+    in this section remain the relevant tools.</p>
+
+  <p class="update">The statements about genus, rank, the residue map and the formulas for
+    polygons and polytopes are those of Brown and Dupont; the later papers are reported
+    from their abstracts and the passages cited. Ours, and checked in the project’s tests,
+    are the identification of their corner terms with the wedge functions of Section 5, the
+    description of the interpolation forms of Section 8.2 as canonical forms of
+    combinations of intervals, the table of Hodge numbers in Figure 11c (which uses that for
+    a plane curve the relative homology group is the first homology of the curve), and the
+    plot of the residue in Figure 11b.</p>
 
   <h3 id="later-transforms">8.2 Dual volumes, Laplace transforms and non-rational forms</h3>
   <p class="gist"><strong>In short:</strong> for a polygon the canonical function is the area
@@ -1441,8 +1640,10 @@
     nearest to <span class="tex">x</span>), so the interpolant has no real poles, as Berrut
     showed. With the
     weights <span class="tex">c_j</span> of polynomial interpolation, by contrast, the residues
-    of <span class="tex">dt/\ell</span> are not <span class="tex">\pm1</span>, and the form is a
-    canonical form only for two nodes. Floater and Hormann found a family in between: for
+    of <span class="tex">dt/\ell</span> are not <span class="tex">\pm1</span>, and the form is the
+    canonical form of an interval only for two nodes (in the wider sense of
+    <a href="#later-hodge">Section 8.1</a> it belongs to a combination of intervals with
+    non-integer coefficients). Floater and Hormann found a family in between: for
     each <span class="tex">d</span>, weights without real poles that reproduce polynomials of
     degree <span class="tex">d</span>; <span class="tex">d=0</span> is Berrut’s interpolant and
     <span class="tex">d=n</span> the polynomial.</p>
@@ -1855,6 +2056,24 @@
       <a href="https://arxiv.org/abs/2509.02239">arXiv:2509.02239</a>, 2025.</li>
     <li>B. Shapiro. Canonical forms and moment-generating functions of plane polypols.
       <a href="https://arxiv.org/abs/2605.10864">arXiv:2605.10864</a>, 2026.</li>
+    <li>F. Brown, C. Dupont. Positive geometries and canonical forms via mixed Hodge theory.
+      <a href="https://arxiv.org/abs/2501.03202">arXiv:2501.03202</a>, 2025.</li>
+    <li>P. Deligne. Théorie de Hodge II. <em>Publications mathématiques de l’IHÉS</em>
+      40:5–57, 1971.</li>
+    <li>B. Sturmfels, S. Telen. Positive geometries from cubic surfaces.
+      <a href="https://arxiv.org/abs/2605.11909">arXiv:2605.11909</a>, 2026.</li>
+    <li>M. Yoshinaga. Regions of totally real arrangements of rational curves.
+      <a href="https://arxiv.org/abs/2611.00861">arXiv:2611.00861</a>, 2026.</li>
+    <li>J. Koefler, D. Pavlov, R. Sinn. Positive genus pairs from amplituhedra.
+      <a href="https://arxiv.org/abs/2601.11142">arXiv:2601.11142</a>, 2026.</li>
+    <li>J. Koefler, D. Pavlov, R. Sinn. The m = 2 amplituhedron is a positive geometry.
+      <a href="https://arxiv.org/abs/2610.27903">arXiv:2610.27903</a>, 2026.</li>
+    <li>B. Hollering, D. Pavlov, E. Pratt. Log canonical models and positive geometries.
+      <a href="https://arxiv.org/abs/2607.28368">arXiv:2607.28368</a>, 2026.</li>
+    <li>A. Pfister. Affine hyperplane arrangements at finite distance.
+      <a href="https://arxiv.org/abs/2602.00847">arXiv:2602.00847</a>, 2026.</li>
+    <li>M. Arundine, V. Calvo Cortes, J. Koefler, F. Rost. Positive geometry of Yang–Mills
+      correlators. <a href="https://arxiv.org/abs/2608.27594">arXiv:2608.27594</a>, 2026.</li>
     <li>E. Wachspress. Generalized barycentrics: rational bases for 2D and 3D elements with
       algebraic sides. Workshop slides,
       <a href="https://www.inf.usi.ch/faculty/hormann/nsfworkshop/presentations/Wachspress.pdf">inf.usi.ch</a>.</li>

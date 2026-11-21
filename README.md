@@ -21,7 +21,7 @@ marked "Added illustration".
 
 | # | Figure | Shows |
 |---|--------|-------|
-| Map | Map of the topics | sixteen topics of the page and the relations between them; select a box for details |
+| Map | Map of the topics | seventeen topics of the page and the relations between them; select a box for details |
 | 1 | Segment | linear interpolation as a ratio of two poles (Shepard form) |
 | 2 | Triangle | area coordinates = ratio-of-poles form |
 | 3 | Canonical function | 3D graph over polygons and regions with curved sides |
@@ -34,6 +34,8 @@ marked "Added illustration".
 | 9 | Disc | simple pole (polygons) versus branch point (disc) |
 | 10 | Polycons *(later development)* | adjoint curves of regions with curved sides; Brüser's 2026 counterexample to Wachspress' conjecture |
 | 11 | Polycon basis *(later development)* | Wachspress' own basis on the pizza slice, with a movable side node; not positive |
+| 11b | Node and handle *(later development)* | a cubic with a node (teardrop, canonical form) smoothed to genus one (ambiguity): residue along the boundary |
+| 11c | Rank and genus *(later development)* | Brown–Dupont's two numbers for eight plane curves, with the graph of components and crossings |
 | 12 | Dual measure *(later development)* | canonical function as an integral over the dual with a density (Mazzucchelli–Raman) |
 | 12b | Cone and cut *(added remark)* | 3D view: the cone of the edge normals is fixed, the point x chooses the cutting plane; the cut is the dual polygon |
 | 12c | Spline on the dual *(added remark)* | the multivariate spline of the edge normals on the dual polygon; its Laplace transform is 1/Πh, the adjoint is the ratio to the uniform density |
@@ -93,6 +95,7 @@ js/math/              pure mathematics, no DOM — the part worth reusing
   toric.js              fibre polytopes (Duistermaat–Heckman), link volume and its minimiser (Santaló point)
   interp.js             one variable: barycentric formula for any weights, Hermite contour integral, potentials, moment curve, residues, poles of rational interpolants
   contour.js            canonical function of a quadrilateral as a contour integral with four poles
+  hodge.js              genus and combinatorial rank of plane curves (Brown–Dupont), the cubics y² = x²(1 − x) − ε
 js/ui/
   stage.js              canvas wrapper: world coordinates, hi-DPI, draggable handles
   ramp.js               sequential colour ramp (heat map, 3D surface)

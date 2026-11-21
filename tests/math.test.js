@@ -1164,3 +1164,84 @@ Deno.test("a quadrilateral's canonical function as a contour integral: closing a
     }
   }
 });
+
+/* ------------------------------------------------------------------ */
+/*  Section 8.1: genus and combinatorial rank (Brown–Dupont)            */
+/* ------------------------------------------------------------------ */
+
+Deno.test("genus and combinatorial rank of plane curves; the dimension of the space of logarithmic forms", async () => {
+  const H = await import("../js/math/hodge.js");
+  const inv = (genera, branches) => { const r = H.planeCurveInvariants(genera, branches); return [r.genus, r.rank, r.forms]; };
+  const same = (a, b, msg) => { if (a.join() !== b.join()) throw new Error(`${msg}: ${a} instead of ${b}`); };
+  // n lines in general position: genus 0, rank = number of bounded regions = (n − 1)(n − 2)/2
+  for (let n = 3; n <= 7; n++) {
+    const pairs = (n * (n - 1)) / 2, regions = ((n - 1) * (n - 2)) / 2;
+    same(inv(new Array(n).fill(0), new Array(pairs).fill(2)), [0, regions, regions], `${n} lines`);
+  }
+  same(inv([0], []), [0, 0, 0], "conic: the disc has canonical form zero");
+  same(inv([0, 0], [2, 2]), [0, 1, 1], "conic and line: the half disc");
+  same(inv([0, 0, 0], [2, 2, 2, 2, 2]), [0, 3, 3], "conic and two lines");
+  same(inv([0], [2]), [0, 1, 1], "nodal cubic: the teardrop");
+  same(inv([0], [1]), [0, 0, 0], "cuspidal cubic: one branch at the cusp");
+  same(inv([1], []), [1, 0, 1], "smooth cubic: one ambiguity, no canonical form");
+  same(inv([1, 0], [2, 2, 2]), [1, 2, 3], "smooth cubic and a line");
+  same(inv([0, 0], [1, 2, 2, 2]), [0, 2, 2], "cuspidal cubic and a general line: the cusp and three crossings (their §5.5.1)");
+  same(inv([0, 0], [2, 2]), [0, 1, 1], "cuspidal cubic and a line through the cusp: two points of intersection (their §5.5.2)");
+  // three concurrent lines: one point with three branches, rank 0 (no bounded region)
+  same(inv([0, 0, 0], [3]), [0, 0, 0], "three concurrent lines");
+});
+
+Deno.test("the nodal cubic: the residue of its canonical form along the boundary is the canonical form of a segment; smoothing the node removes the poles", async () => {
+  const H = await import("../js/math/hodge.js");
+  // teardrop y² = x²(1 − x), parametrised by x = 1 − t², y = t(1 − t²), t ∈ [−1, 1]; the node is t = ±1.
+  // Residue of 2 dx∧dy / f along f = 0 is 2 ds / |∇f|; pulled back to t it must be 2 dt / (1 − t²).
+  for (const t of [-0.9, -0.5, -0.1, 0.3, 0.7, 0.95]) {
+    const x = 1 - t * t, y = t * (1 - t * t);
+    close(y * y, H.cubicG(0, x), 1e-12, "on the curve");
+    const speed = Math.hypot(-2 * t, 1 - 3 * t * t);                      // ds/dt
+    close((2 / Math.hypot(H.cubicDG(x), 2 * y)) * speed, segmentCanonical(-1, 1, t), 1e-10, "residue");
+  }
+  // roots and loop
+  for (const eps of [0.01, 0.05, 0.1]) {
+    const [r1, r2, r3] = H.cubicRoots(eps);
+    for (const r of [r1, r2, r3]) close(H.cubicG(eps, r), 0, 1e-12);
+    if (!(r1 < 0 && 0 < r2 && r2 < r3 && r3 < 1)) throw new Error("order of the roots");
+    const loop = H.cubicLoop(eps, 4000);
+    // smooth curve: the residue density is bounded, and its integral over the oval is the period 2∫dx/√g
+    if (!(Math.max(...loop.density) < 1e3)) throw new Error("bounded density on a smooth cubic");
+    let integral = 0;
+    for (let k = 1; k < loop.pts.length; k++) integral += 0.5 * (loop.density[k] + loop.density[k - 1]) * (loop.s[k] - loop.s[k - 1]);
+    close(integral, H.cubicPeriod(eps), 1e-4, "period");
+  }
+  // the period grows without bound as the oval acquires a node
+  if (!(H.cubicPeriod(1e-6) > H.cubicPeriod(1e-3) && H.cubicPeriod(1e-3) > H.cubicPeriod(0.05))) throw new Error("period grows");
+  if (H.cubicPeriod(0) !== Infinity) throw new Error("nodal cubic: infinite period");
+  // the two half discs: their canonical functions cancel, as they must since the disc has rank 0
+  for (const p of [[0.2, 0.3], [-0.4, 0.1]]) close(halfDiscCanonical(p) + halfDiscCanonical([p[0], -p[1]]), 0, 1e-12);
+});
+
+Deno.test("canonical forms of chains: Brown–Dupont's polygon formula, and polynomial interpolation weights as a combination of intervals", async () => {
+  const I = await import("../js/math/interp.js");
+  const rand = rng(71);
+  // (their eq. 63) the canonical form of a polygon is the sum of dlog f_i ∧ dlog f_{i+1} over the corners,
+  // whatever the scaling of the affine functions f_i; in the normalisation of this page: Σ wedge functions
+  for (let trial = 0; trial < 20; trial++) {
+    const n = 3 + Math.floor(rand() * 5), pts = randomPolygon(n, rand), x = clampIntoConvex(pts, [0.3, -0.2], 0.1);
+    const lines = edgeLines(pts), scale = lines.map(() => 0.3 + 3 * rand());
+    let sum = 0;
+    for (let i = 0; i < n; i++) {
+      const a = lines[mod(i - 1, n)], b = lines[i], sa = scale[mod(i - 1, n)], sb = scale[i];
+      // dlog(f_a) ∧ dlog(f_b) = det(∇f_a, ∇f_b) / (f_a f_b) dx∧dy, with f = scale · h
+      sum += det2(a.n.map((v) => v * sa), b.n.map((v) => v * sb)) / (sa * lineDist(a, x) * sb * lineDist(b, x));
+    }
+    close(sum, polygonCanonical(pts, x), 1e-9, "sum over corners");
+  }
+  // one variable: dt/ℓ(t) is the canonical form of the chain Σ m_j [t_j, t_{j+1}], m_j = c_0 + … + c_j
+  for (const n of [1, 2, 4, 6]) {
+    const t = randomNodes(n, rand), c = I.polynomialWeights(t), x = 1.4 + rand();
+    let m = 0, chain = 0;
+    for (let j = 0; j < n; j++) { m += c[j]; chain += m * (1 / (x - t[j]) - 1 / (x - t[j + 1])); }
+    close(chain, 1 / I.nodePolynomial(t, x), 1e-9, "weighted chain");
+    close(m + c[n], 0, 1e-9, "the weights sum to zero: no boundary at infinity");
+  }
+});
