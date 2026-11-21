@@ -462,3 +462,397 @@ Deno.test("positive Grassmannian G(2,4): chart, cyclic minors and the Plücker r
   close(p(0, 2), a); close(p(1, 3), d);
   close(p(0, 2) * p(1, 3), p(0, 1) * p(2, 3) + p(0, 3) * p(1, 2)); // p13 p24 = p12 p34 + p14 p23
 });
+/* ------------------------------------------------------------------ */
+/*  Section 5, "A mechanical reading": the wheel                        */
+/* ------------------------------------------------------------------ */
+
+/** Random convex CCW polygon with vertices on an ellipse, and a random interior point. */
+function wheelSample(rand, n, circle = false) {
+  for (;;) {
+    const ang = Array.from({ length: n }, () => 2 * Math.PI * rand()).sort((a, b) => a - b);
+    const p = ang.map((t) => (circle ? [Math.cos(t), Math.sin(t)] : [1.3 * Math.cos(t) + 0.2, 0.9 * Math.sin(t) - 0.1]));
+    if (!isConvexCCW(p, 1e-2, 1e-2)) continue;
+    const c = p.map(() => 0.1 + rand()), cs = c.reduce((a, b) => a + b, 0);
+    return { p, x: [0, 1].map((k) => p.reduce((s, q, i) => s + c[i] * q[k], 0) / cs) };
+  }
+}
+
+Deno.test("wheel: Wachspress weights are the spoke stresses of the unique self-stress; the dual polygon is its force diagram", () => {
+  const rand = rng(91);
+  const rank = (M0, tol = 1e-9) => {
+    const M = M0.map((r) => r.slice()), m = M.length, n = M[0].length;
+    let r = 0;
+    for (let c = 0; c < n && r < m; c++) {
+      let piv = r;
+      for (let i = r; i < m; i++) if (Math.abs(M[i][c]) > Math.abs(M[piv][c])) piv = i;
+      if (Math.abs(M[piv][c]) < tol) continue;
+      [M[r], M[piv]] = [M[piv], M[r]];
+      for (let i = r + 1; i < m; i++) { const f = M[i][c] / M[r][c]; for (let k = c; k < n; k++) M[i][k] -= f * M[r][k]; }
+      r++;
+    }
+    return r;
+  };
+  for (let trial = 0; trial < 120; trial++) {
+    const n = 3 + Math.floor(6 * rand()), { p, x } = wheelSample(rand, n);
+    const h = edgeLines(p).map((l) => lineDist(l, x)), w = vertexWedges(p, x), d = polarDual(p, x);
+    const len = p.map((q, i) => Math.hypot(...sub(p[(i + 1) % n], q)));
+    const t = h.map((hi, i) => 1 / (len[i] * hi));       // rim stress (force per unit length), compression
+    // hub: the spoke forces w_i (p_i − x) balance
+    const hub = p.reduce((s, q, i) => add(s, scale(sub(q, x), w[i])), [0, 0]);
+    close(Math.hypot(...hub) / w.reduce((a, b) => a + b, 0), 0, 1e-10, "hub");
+    p.forEach((q, i) => {
+      const im = mod(i - 1, n), ip = (i + 1) % n;
+      // rim node i: the spoke pulls towards the hub, the two rim bars push
+      const f = add(scale(sub(x, q), w[i]), add(scale(sub(p[ip], q), -t[i]), scale(sub(p[im], q), -t[im])));
+      close(Math.hypot(...f) / (w[i] * Math.hypot(...sub(x, q))), 0, 1e-9, "rim node");
+      // Maxwell's reciprocal figure: the dual edge is the spoke force turned by a right angle
+      const e = sub(d[i], d[im]), g = scale(sub(q, x), w[i]);
+      close(Math.min(Math.hypot(e[0] + g[1], e[1] - g[0]), Math.hypot(e[0] - g[1], e[1] + g[0])) / Math.hypot(...g), 0, 1e-9, "reciprocal");
+    });
+    // uniqueness: 2(n+1) equilibrium equations for 2n bar stresses have a one-dimensional solution space
+    const M = Array.from({ length: 2 * (n + 1) }, () => new Array(2 * n).fill(0));
+    for (let i = 0; i < n; i++) for (let k = 0; k < 2; k++) {
+      const j = (i + 1) % n;
+      M[2 * n + k][i] = p[i][k] - x[k]; M[2 * i + k][i] = x[k] - p[i][k];             // spoke i
+      M[2 * i + k][n + i] = p[j][k] - p[i][k]; M[2 * j + k][n + i] = p[i][k] - p[j][k]; // rim bar i
+    }
+    if (2 * n - rank(M) !== 1) throw new Error("the wheel has exactly one self-stress");
+  }
+});
+
+Deno.test("force polygons: edges at distance 1/r, 1, r give Wachspress, mean value and discrete harmonic weights", async () => {
+  const { meanValueWeights } = await import("../js/math/barycentric.js");
+  const rand = rng(92);
+  const dot2 = (u, v) => u[0] * v[0] + u[1] * v[1];
+  const cotAt = (a, b, c) => { const u = sub(a, b), v = sub(c, b); return dot2(u, v) / Math.abs(det2(u, v)); }; // angle at b
+  for (let trial = 0; trial < 120; trial++) {
+    const n = 3 + Math.floor(6 * rand()), { p, x } = wheelSample(rand, n);
+    const r = p.map((q) => Math.hypot(...sub(q, x))), u = p.map((q, i) => scale(sub(q, x), 1 / r[i]));
+    const al = u.map((v, i) => Math.atan2(det2(v, u[(i + 1) % n]), dot2(v, u[(i + 1) % n])));
+    // polygon whose edge i is perpendicular to spoke i at distance rho_i from x: signed edge length over r_i
+    const family = (q) => r.map((ri, i) => {
+      const rho = (k) => Math.pow(r[k], q - 1), ip = (i + 1) % n, im = mod(i - 1, n);
+      return ((rho(ip) - rho(i) * Math.cos(al[i])) / Math.sin(al[i]) + (rho(im) - rho(i) * Math.cos(al[im])) / Math.sin(al[im])) / ri;
+    });
+    const harmonic = p.map((q, i) => cotAt(x, p[(i + 1) % n], q) + cotAt(x, p[mod(i - 1, n)], q));
+    [[0, vertexWedges(p, x)], [1, meanValueWeights(p, x)], [2, harmonic]].forEach(([q, ref]) =>
+      family(q).forEach((v, i) => close(v, ref[i], 1e-8, `family member ${q}`)));
+  }
+  // on a polygon inscribed in a circle the discrete harmonic coordinates are the Wachspress coordinates
+  for (let trial = 0; trial < 60; trial++) {
+    const n = 4 + Math.floor(4 * rand()), { p, x } = wheelSample(rand, n, true);
+    const harmonic = p.map((q, i) => cotAt(x, p[(i + 1) % n], q) + cotAt(x, p[mod(i - 1, n)], q));
+    const total = harmonic.reduce((a, b) => a + b, 0), w = wachspress(p, x);
+    harmonic.forEach((v, i) => close(v / total, w[i], 1e-9, "cyclic polygon"));
+  }
+});
+
+Deno.test("3D: the Wachspress weight is twice the area of the dual face over the distance to the vertex", async () => {
+  const { buildPolytope, SOLIDS, faceDistances, vertexWedges3d } = await import("../js/math/polytope3d.js");
+  const rand = rng(93);
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  for (const name of Object.keys(SOLIDS)) {
+    const poly = buildPolytope(SOLIDS[name]);
+    for (let trial = 0; trial < 10; trial++) {
+      const c = poly.vertices.map(() => 0.1 + rand()), cs = c.reduce((a, b) => a + b, 0);
+      const x = [0, 1, 2].map((k) => poly.vertices.reduce((s, v, i) => s + c[i] * v.p[k], 0) / cs);
+      const h = faceDistances(poly, x), w = vertexWedges3d(poly, x);
+      const F = [0, 0, 0];
+      poly.vertices.forEach((v, i) => {
+        const D = v.faces.map((f) => poly.planes[f].n.map((t) => t / h[f]));   // the three dual vertices
+        const area = 0.5 * Math.hypot(...cross(D[1].map((t, k) => t - D[0][k]), D[2].map((t, k) => t - D[0][k])));
+        const r = Math.hypot(...v.p.map((t, k) => t - x[k]));
+        close(w[i], (2 * area) / r, 1e-9, name);
+        for (let k = 0; k < 3; k++) F[k] += (area * (v.p[k] - x[k])) / r;      // force of magnitude `area` along the spoke
+      });
+      close(Math.hypot(...F), 0, 1e-9, "spoke forces balance");
+    }
+  }
+});
+
+Deno.test("forcePolygon: reproduces the three kinds of weights; apexes coincide exactly for a self-stress", async () => {
+  const { forcePolygon, meanValueWeights } = await import("../js/math/barycentric.js");
+  const rand = rng(94);
+  const dot2 = (u, v) => u[0] * v[0] + u[1] * v[1];
+  const cotAt = (a, b, c) => { const u = sub(a, b), v = sub(c, b); return dot2(u, v) / Math.abs(det2(u, v)); };
+  let gapMV = 0, gapDH = 0;
+  for (let trial = 0; trial < 120; trial++) {
+    const n = 3 + Math.floor(6 * rand()), { p, x } = wheelSample(rand, n);
+    const W = forcePolygon(p, x, "wachspress"), M = forcePolygon(p, x, "meanvalue"), H = forcePolygon(p, x, "harmonic");
+    const d = polarDual(p, x), w = vertexWedges(p, x), mv = meanValueWeights(p, x);
+    const h = edgeLines(p).map((l) => lineDist(l, x));
+    W.v.forEach((q, i) => { close(q[0], d[i][0], 1e-9); close(q[1], d[i][1], 1e-9); });   // the polar dual
+    W.weights.forEach((v, i) => close(v, w[i], 1e-8, "Wachspress weights"));
+    M.weights.forEach((v, i) => close(v, mv[i], 1e-8, "mean value weights"));
+    H.weights.forEach((v, i) => close(v, 0.5 * (cotAt(x, p[(i + 1) % n], p[i]) + cotAt(x, p[mod(i - 1, n)], p[i])), 1e-8, "cotangent weights"));
+    // every force polygon closes: Σ w_i (p_i − x) = 0
+    for (const F of [W, M, H]) {
+      const s = p.reduce((acc, q, i) => add(acc, scale(sub(q, x), F.weights[i])), [0, 0]);
+      close(Math.hypot(...s) / F.weights.reduce((a, b) => a + Math.abs(b), 0), 0, 1e-9, "closure");
+    }
+    // Wachspress: all apexes at the hub, rim forces 1/h_i
+    close(W.spread, 0, 1e-9, "Wachspress apexes coincide");
+    W.apex.forEach((a) => close(Math.hypot(...a), 0, 1e-9));
+    W.v.forEach((q, i) => close(Math.hypot(...q), 1 / h[i], 1e-9, "rim force"));
+    if (n === 3) { close(M.spread, 0, 1e-8, "triangle"); close(H.spread, 0, 1e-8, "triangle"); }
+    else { gapMV = Math.max(gapMV, M.spread); gapDH = Math.max(gapDH, H.spread); }
+  }
+  if (!(gapMV > 1e-2 && gapDH > 1e-2)) throw new Error("mean value and discrete harmonic spokes are not balanced by the rim");
+  // discrete harmonic on a polygon inscribed in a circle: the apexes coincide again
+  for (let trial = 0; trial < 40; trial++) {
+    const { p, x } = wheelSample(rand, 4 + Math.floor(4 * rand()), true);
+    close(forcePolygon(p, x, "harmonic").spread, 0, 1e-8, "cyclic polygon");
+  }
+});
+
+/* ------------------------------------------------------------------ */
+/*  Section 8.2: splines and Laplace transforms                        */
+/* ------------------------------------------------------------------ */
+
+Deno.test("cone spline T_X of a polygon: Laplace transform 1/Πh, derivative rule, adjoint as a differential operator", async () => {
+  const SP = await import("../js/math/splines.js");
+  const rand = rng(101);
+  const fact = (k) => (k <= 1 ? 1 : k * fact(k - 1));
+  const d3 = (p, q) => p[0] * q[0] + p[1] * q[1] + p[2] * q[2];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  // distance of v from the planes spanned by two of the vectors (where the spline has its kinks)
+  const wallDist = (X, v) => {
+    let m = Infinity;
+    for (let i = 0; i < X.length; i++) for (let j = i + 1; j < X.length; j++) {
+      const c = cross(X[i], X[j]);
+      m = Math.min(m, Math.abs(d3(c, v)) / Math.hypot(...c));
+    }
+    return m;
+  };
+  let checked = 0;
+  for (let trial = 0; trial < 36; trial++) {
+    const n = 3 + (trial % 3), { p, x } = wheelSample(rand, n);
+    const X = SP.facetVectors(p), u = [1, x[0], x[1]], d = polarDual(p, x);
+    const h = edgeLines(p).map((l) => lineDist(l, x)), prod = h.reduce((a, b) => a * b, 1);
+    X.forEach((a, i) => close(d3(a, u), h[i], 1e-12, "⟨a_i,(1,x)⟩ = h_i(x)"));
+    // the homogeneous adjoint restricts to the adjoint of canonical.js; adj / Πh is the canonical function
+    close(SP.adjointHom(X, u), polygonAdjoint(p, x), 1e-9, "adjoint");
+    close(SP.adjointHom(X, u) / prod, polygonCanonical(p, x), 1e-9, "canonical function");
+    // indicator of the cone ↔ canonical function: 2 · area of the slice
+    close(2 * SP.integrateFan(d, () => 1), polygonCanonical(p, x), 1e-9, "uniform density");
+    // spline ↔ 1/Πh: (n−1)! · ∫ over the slice
+    const mass = SP.integrateFan(d, (w) => SP.dualSplineDensity(p, x, w), 8);
+    close(fact(n - 1) * mass * prod, 1, 5e-3, "Laplace transform of the spline");
+    // points of the cone, kept away from the kinks
+    const amax = Math.max(...X.map((a) => Math.hypot(...a))), T = (q) => SP.coneSpline(X, q);
+    for (let rep = 0; rep < 5; rep++) {
+      const c = d.map(() => 0.15 + rand()), cs = c.reduce((a, b) => a + b, 0);
+      const w = [0, 1].map((k) => d.reduce((s, q, i) => s + c[i] * q[k], 0) / cs);
+      const v = [1 - (x[0] * w[0] + x[1] * w[1]), w[0], w[1]];
+      const step = n === 4 ? 1e-5 : 1e-3;
+      close(T(v.map((q) => -q)), 0, 1e-12, "zero outside the cone");
+      close(T(v.map((q) => 2 * q)), Math.pow(2, n - 3) * T(v), 1e-9, "homogeneous of degree n − 3");
+      if (n === 3) { close(T(v), 1 / Math.abs(SP.det3(...X)), 1e-12, "three vectors: indicator / |det|"); continue; }
+      if (wallDist(X, v) < 6 * step * amax) continue;
+      // D_a T_X = T_{X∖a}
+      const k = Math.floor(n * rand()), a = X[k];
+      const fd = (T(v.map((q, i) => q + step * a[i])) - T(v.map((q, i) => q - step * a[i]))) / (2 * step);
+      close(fd, SP.coneSpline(X.filter((_, i) => i !== k), v), 1e-5, "derivative removes a vector");
+      // adj(∂) T_X = 1 inside the cone
+      let val = 0;
+      for (const t of SP.adjointTerms(X)) {
+        const dirs = t.factors.map((f) => X[f]), m = dirs.length;
+        let acc = 0;
+        for (let mask = 0; mask < 1 << m; mask++) {
+          let sign = 1;
+          const q = v.slice();
+          for (let b = 0; b < m; b++) { const s = (mask >> b) & 1 ? 1 : -1; sign *= s; for (let i = 0; i < 3; i++) q[i] += s * step * dirs[b][i]; }
+          acc += sign * T(q);
+        }
+        val += (t.coeff * acc) / Math.pow(2 * step, m);
+      }
+      close(val, 1, 1e-5, "adjoint operator gives the indicator");
+      checked++;
+    }
+  }
+  if (checked < 40) throw new Error("too few interior points checked");
+});
+
+Deno.test("linear precision as Stokes' theorem on the dual cone: Σ w_i (1, p_i) = C_P (1, x)", async () => {
+  const SP = await import("../js/math/splines.js");
+  const rand = rng(102);
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  for (let trial = 0; trial < 60; trial++) {
+    const n = 3 + (trial % 5), { p, x } = wheelSample(rand, n);
+    const X = SP.facetVectors(p), L = edgeLines(p), h = L.map((l) => lineDist(l, x)), C = polygonCanonical(p, x);
+    const sum = [0, 0, 0];
+    p.forEach((q, i) => {
+      const im = mod(i - 1, n), cr = cross(X[im], X[i]), dn = det2(L[im].n, L[i].n);
+      // the two facet vectors at a vertex span the plane orthogonal to the homogeneous vertex (1, p_i)
+      close(cr[0], dn, 1e-10); close(cr[1], dn * q[0], 1e-10); close(cr[2], dn * q[1], 1e-10);
+      // Laplace transform of the facet cone(a_{i−1}, a_i) of the dual cone, times its unit normal
+      const facet = Math.hypot(...cr) / (h[im] * h[i]), len = Math.hypot(1, q[0], q[1]);
+      sum[0] += facet / len; sum[1] += (facet * q[0]) / len; sum[2] += (facet * q[1]) / len;
+    });
+    close(sum[0], C, 1e-9, "partition of unity"); close(sum[1], C * x[0], 1e-9, "linear precision");
+    close(sum[2], C * x[1], 1e-9, "linear precision");
+  }
+});
+
+Deno.test("one variable: the B-spline with knots t_i transforms into 1/Π(x − t_i), the denominator of Lagrange's barycentric formula", async () => {
+  const { bspline, lagrangeWeights } = await import("../js/math/splines.js");
+  const rand = rng(103);
+  let done = 0;
+  for (let trial = 0; trial < 60; trial++) {
+    const n = 1 + (trial % 5), t = Array.from({ length: n + 1 }, () => 4 * rand() - 2).sort((a, b) => a - b);
+    if (t.some((v, i) => i && v - t[i - 1] < 0.15)) continue;
+    const x = t[n] + 0.3 + rand(), N = 6000, dy = (t[n] - t[0]) / N;
+    let mass = 0, transform = 0;
+    for (let i = 0; i < N; i++) {
+      const y = t[0] + (i + 0.5) * dy, m = bspline(t, y);
+      mass += m * dy;
+      transform += (m * dy) / Math.pow(x - y, n + 1);
+    }
+    const prod = t.reduce((acc, ti) => acc * (x - ti), 1);
+    close(mass, 1, 1e-6, "B-spline has integral one");
+    close(transform * prod, 1, 1e-5, "∫ M(y) dy / (x − y)^{n+1} = 1 / Π (x − t_i)");
+    // partial fractions: the residues are the barycentric weights of Lagrange interpolation
+    const c = lagrangeWeights(t);
+    close(c.reduce((s, ci, i) => s + ci / (x - t[i]), 0) * prod, 1, 1e-9, "partial fractions");
+    // the barycentric formula reproduces a polynomial of degree n
+    const f = (y) => 1 - 2 * y + 0.5 * Math.pow(y, n);
+    const num = c.reduce((s, ci, i) => s + (ci * f(t[i])) / (x - t[i]), 0), den = c.reduce((s, ci, i) => s + ci / (x - t[i]), 0);
+    close(num / den, f(x), 1e-8, "Lagrange interpolation in barycentric form");
+    done++;
+  }
+  if (done < 20) throw new Error("too few knot sequences checked");
+});
+
+Deno.test("cone and cut: 3! × volume of the pyramid under the cutting plane is the canonical function; sub-lists of vectors", async () => {
+  const SP = await import("../js/math/splines.js");
+  const rand = rng(104);
+  const fact = (k) => (k <= 1 ? 1 : k * fact(k - 1));
+  for (let trial = 0; trial < 40; trial++) {
+    const n = 3 + (trial % 4), { p, x } = wheelSample(rand, n);
+    const X = SP.facetVectors(p), h = edgeLines(p).map((l) => lineDist(l, x)), d = polarDual(p, x);
+    const cut = X.map((a, i) => a.map((c) => c / h[i]));
+    // the cut lies in the plane ⟨(1, x), v⟩ = 1 and projects to the dual polygon
+    cut.forEach((s, i) => {
+      close(s[0] + x[0] * s[1] + x[1] * s[2], 1, 1e-10);
+      close(s[1], d[i][0], 1e-10); close(s[2], d[i][1], 1e-10);
+    });
+    let volume = 0;
+    for (let i = 1; i < n - 1; i++) volume += Math.abs(SP.det3(cut[0], cut[i], cut[i + 1])) / 6;
+    close(6 * volume, polygonCanonical(p, x), 1e-9, "pyramid volume");
+    // the Laplace transform formula also holds for the spline of a sub-list (Figure 12d)
+    if (n >= 5) {
+      const drop = Math.floor(n * rand()), keep = X.map((_, i) => i).filter((i) => i !== drop);
+      const Y = keep.map((i) => X[i]), hull = keep.map((i) => d[i]), o = hull[0];
+      const shifted = hull.map((q) => [q[0] - o[0], q[1] - o[1]]);
+      const mass = SP.integrateFan(shifted, (q) => {
+        const w = [q[0] + o[0], q[1] + o[1]];
+        return SP.coneSpline(Y, [1 - (x[0] * w[0] + x[1] * w[1]), w[0], w[1]]);
+      }, 8, 6);
+      close(fact(keep.length - 1) * mass * keep.reduce((acc, i) => acc * h[i], 1), 1, 2e-3, "sub-list");
+    }
+  }
+});
+
+/* ------------------------------------------------------------------ */
+/*  Section 8.2: toric varieties and symplectic geometry               */
+/* ------------------------------------------------------------------ */
+
+Deno.test("Duistermaat–Heckman: the spline is the volume of the fibre polytope (reduced space)", async () => {
+  const SP = await import("../js/math/splines.js");
+  const { fibrePolytope } = await import("../js/math/toric.js");
+  const rand = rng(111);
+  let sides = new Set();
+  for (let trial = 0; trial < 80; trial++) {
+    const n = 4 + (trial % 2), { p, x } = wheelSample(rand, n);
+    const X = SP.facetVectors(p), d = polarDual(p, x);
+    const c = d.map(() => 0.05 + rand()), cs = c.reduce((a, b) => a + b, 0);
+    const w = [0, 1].map((k) => d.reduce((s, q, i) => s + c[i] * q[k], 0) / cs);
+    const v = [1 - (x[0] * w[0] + x[1] * w[1]), w[0], w[1]];
+    const F = fibrePolytope(X, v);
+    close(F.spline, SP.coneSpline(X, v), 1e-8, "volume of the fibre over √det(AAᵀ)");
+    // the facet t_i = 0 is present exactly when v lies in the cone of the other vectors
+    const present = X.map((_, i) => pointInConvex(d.filter((_, k) => k !== i), w, 1e-9));
+    const found = new Set(F.facets);
+    present.forEach((yes, i) => { if (yes !== found.has(i)) throw new Error("facets of the fibre polytope"); });
+    if (found.has(-1)) throw new Error("the fibre polytope is bounded");
+    if (n === 5) sides.add(F.points.length);
+  }
+  if (!(sides.has(3) && sides.has(4) && sides.has(5))) throw new Error("fibre polygons with 3, 4 and 5 sides occur");
+});
+
+Deno.test("volume minimisation: the canonical function is the Martelli–Sparks–Yau volume; its minimiser is the Santaló point", async () => {
+  const { linkVolume, canonicalMinimum, TORIC_DIAGRAMS } = await import("../js/math/toric.js");
+  const rand = rng(112);
+  // vol / π³ = C_P(x) / 27 for the Reeb vector 3·(1, x)
+  for (let trial = 0; trial < 40; trial++) {
+    const { p, x } = wheelSample(rand, 3 + (trial % 5));
+    close(linkVolume(p, x), polygonCanonical(p, x) / 27, 1e-9, "formula (3.26)");
+  }
+  // known Sasaki–Einstein volumes (in units of π³)
+  const s13 = Math.sqrt(13), s33 = Math.sqrt(33);
+  const known = { c3: 1, c3z3: 1 / 3, conifold: 16 / 27, dp1: (46 + 13 * s13) / 324, dp2: (59 + 11 * s33) / 486, dp3: 2 / 9 };
+  for (const key of Object.keys(known)) {
+    const pts = TORIC_DIAGRAMS[key].pts, m = canonicalMinimum(pts);
+    close(m.value / 27, known[key], 1e-8, `volume for ${key}`);
+    // Santaló point: the centroid of the polar dual about the minimiser is the minimiser itself
+    const c = centroid(polarDual(pts, m.x));
+    close(Math.hypot(...c), 0, 1e-5, `Santaló point for ${key}`);
+    // strict minimum: the function is larger at nearby points
+    for (let k = 0; k < 6; k++) {
+      const q = [m.x[0] + 0.05 * Math.cos(k), m.x[1] + 0.05 * Math.sin(k)];
+      if (!(polygonCanonical(pts, q) > m.value)) throw new Error("minimum");
+    }
+  }
+  // dP₂: the Reeb vector of Martelli–Sparks–Yau, eq. (3.48), and the R-charges from their volumes (3.50)
+  const dp2 = TORIC_DIAGRAMS.dp2.pts, m = canonicalMinimum(dp2), r = (3 / 16) * (s33 - 1);
+  close(m.x[0], r, 1e-6); close(m.x[1], r, 1e-6);
+  const lam = wachspress(dp2, m.x), denom = 59 + 11 * s33;
+  // vertices in our order: (0,0), (1,0), (2,1), (1,2), (0,1)  ↔  v1, v5, v4, v3, v2 of the paper
+  const charges = [2 * (17 + s33) / denom, 6 * (1 + s33) / denom, 4 * (9 + s33) / denom, 4 * (9 + s33) / denom, 6 * (1 + s33) / denom];
+  lam.forEach((l, i) => close(2 * l, charges[i], 1e-6, "R-charge = twice the Wachspress coordinate"));
+  // conifold and C³: all charges equal
+  wachspress(TORIC_DIAGRAMS.conifold.pts, [0.5, 0.5]).forEach((l) => close(2 * l, 0.5, 1e-12));
+});
+
+Deno.test("counting lattice points of the toric cone: the weighted count tends to the canonical function", async () => {
+  const { TORIC_DIAGRAMS } = await import("../js/math/toric.js");
+  // Σ over lattice points m of the cone { ⟨m, (1, p_a)⟩ ≥ 0 } of e^{−ε⟨(1,x), m⟩}; the sum over m_0 is geometric
+  const count = (pts, x, eps) => {
+    const R = Math.ceil(60 / eps);
+    let sum = 0;
+    for (let m1 = -R; m1 <= R; m1++) for (let m2 = -R; m2 <= R; m2++) {
+      const lowest = Math.max(...pts.map((p) => -(p[0] * m1 + p[1] * m2)));      // m_0 ≥ lowest (an integer)
+      const e = eps * (lowest + x[0] * m1 + x[1] * m2);
+      if (e < 60) sum += Math.exp(-e);
+    }
+    return sum / (1 - Math.exp(-eps));
+  };
+  for (const [key, x] of [["conifold", [0.4, 0.55]], ["dp2", [0.8, 0.95]]]) {
+    const pts = TORIC_DIAGRAMS[key].pts;
+    // ε³ · count = C_P(x) + O(ε); two step sizes remove the first-order term
+    const a = Math.pow(0.1, 3) * count(pts, x, 0.1), b = Math.pow(0.05, 3) * count(pts, x, 0.05);
+    close(2 * b - a, polygonCanonical(pts, x), 5e-3, key);
+  }
+});
+
+Deno.test("Newton polytopes: the stringy integral of a polynomial in one variable tends to the canonical function of its Newton segment", () => {
+  // α' ∫_0^∞ dx/x · x^{α'X} p(x)^{−α'c}  →  canonical function of c·N(p) at X.
+  // With x = e^s and p given by its coefficients, log p(e^s) is evaluated without overflow.
+  const logp = (coeffs, s) => {
+    const terms = coeffs.map((ck, k) => Math.log(ck) + k * s), top = Math.max(...terms);
+    return top + Math.log(terms.reduce((acc, t) => acc + Math.exp(t - top), 0));
+  };
+  const stringy = (coeffs, X, c, alpha) => {
+    const deg = coeffs.length - 1, ds = 0.02, S = 40 / (alpha * Math.min(X, c * deg - X));
+    let sum = 0;
+    for (let s = -S; s <= S; s += ds) sum += Math.exp(alpha * (X * s - c * logp(coeffs, s)));
+    return alpha * sum * ds;
+  };
+  const alpha = 0.02;
+  // p = 1 + x: Newton segment [0, 1]; the integral is a Beta function
+  close(stringy([1, 1], 0.3, 1, alpha), 1 / (0.3 * 0.7), 2e-3, "segment [0, c]");
+  // p = 1 + k x + x²: Newton segment [0, 2]; the interior monomial does not matter in the limit
+  for (const k of [3, 0.5]) {
+    close(stringy([1, k, 1], 0.7, 1, alpha), 2 / (0.7 * 1.3), 4e-3, "segment [0, 2c]");
+  }
+});

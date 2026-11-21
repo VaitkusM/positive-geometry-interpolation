@@ -14,7 +14,7 @@ with poles on the boundary of the domain.
 
 The page is written for a mixed audience (geometric modelling people who have
 not met positive geometries, and mathematicians / physicists who have not met
-barycentric coordinates) and contains fifteen interactive figures. Sections 1–7 follow
+barycentric coordinates) and contains twenty-two interactive figures. Sections 1–7 follow
 the 2019 paper; material published since then is collected in Section 8 and marked
 "Later development" on the page, and figures that go beyond the paper's own are
 marked "Added illustration".
@@ -26,6 +26,7 @@ marked "Added illustration".
 | 3 | Canonical function | 3D graph over polygons and regions with curved sides |
 | 4 | Residues | the residue along an edge is the canonical function of the edge |
 | 5 | Coordinates from forms | wedge / whole-shape ratio, and the polar dual polygon |
+| 5b | The wheel *(added remark)* | Wachspress weights as the spoke stresses of a wheel in equilibrium; the dual polygon as Maxwell's force diagram; comparison with mean value and discrete harmonic weights |
 | 6 | Polyhedra *(added illustration)* | the same construction in 3D, with the dual polyhedron and its pyramids |
 | 7 | Adjoint | the adjoint curve through the external intersection points |
 | 8 | Line space | tetrahedral line complex and the octahedron (hypersimplex) |
@@ -33,6 +34,12 @@ marked "Added illustration".
 | 10 | Polycons *(later development)* | adjoint curves of regions with curved sides; Brüser's 2026 counterexample to Wachspress' conjecture |
 | 11 | Polycon basis *(later development)* | Wachspress' own basis on the pizza slice, with a movable side node; not positive |
 | 12 | Dual measure *(later development)* | canonical function as an integral over the dual with a density (Mazzucchelli–Raman) |
+| 12b | Cone and cut *(added remark)* | 3D view: the cone of the edge normals is fixed, the point x chooses the cutting plane; the cut is the dual polygon |
+| 12c | Spline on the dual *(added remark)* | the multivariate spline of the edge normals on the dual polygon; its Laplace transform is 1/Πh, the adjoint is the ratio to the uniform density |
+| 12d | Removing vectors *(added remark)* | a derivative along an edge normal removes it from the spline; three vectors left give a flat triangle |
+| 12e | One variable *(added remark)* | B-spline as the shadow of a simplex; 1/Π(x − tᵢ), its partial fractions and Lagrange's barycentric weights |
+| 12f | Fibre polytope *(added remark)* | Duistermaat–Heckman: the spline value is the volume of the fibre polytope (reduced space); sides disappear across the diagonals |
+| 12g | Volume minimisation *(added remark)* | the canonical function as the Martelli–Sparks–Yau volume of a toric cone; its minimum is the Santaló point; R-charges as Wachspress coordinates |
 | 13 | Area vs perimeter *(later development)* | Wachspress and mean value normalisers as area and perimeter of the dual polygon |
 | 14 | Smooth limit *(later development)* | inscribed polygons → the kernel of Warren et al. for the circle |
 | 15 | Push-forward *(later development)* | quadrilateral from the unit square via the bilinear patch; parallelogram case |
@@ -75,6 +82,8 @@ js/math/              pure mathematics, no DOM — the part worth reusing
                         mean value coordinates
   polytope3d.js         simple polyhedra from face planes, 3D Wachspress, 3D dual
   pushforward.js        inverse bilinear map (complex roots), push-forward of the square's form
+  splines.js            multivariate (cone) splines of a polygon, adjoint as an operator, B-splines
+  toric.js              fibre polytopes (Duistermaat–Heckman), link volume and its minimiser (Santaló point)
 js/ui/
   stage.js              canvas wrapper: world coordinates, hi-DPI, draggable handles
   ramp.js               sequential colour ramp (heat map, 3D surface)

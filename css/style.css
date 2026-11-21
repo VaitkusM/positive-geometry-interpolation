@@ -118,6 +118,19 @@ footer { padding: 1.5rem 1.25rem 3rem; color: var(--ink-2); font: 0.85rem/1.5 va
 .badge.alt { color: var(--ink-2); border-color: var(--axis); }
 .lead.small { font-size: 0.95rem; color: var(--ink-2); }
 .update { border-left: 3px solid var(--accent); padding-left: 0.9rem; font-size: 0.95rem; }
+/* "In short" line that opens a subsection: the one thing to take away. */
+.gist { border-left: 3px solid var(--ink-2); padding-left: 0.9rem; color: var(--ink-2); }
+.gist strong { color: var(--ink); }
+/* Small side-by-side comparison table in the running text. */
+table.compare { border-collapse: collapse; width: 100%; margin: 0.6rem 0 1.2rem; font-size: 0.95rem; }
+table.compare th, table.compare td { text-align: left; vertical-align: top; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--grid); }
+table.compare thead th { border-bottom: 2px solid var(--ink-2); }
+table.compare tbody th { font-weight: 600; width: 22%; }
+/* Numbered steps of an argument or recipe. */
+ol.steps { padding-left: 1.4rem; }
+ol.steps li { margin-bottom: 0.35rem; }
+.note-box ol.steps { font-size: 0.95rem; margin-bottom: 0; }
+.note-box h3 { margin-top: 1.1rem; }
 section#later { border-top: 2px solid var(--accent); padding-top: 2rem; }
 
 /* ---------- 3. figures ---------- */

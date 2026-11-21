@@ -30,15 +30,17 @@
   <h1>Positive Geometries for Barycentric Interpolation</h1>
   <p class="byline">after Márton Vaitkus, Budapest University of Technology and Economics</p>
   <p class="lead">
-    Linear interpolation on a segment, barycentric coordinates on a triangle and Wachspress
-    coordinates on a convex polygon are all <strong>ratios of rational functions whose poles sit
-    on the boundary</strong> of the domain. <em>Positive geometries</em>, a notion from
-    theoretical physics, explain where these functions come from and why the recipe works.
-    All figures on this page are interactive.
+    To interpolate is to fill in values between given data. The three classical recipes —
+    linear interpolation on a segment, barycentric coordinates on a triangle and Wachspress
+    coordinates on a convex polygon — share a structure that is easy to miss: every weight is a
+    <strong>ratio of two functions that become infinite on the boundary</strong> of the domain.
+    <em>Positive geometries</em>, a notion from theoretical physics, say where these functions
+    come from and why the recipe works. All figures on this page are interactive.
   </p>
   <p class="lead small">Sections 1–7 follow the 2019 paper. Material marked
     <span class="badge">Later development</span> reports results published since then, and
-    <span class="badge alt">Added illustration</span> marks figures that go beyond the paper’s own.</p>
+    <span class="badge alt">Added illustration</span> and <span class="badge alt">Added remark</span>
+    mark figures and explanations that go beyond the paper’s own.</p>
 </header>
 
 <nav class="toc" aria-label="Sections">
@@ -65,6 +67,29 @@
       and perhaps the amplituhedron. Sections 1–3 explain what interpolation people want from
       “barycentric coordinates”; Section 5 shows that canonical forms deliver exactly that.</p>
   </div>
+
+  <h3>The argument in five steps</h3>
+  <ol class="steps">
+    <li><strong>Sections 1–3</strong> rewrite the classical formulas so that each weight reads
+      “a function that is infinite near its own vertex, divided by a function that is infinite
+      on the whole boundary”.</li>
+    <li><strong>Section 4</strong> identifies the denominator: it is the <em>canonical
+      function</em> of the domain, which positive geometries attach to a region by one simple
+      rule.</li>
+    <li><strong>Section 5</strong> identifies the numerators: they are canonical functions too,
+      of an infinite wedge at each vertex. That the weights sum to one then needs no
+      computation.</li>
+    <li><strong>Section 6</strong> looks at the polynomial that appears when everything is put
+      over a common denominator, the <em>adjoint</em>.</li>
+    <li><strong>Sections 7 and 8</strong> ask how far the idea reaches: the paper’s open
+      problems, and what has been published since.</li>
+  </ol>
+
+  <h3>Three words used throughout</h3>
+  <p>A <strong>rational function</strong> is a quotient of two polynomials. It has a
+    <strong>pole</strong> where its denominator vanishes and the function becomes infinite. The
+    pole is <strong>simple</strong> when the function grows like 1/distance on approaching it,
+    as <span class="tex">1/x</span> does at <span class="tex">x=0</span>, and not faster.</p>
 </section>
 
 <!-- ================================================================== -->
@@ -75,17 +100,24 @@
     segment, linear interpolation fills in the values in between:</p>
   <div class="tex block">f(x)=\underbrace{\frac{b-x}{b-a}}_{\lambda_a(x)}\,f(a)+\underbrace{\frac{x-a}{b-a}}_{\lambda_b(x)}\,f(b).</div>
   <p>The weights <span class="tex">\lambda_a,\lambda_b</span> are the <em>barycentric coordinates</em> of
-    <span class="tex">x</span>: they are positive inside the segment, sum to one, and
-    <span class="tex">\lambda_a=1</span> at <span class="tex">a</span>. Dividing numerator and
-    denominator by <span class="tex">(x-a)(b-x)</span> gives the same function in
-    <em>barycentric form</em>:</p>
+    <span class="tex">x</span>. They are positive inside the segment and sum to one, and at the end
+    point <span class="tex">a</span> they take the values <span class="tex">\lambda_a=1</span>,
+    <span class="tex">\lambda_b=0</span>, so that the data value <span class="tex">f(a)</span> is
+    reproduced there.</p>
+  <p>Now a small algebraic step that the rest of the page builds on. Write the formula as one
+    fraction, <span class="tex">\big((b-x)f(a)+(x-a)f(b)\big)/(b-a)</span>, and divide top and
+    bottom by <span class="tex">(x-a)(b-x)</span>. The function does not change, but it now
+    reads</p>
   <div class="tex block">f(x)=\frac{\dfrac{1}{x-a}\,f(a)+\dfrac{1}{b-x}\,f(b)}{\dfrac{1}{x-a}+\dfrac{1}{b-x}}
     \qquad\text{with}\qquad \frac{1}{x-a}+\frac{1}{b-x}=\frac{b-a}{(x-a)(b-x)}.</div>
-  <p>Each data value is now weighted by a function that blows up at its own point. Near
-    <span class="tex">a</span> the term <span class="tex">1/(x-a)</span> dominates both numerator and
-    denominator, the ratio tends to “<span class="tex">\infty/\infty</span>”, and what survives is
-    <span class="tex">f(a)</span>. This is the idea of <strong>Shepard interpolation</strong>,
-    <span class="tex">f(x)=\sum_i w_i(x)f(x_i)\,/\sum_j w_j(x)</span> with weights such as
+  <p>This is called the <em>barycentric form</em>. Each data value is weighted by a function
+    with a pole at its own point: <span class="tex">1/(x-a)</span> is infinite at
+    <span class="tex">a</span>, and <span class="tex">1/(b-x)</span> at <span class="tex">b</span>. As
+    <span class="tex">x</span> approaches <span class="tex">a</span>, the term
+    <span class="tex">1/(x-a)</span> outgrows everything else in both numerator and denominator,
+    so the ratio tends to <span class="tex">f(a)</span>. Interpolation happens <em>because</em>
+    the weights blow up. This is the idea of <strong>Shepard interpolation</strong>,
+    <span class="tex">f(x)=\sum_i w_i(x)f(x_i)\,/\sum_j w_j(x)</span>, with weights such as
     <span class="tex">w_i=1/\operatorname{dist}(x,x_i)</span>.</p>
 
   <figure class="fig" data-figure="segment">
@@ -102,17 +134,25 @@
   <h2><span class="num">2</span> The same trick on a triangle</h2>
 
   <p>On a triangle <span class="tex">\mathbf p_0\mathbf p_1\mathbf p_2</span> the barycentric coordinates
-    of a point <span class="tex">\mathbf x</span> are ratios of areas. Writing
-    <span class="tex">A_i</span> for the area of the small triangle spanned by
-    <span class="tex">\mathbf x</span> and the side opposite to <span class="tex">\mathbf p_i</span>, and
-    <span class="tex">A=A_0+A_1+A_2</span>,</p>
+    of a point <span class="tex">\mathbf x</span> are ratios of areas. The point
+    <span class="tex">\mathbf x</span> splits the triangle into three small triangles. Write
+    <span class="tex">A_i</span> for the area of the one spanned by
+    <span class="tex">\mathbf x</span> and the side <em>opposite</em> to
+    <span class="tex">\mathbf p_i</span>, and <span class="tex">A=A_0+A_1+A_2</span> for the total
+    area. Then <span class="tex">\lambda_i=A_i/A</span>, and the same division trick as on the
+    segment, this time by <span class="tex">A_0A_1A_2</span>, gives</p>
   <div class="tex block">f(\mathbf x)=\frac{A_0\,f(\mathbf p_0)+A_1\,f(\mathbf p_1)+A_2\,f(\mathbf p_2)}{A}
     \;=\;\frac{\dfrac{1}{A_1A_2}f(\mathbf p_0)+\dfrac{1}{A_2A_0}f(\mathbf p_1)+\dfrac{1}{A_0A_1}f(\mathbf p_2)}{\dfrac{A}{A_0A_1A_2}}.</div>
-  <p>The second expression is obtained by dividing through by <span class="tex">A_0A_1A_2</span>.
-    Each area <span class="tex">A_i</span> is a linear function of <span class="tex">\mathbf x</span> that
-    vanishes on one side of the triangle. So the weight of <span class="tex">\mathbf p_0</span> has
-    poles along the <em>two sides that meet at</em> <span class="tex">\mathbf p_0</span>, and the
-    denominator has poles along all three sides.</p>
+  <p>Where are the poles? Each area <span class="tex">A_i</span> is half a side length times the
+    distance from <span class="tex">\mathbf x</span> to that side, so it is a linear function of
+    <span class="tex">\mathbf x</span> that vanishes exactly on the side opposite to
+    <span class="tex">\mathbf p_i</span>. The weight <span class="tex">1/(A_1A_2)</span> of
+    <span class="tex">\mathbf p_0</span> is therefore infinite on the sides opposite to
+    <span class="tex">\mathbf p_1</span> and <span class="tex">\mathbf p_2</span>, and these are the
+    <em>two sides that meet at</em> <span class="tex">\mathbf p_0</span>. The denominator is
+    infinite on all three sides. This is the picture of Section 1 again: a weight with poles at
+    the vertex’s own part of the boundary, divided by a function with poles on the whole
+    boundary.</p>
 
   <figure class="fig" data-figure="triangle">
     <figcaption><strong>Figure 2.</strong> Drag the vertices or the point
@@ -132,38 +172,64 @@
     <span class="tex">\lambda_i(\mathbf x)\ge 0</span> with</p>
   <div class="tex block">\sum_i\lambda_i(\mathbf x)=1\quad\text{(partition of unity)},\qquad
     \sum_i\lambda_i(\mathbf x)\,\mathbf p_i=\mathbf x\quad\text{(linear precision)}.</div>
-  <p>For <span class="tex">n&gt;3</span> they are no longer unique. Wachspress found the simplest
-    rational choice. With <span class="tex">A_i</span> the area of the triangle
-    <span class="tex">\mathbf x\,\mathbf p_i\,\mathbf p_{i+1}</span> and <span class="tex">C_i</span> the area
-    of the corner triangle <span class="tex">\mathbf p_{i-1}\mathbf p_i\,\mathbf p_{i+1}</span> (indices
-    modulo <span class="tex">n</span>),</p>
+  <p>The first condition says that the weights are those of an average, so constant data are
+    reproduced. The second says that the average of the vertices, taken with these weights, is
+    the point <span class="tex">\mathbf x</span> itself; it follows that every linear function is
+    reproduced exactly. Together these are three linear equations for
+    <span class="tex">n</span> unknowns. For a triangle they have one solution, the area
+    coordinates of Section 2. For <span class="tex">n&gt;3</span> there are many, and one has to
+    choose.</p>
+  <p>Wachspress found the simplest rational choice. The notation changes slightly from
+    Section 2: <span class="tex">A_i</span> is now the area of the triangle
+    <span class="tex">\mathbf x\,\mathbf p_i\,\mathbf p_{i+1}</span> on <em>edge</em>
+    <span class="tex">i</span>, and <span class="tex">C_i</span> is the area of the corner triangle
+    <span class="tex">\mathbf p_{i-1}\mathbf p_i\,\mathbf p_{i+1}</span> (indices modulo
+    <span class="tex">n</span>). Then</p>
   <div class="tex block">\lambda_i(\mathbf x)=\frac{w_i(\mathbf x)}{\sum_k w_k(\mathbf x)},\qquad
     w_i(\mathbf x)=\frac{C_i}{A_{i-1}(\mathbf x)\,A_i(\mathbf x)}.</div>
-  <p>Once more the weight of a vertex has poles along the two edges through that vertex, and
-    the normalising sum has poles along the whole boundary. You can experiment with these
-    coordinates in <a href="#coordinates">Figure 5</a>.</p>
+  <p>The area <span class="tex">A_{i-1}</span> vanishes on the edge arriving at
+    <span class="tex">\mathbf p_i</span> and <span class="tex">A_i</span> on the edge leaving it. So
+    once more the weight of a vertex has poles along the two edges through that vertex, and the
+    normalising sum has poles along the whole boundary. For <span class="tex">n=3</span> all
+    <span class="tex">C_i</span> equal the area of the triangle and the formula is the one of
+    Section 2. You can experiment with these coordinates in
+    <a href="#coordinates">Figure 5</a>.</p>
 
-  <p class="pattern"><strong>The common pattern.</strong> In all three cases numerator and
-    denominator are rational functions with singularities along the “boundaries” of some
-    region, and interpolation happens because they blow up together. Positive geometries
-    make this precise.</p>
+  <p class="pattern"><strong>The common pattern.</strong> In all three cases a weight is a
+    function with poles on the part of the boundary through its vertex, divided by the sum of
+    all such functions, which has poles on the whole boundary. Interpolation happens because
+    numerator and denominator blow up together. Two questions are left open: why these
+    particular functions, and why does their sum behave so well? Positive geometries answer
+    both.</p>
 </section>
 
 <!-- ================================================================== -->
 <section id="positive">
   <h2><span class="num">4</span> Positive geometries and canonical forms</h2>
 
+  <p>Sections 1–3 produced, for each domain, a function with poles on its whole boundary:
+    <span class="tex">1/(x-a)+1/(b-x)</span> for the segment,
+    <span class="tex">A/(A_0A_1A_2)</span> for the triangle, <span class="tex">\sum_k w_k</span> for
+    the polygon. Is there a rule that assigns such a function to a region? There is, and it
+    comes from an unexpected place.</p>
   <p>Positive geometries were introduced by Arkani-Hamed, Bai and Lam in the study of particle
     scattering. Informally, a <strong>positive geometry</strong> is a region
     <span class="tex">X_{\ge0}</span> (a segment, a polygon, a region bounded by lines and conics, …)
     that comes with a unique <strong>canonical form</strong>
-    <span class="tex">\Omega(X_{\ge0})</span>: a rational differential form that</p>
+    <span class="tex">\Omega(X_{\ge0})</span>. On this page you can think of the form as a
+    function <span class="tex">C</span> on the region, its <strong>canonical function</strong>
+    (the first background box says why). It is a rational function singled out by two
+    rules:</p>
   <ul>
-    <li>has simple poles along the boundary of the region and no other singularities, and</li>
-    <li>is <em>recursive</em>: its residue along each boundary component is the canonical form
-      of that component, which is again a positive geometry of one dimension less. The
+    <li><strong>Poles on the boundary, and only there.</strong> Near each piece of the boundary
+      the function grows like 1/distance (a simple pole); it is finite everywhere else.</li>
+    <li><strong>Recursion.</strong> Remove the pole at a boundary piece by multiplying with the
+      distance to it. What is left on that piece, the <em>residue</em>, must be the canonical
+      function of the piece itself, which is a positive geometry of one dimension less. The
       recursion ends at points, whose canonical form is <span class="tex">\pm1</span>.</li>
   </ul>
+  <p>So the canonical function of a polygon is fixed by those of its edges, and those of the
+    edges by their end points. The examples below make this concrete.</p>
 
   <details class="aside">
     <summary>Background: differential forms and residues, in two paragraphs</summary>
@@ -201,18 +267,25 @@
   <p><strong>Segment.</strong> The function met in Section 1 is the canonical function of
     <span class="tex">[a,b]</span>:</p>
   <div class="tex block">\Omega([a,b])=\frac{(b-a)\,dx}{(x-a)(b-x)}=\left(\frac{1}{x-a}+\frac{1}{b-x}\right)dx,</div>
-  <p>with residues <span class="tex">+1</span> at <span class="tex">a</span> and
-    <span class="tex">-1</span> at <span class="tex">b</span> (the two end points with opposite
-    orientations).</p>
+  <p>Check the two rules. The only poles are at <span class="tex">a</span> and
+    <span class="tex">b</span>, and both are simple. Near <span class="tex">a</span> the function is
+    <span class="tex">1/(x-a)</span> plus something finite; multiplying by
+    <span class="tex">x-a</span> and letting <span class="tex">x\to a</span> leaves the residue
+    <span class="tex">+1</span>. At <span class="tex">b</span> the same computation with
+    <span class="tex">x-b</span> gives <span class="tex">-1</span>. The signs record that the two end
+    points are met with opposite orientations; they play no role in what follows.</p>
   <p><strong>Triangle.</strong> With <span class="tex">\langle\mathbf u,\mathbf v,\mathbf w\rangle</span>
     the determinant of the homogeneous coordinates <span class="tex">[x:y:1]</span> of three points
     (twice the signed area of their triangle),</p>
   <div class="tex block">\Omega(\triangle)=\frac{\langle\mathbf p_0,\mathbf p_1,\mathbf p_2\rangle^{2}}
     {\langle\mathbf x,\mathbf p_0,\mathbf p_1\rangle\,\langle\mathbf x,\mathbf p_1,\mathbf p_2\rangle\,\langle\mathbf x,\mathbf p_2,\mathbf p_0\rangle}\;dx\,dy
     \;=\;\frac{A^{2}}{2\,A_0A_1A_2}\;dx\,dy ,</div>
-  <p>which is the denominator of Section 2 up to the constant <span class="tex">A/2</span>. For the
-    triangle with vertices <span class="tex">(0,0),(1,0),(0,1)</span> this is
-    <span class="tex">dx\,dy/\big(xy(1-x-y)\big)</span>.</p>
+  <p>which is the denominator of Section 2 multiplied by the constant
+    <span class="tex">A/2</span>. The three factors below the line vanish on the three sides, so
+    there is a simple pole along each side and nothing else. For the triangle with vertices
+    <span class="tex">(0,0),(1,0),(0,1)</span> the formula becomes
+    <span class="tex">dx\,dy/\big(xy(1-x-y)\big)</span>: one factor for each of the sides
+    <span class="tex">x=0</span>, <span class="tex">y=0</span> and <span class="tex">x+y=1</span>.</p>
 
   <figure class="fig" data-figure="surface">
     <figcaption><strong>Figure 3.</strong> The canonical function is positive inside the region
@@ -222,12 +295,17 @@
   </figure>
 
   <h3>Residues: the boundary of a boundary</h3>
-  <p>The defining property is the recursion. Approach an edge of a polygon and strip off the
-    pole by multiplying with the distance <span class="tex">\varepsilon</span> to the edge: in the
-    limit one finds the canonical function of that edge, the segment formula
-    <span class="tex">L/\big(s(L-s)\big)</span> for an edge of length <span class="tex">L</span>.
-    Taking residues once more, at the two ends of the edge, leaves <span class="tex">+1</span> and
-    <span class="tex">-1</span>.</p>
+  <p>The recursion rule can be watched at work. Take a polygon, and sample its canonical
+    function <span class="tex">C</span> along a line parallel to one edge, at distance
+    <span class="tex">\varepsilon</span> from it. As the line approaches the edge,
+    <span class="tex">C</span> grows like <span class="tex">1/\varepsilon</span>. Multiply by
+    <span class="tex">\varepsilon</span> to remove this growth. In the limit
+    <span class="tex">\varepsilon\to0</span> one finds the canonical function of the edge: the
+    segment formula of Section 1, which reads <span class="tex">L/\big(s(L-s)\big)</span> for an
+    edge of length <span class="tex">L</span> and a point at distance <span class="tex">s</span> from
+    its start. Taking residues once more, at the two ends of the edge, leaves
+    <span class="tex">+1</span> and <span class="tex">-1</span>, and the recursion has reached its
+    end.</p>
 
   <figure class="fig" data-figure="residue">
     <figcaption><strong>Figure 4.</strong> Choose an edge (buttons, or click near it) and move the
@@ -239,10 +317,17 @@
 
   <h3>Triangulations and a small zoo</h3>
   <p>Canonical forms are <strong>additive</strong>: if a region is cut into pieces, its
-    canonical form is the sum of the forms of the pieces. Along an interior cut the two
-    neighbouring pieces have poles with opposite residues, which cancel. Hence the canonical
-    form of any convex polygon can be found by triangulating it, and convex polytopes are
-    positive geometries.</p>
+    canonical form is the sum of the forms of the pieces. The smallest example is a segment
+    <span class="tex">[a,b]</span> cut at a point <span class="tex">c</span>:</p>
+  <div class="tex block">\underbrace{\frac{1}{x-a}+\frac{1}{c-x}}_{[a,c]}+\underbrace{\frac{1}{x-c}+\frac{1}{b-x}}_{[c,b]}
+    =\frac{1}{x-a}+\frac{1}{b-x}.</div>
+  <p>The two middle terms are the poles at the cut. They have opposite residues and cancel, so
+    the sum has no pole at <span class="tex">c</span>. The same happens along any interior cut
+    of a planar region. Hence the canonical form of a convex polygon can be found by cutting it
+    into triangles and adding their forms, and convex polytopes are positive geometries.
+    Section 5 uses additivity in a less obvious way, with pieces that overlap.</p>
+  <p>Positive geometries are far more general than polygons. The two lists below show the
+    range; the unfamiliar names in them are not needed later.</p>
   <div class="two-col">
     <div>
       <p><strong>Generalised simplices</strong> — constant numerator:</p>
@@ -278,34 +363,66 @@
 <section id="coordinates">
   <h2><span class="num">5</span> Barycentric coordinates as ratios of canonical forms</h2>
 
-  <p>Here is the proposal of the paper. To get the weight of a vertex, keep only the boundary
-    components that meet at that vertex, close them up with one extra side that depends on the
-    evaluation point, and divide by the canonical form of the whole shape.</p>
+  <p>Section 4 identified the <em>denominators</em> of Sections 1–3 as canonical functions of
+    the whole domain. The proposal of the paper is that the <em>numerators</em> are canonical
+    functions as well, of a simpler region attached to each vertex. The recipe for the weight
+    of a vertex has three steps.</p>
+  <ol class="steps">
+    <li><strong>Keep</strong> only the pieces of the boundary that meet at the vertex.</li>
+    <li><strong>Close them up</strong> into a region with one extra side, placed infinitely far
+      away as seen from the evaluation point. Because it is infinitely far away, it adds no
+      pole at any finite point.</li>
+    <li><strong>Divide</strong> the canonical function of this region by the canonical function
+      of the whole shape.</li>
+  </ol>
+  <p>In projective geometry the extra side of step 2 has a name: it is the point or line
+    <span class="tex">x^*</span> <em>dual</em> to the evaluation point
+    <span class="tex">x</span>. If the drawing is centred at <span class="tex">x</span>, this dual
+    is the point or line at infinity, and that is all one needs to know about it here.</p>
 
-  <p><strong>Segment.</strong> The only boundary component at <span class="tex">a</span> is the point
-    <span class="tex">a</span> itself. The extra “side” is the point
-    <span class="tex">x^*</span> dual to <span class="tex">x</span>; in coordinates centred at
-    <span class="tex">x</span> it is the point at infinity. So the numerator is the canonical form of
-    the half line <span class="tex">[a,\infty]</span>, which is <span class="tex">dx/(x-a)</span>:</p>
+  <p><strong>Segment.</strong> The only piece of the boundary at <span class="tex">a</span> is the
+    point <span class="tex">a</span> itself. Closing up with a point at infinity gives the half
+    line from <span class="tex">a</span> to infinity. Its canonical function is
+    <span class="tex">1/(x-a)</span>: let <span class="tex">b\to\infty</span> in the segment formula
+    <span class="tex">1/(x-a)+1/(b-x)</span> and the second term disappears. Step 3 then gives</p>
   <div class="tex block">\lambda_a(x)=\frac{\Omega([a,x^*])}{\Omega([a,b])}
-    =\frac{1}{x-a}\cdot\frac{(x-a)(b-x)}{b-a}=\frac{b-x}{b-a}.</div>
+    =\frac{1}{x-a}\cdot\frac{(x-a)(b-x)}{b-a}=\frac{b-x}{b-a},</div>
+  <p>the linear interpolation weight of Section 1.</p>
 
   <p><strong>Triangle and polygon.</strong> Let <span class="tex">l_{i-1}</span> and
     <span class="tex">l_i</span> be the lines of the two edges through
-    <span class="tex">\mathbf p_i</span>, and <span class="tex">\mathbf x^*</span> the line dual to
-    <span class="tex">\mathbf x</span>. Then</p>
+    <span class="tex">\mathbf p_i</span>. Closing them up with the line at infinity
+    <span class="tex">\mathbf x^*</span> gives a “triangle” with one side at infinity: the infinite
+    <strong>wedge</strong> between the two edge lines (shaded in Figure 5). The recipe
+    says</p>
   <div class="tex block">\lambda_i(\mathbf x)=\frac{\Omega\big(\triangle(l_{i-1},\,l_i,\,\mathbf x^*)\big)}{\Omega(P)} .</div>
-  <p>In the affine picture <span class="tex">\mathbf x^*</span> is the line at infinity, so the
-    triangle <span class="tex">\triangle(l_{i-1},l_i,\mathbf x^*)</span> is the infinite
-    <strong>wedge</strong> between the two edge lines. If
-    <span class="tex">h_k(\mathbf x)</span> is the distance from <span class="tex">\mathbf x</span> to the
-    line <span class="tex">l_k</span> and <span class="tex">\mathbf n_k</span> its inward unit normal,
-    the canonical function of the wedge is</p>
+  <p>To make this explicit, let <span class="tex">h_k(\mathbf x)</span> be the distance from
+    <span class="tex">\mathbf x</span> to the line <span class="tex">l_k</span> and
+    <span class="tex">\mathbf n_k</span> the unit normal of that line pointing into the polygon. The
+    canonical function of the wedge has a simple pole on each of its two lines and a constant
+    numerator, and the canonical function of the polygon is the sum over all vertices:</p>
   <div class="tex block">w_i(\mathbf x)=\frac{\det(\mathbf n_{i-1},\mathbf n_i)}{h_{i-1}(\mathbf x)\,h_i(\mathbf x)},
     \qquad\text{and}\qquad \Omega(P)=\sum_i w_i(\mathbf x)\;dx\,dy .</div>
-  <p>These <span class="tex">w_i</span> are exactly the Wachspress weights of Section 3 (up to a
-    common factor 2), so the ratios <span class="tex">\lambda_i=w_i/\sum_k w_k</span> are the
-    barycentric coordinates of a triangle and the Wachspress coordinates of a convex polygon.</p>
+  <p>The constant <span class="tex">\det(\mathbf n_{i-1},\mathbf n_i)</span> is the sine of the angle
+    by which the boundary turns at <span class="tex">\mathbf p_i</span>; it is what makes the
+    residues at the corner equal to <span class="tex">\pm1</span>.</p>
+  <p>These <span class="tex">w_i</span> are the Wachspress weights of Section 3 in different
+    notation. The area <span class="tex">A_k</span> there is half the length of edge
+    <span class="tex">k</span> times <span class="tex">h_k</span>, and the corner area
+    <span class="tex">C_i</span> is half the product of the two edge lengths at
+    <span class="tex">\mathbf p_i</span> times the same sine. In
+    <span class="tex">C_i/(A_{i-1}A_i)</span> the edge lengths cancel and
+    <span class="tex">2w_i</span> remains. The factor 2 is common to all weights and drops out,
+    so the ratios <span class="tex">\lambda_i=w_i/\sum_k w_k</span> are the barycentric
+    coordinates of a triangle and the Wachspress coordinates of a convex polygon.</p>
+  <p>The interpolation property can now be read off from the poles. At the vertex
+    <span class="tex">\mathbf p_i</span> both <span class="tex">h_{i-1}</span> and
+    <span class="tex">h_i</span> vanish, so <span class="tex">w_i</span> outgrows all other weights
+    and <span class="tex">\lambda_i\to1</span>. On the edge from <span class="tex">\mathbf p_i</span>
+    to <span class="tex">\mathbf p_{i+1}</span> only <span class="tex">w_i</span> and
+    <span class="tex">w_{i+1}</span> have a pole, so only these two coordinates survive, and by
+    the residue property of Figure 4 they are the linear interpolation weights of
+    Section 1.</p>
 
   <figure class="fig" data-figure="wachspress">
     <figcaption><strong>Figure 5.</strong> Left: the wedge of the selected vertex; its canonical
@@ -320,33 +437,145 @@
   </figure>
 
   <h3>Why the weights sum to one</h3>
-  <p>The wedges of all vertices overlap in a complicated way, yet their canonical forms add
-    up to <span class="tex">\Omega(P)</span>: every wedge form has an additional pole along
-    <span class="tex">\mathbf x^*</span>, and these poles cancel in the sum. In the language of
+  <p>The displayed formula contains a claim that deserves a second look: the wedge functions
+    add up to the canonical function of the polygon, <span class="tex">\sum_i w_i=C_P</span>.
+    Once this is known, <span class="tex">\sum_i\lambda_i=\sum_i w_i/C_P=1</span> is
+    immediate. But the wedges are not a subdivision of the polygon. Each of them contains the
+    whole polygon, and they overlap each other. Why should their forms add up?</p>
+  <p><strong>First answer: cancelling poles.</strong> Seen projectively, every wedge is a
+    triangle with a third side <span class="tex">\mathbf x^*</span> at infinity, and its form has
+    a pole there. In the sum over all vertices these poles at infinity cancel, in the same way
+    as the poles at the cut point <span class="tex">c</span> cancelled in Section 4. What remains
+    has poles only on the edges of the polygon, with the right residues. In the language of
     positive geometries the wedges form a <em>signed triangulation</em> of
-    <span class="tex">P</span>, and additivity gives
-    <span class="tex">\sum_i\lambda_i=1</span> without any computation.</p>
-  <p>The dual picture makes this visible. The canonical function of a convex polytope at
-    <span class="tex">\mathbf x</span> is the volume of its polar dual
-    <span class="tex">P^*_{\mathbf x}</span>, taken with <span class="tex">\mathbf x</span> as origin:</p>
-  <div class="tex block">\operatorname{Vol}(P^*_{\mathbf x})=\frac{1}{d!}\int_{\mathbf y\in P^*_{\mathbf x}}\frac{\omega(\mathbf y)}{(\mathbf x^{T}\mathbf y)^{d+1}}
-    \qquad\text{(in the plane: } C_P(\mathbf x)=2\operatorname{Area}(P^*_{\mathbf x})\text{)}.</div>
-  <p>The wedge at <span class="tex">\mathbf p_i</span> corresponds to the triangle
-    <span class="tex">\mathbf 0\,\mathbf d_{i-1}\mathbf d_i</span>, and these triangles tile the dual
-    polygon in the ordinary sense. This recovers the description of Wachspress coordinates as
-    ratios of polar dual volumes by Ju, Schaefer, Warren and Desbrun.</p>
+    <span class="tex">P</span>, and additivity holds for those as well.</p>
+  <p><strong>Second answer: a picture.</strong> There is a second drawing in which the
+    overlapping wedges turn into triangles that fit together without overlap. Move the origin
+    to <span class="tex">\mathbf x</span> and replace every edge line <span class="tex">l_k</span> by
+    the point</p>
+  <div class="tex block">\mathbf d_k=\frac{\mathbf n_k}{h_k(\mathbf x)} ,</div>
+  <p>which lies in the direction of the normal, at distance <span class="tex">1/h_k</span>: the
+    closer the edge, the farther the point. The polygon with vertices
+    <span class="tex">\mathbf d_k</span> is the <strong>polar dual</strong>
+    <span class="tex">P^*_{\mathbf x}</span> of <span class="tex">P</span> with respect to
+    <span class="tex">\mathbf x</span> (right panel of Figure 5). Lines of
+    <span class="tex">P</span> have become points, and the vertex
+    <span class="tex">\mathbf p_i</span>, where two lines meet, has become the edge joining
+    <span class="tex">\mathbf d_{i-1}</span> and <span class="tex">\mathbf d_i</span>. The triangle from
+    the origin to that edge has area</p>
+  <div class="tex block">\operatorname{Area}(\mathbf 0,\mathbf d_{i-1},\mathbf d_i)=\tfrac12\det(\mathbf d_{i-1},\mathbf d_i)
+    =\frac{\det(\mathbf n_{i-1},\mathbf n_i)}{2\,h_{i-1}h_i}=\frac{w_i}{2}.</div>
+  <p>So each wedge weight is twice the area of a triangle, these triangles tile the dual polygon
+    in the ordinary sense, and</p>
+  <div class="tex block">C_P(\mathbf x)=\sum_i w_i(\mathbf x)=2\operatorname{Area}(P^*_{\mathbf x}),
+    \qquad \lambda_i(\mathbf x)=\frac{\operatorname{Area}(\mathbf 0,\mathbf d_{i-1},\mathbf d_i)}{\operatorname{Area}(P^*_{\mathbf x})}.</div>
+  <p>The partition of unity is now the statement that the pieces of a tiling add up to the
+    whole. This recovers the description of Wachspress coordinates as ratios of polar dual
+    volumes by Ju, Schaefer, Warren and Desbrun.</p>
+  <p>The statement holds in every dimension: the canonical function of a convex polytope at
+    <span class="tex">\mathbf x</span> is, in the normalisation of this page,
+    <span class="tex">d!</span> times the volume of its polar dual. The paper writes that volume as an integral in homogeneous coordinates, which will
+    return in Sections 7 and 8.2:</p>
+  <div class="tex block">\operatorname{Vol}(P^*_{\mathbf x})=\frac{1}{d!}\int_{\mathbf y\in P^*_{\mathbf x}}\frac{\omega(\mathbf y)}{(\mathbf x^{T}\mathbf y)^{d+1}} .</div>
+
+  <h3 id="wheel">A mechanical reading: the wheel <span class="badge alt">Added remark</span></h3>
+  <p class="gist"><strong>In short:</strong> build the polygon as a wheel, with its edges as the
+    rim and the point <span class="tex">\mathbf x</span> as the hub, joined to the vertices by
+    spokes. Tighten the spokes. The tension in each spoke, per unit of its length, is its
+    Wachspress weight, and the dual polygon is the diagram of the forces.</p>
+  <p>The word <em>barycentric</em> is mechanical in origin: Möbius read the coordinates
+    <span class="tex">\lambda_i</span> as masses at the vertices whose centre of gravity is
+    <span class="tex">\mathbf x</span>. An equivalent picture uses forces. Join
+    <span class="tex">\mathbf x</span> to every vertex by a spoke that pulls with the force
+    <span class="tex">w_i\,(\mathbf p_i-\mathbf x)</span>, proportional to its length; the factor
+    <span class="tex">w_i</span> is the <em>stress</em> of the spoke, its tension per unit
+    length. Linear precision, written as
+    <span class="tex">\sum_i w_i(\mathbf p_i-\mathbf x)=\mathbf 0</span>, says that these forces
+    balance at <span class="tex">\mathbf x</span>. This holds for every set of barycentric
+    coordinates and does not distinguish Wachspress’.</p>
+  <p>The other ends of the spokes do. Each spoke also pulls its vertex inwards, and something
+    has to hold the vertex in place. Let the edges of the polygon do it: make them rigid bars,
+    hinged at the vertices, so that the polygon becomes the rim of a wheel. A framework of bars
+    that carries internal forces without any outside load is said to be in a state of
+    <em>self-stress</em>. The wheel has exactly one, up to a common factor:</p>
+  <div class="tex block">\text{spoke } i:\ \text{tension } w_i=\frac{\det(\mathbf n_{i-1},\mathbf n_i)}{h_{i-1}h_i}\ \text{per unit length},
+    \qquad \text{rim bar } i:\ \text{compression of magnitude } \frac{1}{h_i}.</div>
+  <p>So the Wachspress coordinates are the only barycentric coordinates whose spoke forces
+    are balanced by the rim alone; with any other choice the vertices need outside support.
+    Inside a convex polygon all spokes are in tension and all rim bars in compression, as in a
+    bicycle wheel.</p>
+  <p><strong>The dual polygon is the force diagram.</strong> Maxwell showed how to draw the
+    forces of a framework in equilibrium as a second figure: turn every bar force by a right
+    angle; the forces at each joint then form a closed polygon, and these polygons fit together
+    into the <em>reciprocal figure</em>. For the wheel, the reciprocal figure is the right panel
+    of Figure 5, shown again in Figure 5b below together with the forces:</p>
+  <ul>
+    <li>the dual edge from <span class="tex">\mathbf d_{i-1}</span> to
+      <span class="tex">\mathbf d_i</span> is the force in spoke <span class="tex">i</span>, of
+      length <span class="tex">w_i\,|\mathbf p_i-\mathbf x|</span>;</li>
+    <li>the segment from the origin to <span class="tex">\mathbf d_i</span> is the force in rim
+      bar <span class="tex">i</span>, of length <span class="tex">1/h_i</span>;</li>
+    <li>the triangle <span class="tex">\mathbf 0\,\mathbf d_{i-1}\mathbf d_i</span> is the closed
+      force polygon at the vertex <span class="tex">\mathbf p_i</span>, and the dual polygon is
+      the closed force polygon at the hub.</li>
+  </ul>
+  <p>“The dual polygon closes up” and “the forces at the hub balance” are the same statement,
+    and the tiling of the dual polygon by triangles is the equilibrium of the whole wheel.
+    There is a third way to see the points <span class="tex">\mathbf d_i</span>. Lift the hub
+    to height one above the plane and leave the rim where it is: the wheel becomes a pyramid
+    over the polygon. The face of the pyramid over edge <span class="tex">i</span> is the graph
+    of the function <span class="tex">h_i(\cdot)/h_i(\mathbf x)</span>, and its slope (gradient)
+    is <span class="tex">\mathbf n_i/h_i(\mathbf x)=\mathbf d_i</span>. This correspondence
+    between self-stresses, reciprocal figures and polyhedral surfaces above the framework goes
+    back to Maxwell and Cremona (see Whiteley).</p>
+  <figure class="fig" data-figure="wheel">
+    <figcaption><strong>Figure 5b.</strong> <span class="badge alt">Added remark</span>
+      The wheel and its force diagram. With Wachspress weights the force diagram is the dual
+      polygon of Figure 5, cut into one triangle per vertex: the three sides of a triangle
+      are the three forces at that vertex, so the whole wheel is in equilibrium. Switch to
+      mean value or discrete harmonic coordinates: the forces still balance at the hub (the
+      polygon still closes), but the dashed lines that would carry the rim forces no longer
+      meet in one point, except on a triangle.</figcaption>
+  </figure>
+
+  <p><strong>Why this produces rational functions.</strong> The equilibrium conditions of a
+    bar framework are linear equations for the bar forces, with coefficients that are linear
+    in the positions of the joints. Solving them needs only the four arithmetic operations,
+    so the stresses of a framework are always rational functions of the positions.
+    Classically, rational operations are also exactly those that can be carried out with a
+    ruler, by joining points and intersecting lines (parallels allowed), whereas square roots
+    need a compass. Mean value coordinates (Section 7) contain the distances
+    <span class="tex">|\mathbf p_i-\mathbf x|</span>, hence square roots; they balance the hub
+    but are not the self-stress of the wheel.
+    <a href="#later-meanvalue">Section 8.3</a> compares the force polygons.</p>
+  <p class="update">That the spoke forces of any barycentric coordinates balance is standard,
+    and so is Maxwell’s theory. The identification of the Wachspress weights with the
+    self-stress of the wheel, and of the polar dual with its reciprocal figure, follows
+    directly from the formulas above and is checked in the project’s tests; we did not find
+    it stated in the literature we searched.</p>
 
   <h3>One dimension up <span class="badge alt">Added illustration</span></h3>
   <p>The paper notes that the generalisation to higher dimensions is straightforward. In
-    <span class="tex">d</span> dimensions the recipe applies verbatim to polytopes in which every
-    vertex lies on exactly <span class="tex">d</span> facets (<em>simple</em> polytopes; their polar
-    duals are simplicial). For a polyhedron with outward unit face normals
+    <span class="tex">d</span> dimensions the three-step recipe applies word for word to polytopes
+    in which every vertex lies on exactly <span class="tex">d</span> facets. Such polytopes are
+    called <em>simple</em>: a cube is simple, an octahedron is not, because four faces meet at
+    each of its vertices. In space, three face planes meet at a vertex and bound an infinite
+    cone, which takes the place of the wedge. For a polyhedron with outward unit face normals
     <span class="tex">\mathbf n_f</span> and distances <span class="tex">h_f(\mathbf x)</span> from
-    <span class="tex">\mathbf x</span> to the face planes, the wedge at a vertex on the faces
-    <span class="tex">a,b,c</span> is the cone bounded by those three planes, and</p>
+    <span class="tex">\mathbf x</span> to the face planes, the weight of a vertex on the faces
+    <span class="tex">a,b,c</span> is the exact analogue of the planar formula, with three
+    distances in place of two:</p>
   <div class="tex block">w_v(\mathbf x)=\frac{|\det(\mathbf n_a,\mathbf n_b,\mathbf n_c)|}{h_a(\mathbf x)\,h_b(\mathbf x)\,h_c(\mathbf x)},
     \qquad C_P(\mathbf x)=\sum_v w_v(\mathbf x)=3!\,\operatorname{Vol}(P^*_{\mathbf x}),
     \qquad \lambda_v=\frac{w_v}{C_P}.</div>
+  <p>The force picture of the wheel carries over in part. Each vertex of the polyhedron
+    corresponds to a triangular face of the dual, perpendicular to the line from
+    <span class="tex">\mathbf x</span> to that vertex, and
+    <span class="tex">w_v=2\operatorname{Area}(\text{dual face})/|\mathbf v-\mathbf x|</span>.
+    Forces along these lines with the dual areas as magnitudes balance at
+    <span class="tex">\mathbf x</span>, because the area vectors of a closed polyhedron sum to
+    zero. There is no rim of bars in this case: a polyhedron such as the cube is not rigid as
+    a bar framework.</p>
 
   <figure class="fig" data-figure="polytope3d">
     <figcaption><strong>Figure 6.</strong> <span class="badge alt">Added illustration</span>
@@ -363,17 +592,30 @@
 <section id="adjoint">
   <h2><span class="num">6</span> The numerator: the adjoint polynomial</h2>
 
-  <p>Putting the canonical function of an <span class="tex">n</span>-gon over a common denominator
-    gives</p>
+  <p>The canonical function of an <span class="tex">n</span>-gon is a sum of
+    <span class="tex">n</span> fractions <span class="tex">w_i</span>, each with two of the distances
+    <span class="tex">h_k</span> in its denominator. Putting them over the common denominator
+    <span class="tex">h_0h_1\cdots h_{n-1}</span> gives</p>
   <div class="tex block">C_P(\mathbf x)=\frac{\operatorname{adj}_P(\mathbf x)}{h_0(\mathbf x)\,h_1(\mathbf x)\cdots h_{n-1}(\mathbf x)},
     \qquad \operatorname{adj}_P(\mathbf x)=\sum_i\det(\mathbf n_{i-1},\mathbf n_i)\!\!\prod_{k\ne i-1,\,i}\!\!h_k(\mathbf x).</div>
-  <p>The numerator has degree <span class="tex">n-3</span>. It is the <strong>adjoint
-    polynomial</strong> introduced by Wachspress and later defined through triangulations by
-    Warren. Its job is to remove unwanted poles: the denominator vanishes on all edge
-    <em>lines</em>, which also cross each other outside the polygon, but the residue along an edge line may
-    have poles only at the two end points of that edge. So the adjoint curve passes through every
-    intersection point of two non-adjacent edge lines — and this determines it up to a
-    constant factor.</p>
+  <p>The numerator is the <strong>adjoint polynomial</strong>, introduced by Wachspress and
+    later defined through triangulations by Warren. Each term of the sum is a product of
+    <span class="tex">n-2</span> linear functions, but the parts of highest degree cancel (this
+    is the cancellation of the poles at infinity from Section 5), so the adjoint has degree
+    <span class="tex">n-3</span>: a constant for a triangle, a line for a quadrilateral, a conic
+    for a pentagon.</p>
+  <p>What is the adjoint for? The denominator vanishes on the full edge <em>lines</em>, not
+    only on the edges, and two edge lines that are not neighbours cross somewhere outside the
+    polygon. At such a crossing two factors of the denominator vanish at once, and the
+    function would have a singularity that the rules of Section 4 do not allow: the residue
+    along an edge line is the canonical function of that edge, and may be infinite only at the
+    two end points of the edge. The numerator must therefore vanish at every such crossing. In
+    other words, the <em>adjoint curve</em> <span class="tex">\operatorname{adj}_P=0</span> passes
+    through every intersection point of two non-adjacent edge lines.</p>
+  <p>This determines the curve. There are <span class="tex">n(n-3)/2</span> such points (2 for
+    a quadrilateral, 5 for a pentagon, 9 for a hexagon, counting points at infinity when two
+    lines are parallel), which is exactly the number of points that in general fix a curve of degree
+    <span class="tex">n-3</span>: two points fix a line, five a conic, nine a cubic.</p>
 
   <figure class="fig" data-figure="adjoint">
     <figcaption><strong>Figure 7.</strong> The adjoint curve of a quadrilateral is a line, of a
@@ -391,12 +633,23 @@
     polytopes. The paper ends with three directions.</p>
 
   <h3>Interpolation in line space</h3>
-  <p>The lines of 3D space form the Grassmannian <span class="tex">G(2,4)</span>, a
-    four-dimensional quadric hypersurface in <span class="tex">\mathbb P^5</span> (Plücker
-    coordinates). Its positive part is a positive geometry, so it has a canonical form with
-    poles along its boundary. A natural analogue of a simplex is bounded by the
-    <em>tetrahedral line complex</em>, built from the lines determined by the vertices of a
-    tetrahedron; its combinatorics is that of an octahedron, the hypersimplex. Can barycentric
+  <p>So far the things being interpolated between were points. Could they be <em>lines</em>?
+    A line in space is fixed by four numbers (for instance, the two points where it crosses two
+    fixed planes), so the set of all lines in 3D is a four-dimensional space. It is called the
+    Grassmannian <span class="tex">G(2,4)</span>. The standard way to give a line coordinates is
+    to pick two points on it, write their homogeneous coordinates as the rows of a
+    <span class="tex">2\times4</span> matrix, and take the six <span class="tex">2\times2</span>
+    minors <span class="tex">p_{ij}</span>. These <em>Plücker coordinates</em> are defined up to a
+    common factor and satisfy one quadratic equation,
+    <span class="tex">p_{12}p_{34}-p_{13}p_{24}+p_{14}p_{23}=0</span>, so line space is a curved
+    hypersurface (a quadric) in the five-dimensional projective space
+    <span class="tex">\mathbb P^5</span>.</p>
+  <p>The part of line space where the Plücker coordinates are positive is a positive geometry,
+    so it has a canonical form with poles along its boundary. What should play the role of a
+    triangle? The paper suggests looking at the <em>tetrahedral line complex</em>, which is
+    built from a tetrahedron: its six edge lines take the place of the vertices. The six edge
+    lines and the way they are connected form the pattern of an octahedron (Figure 8), a
+    shape known in this context as a hypersimplex. The question of the paper: can barycentric
     coordinates for lines be defined as ratios of canonical forms?</p>
   <p class="update"><span class="badge">Later development</span> While preparing this page (November
     2026) we found no published construction of barycentric coordinates in line space; the
@@ -411,18 +664,26 @@
   </figure>
 
   <h3>Mean value coordinates</h3>
-  <p>Mean value coordinates are transcendental, so they cannot be ratios of rational forms.
-    They can, however, be written as Shepard-like interpolants after deforming the boundary
-    into a circle around the current point. A disc is not a positive geometry — it has no
-    zero-dimensional boundary components to end the recursion — but there is still a natural
-    projectively well-defined function singular along a conic
-    <span class="tex">\mathbf x^{T}Q\,\mathbf x=0</span>:</p>
+  <p>Mean value coordinates are the other widely used generalised barycentric coordinates.
+    Unlike Wachspress coordinates they also work on non-convex polygons. They are defined
+    through angles and distances seen from the point <span class="tex">\mathbf x</span>, not by
+    rational functions (the paper calls them transcendental), so they cannot be ratios of
+    canonical forms as defined in Section 4. They can, however, be written as Shepard-like
+    interpolants after deforming the boundary into a circle around the current point. This
+    suggests asking what the canonical function of a <em>disc</em> would be.</p>
+  <p>Strictly speaking there is none. A disc is not a positive geometry: its boundary is a
+    single closed curve without corners, so the recursion of Section 4 never arrives at
+    points. But there is still a natural, projectively well-defined function that is singular
+    along a conic <span class="tex">\mathbf x^{T}Q\,\mathbf x=0</span>:</p>
   <div class="tex block">\Omega(\mathbb P^2,\mathcal C)=\frac{\pi\,\det(Q)^{3/4}}{(\mathbf x^{T}Q\,\mathbf x)^{3/2}}\;\omega(\mathbf x),
     \qquad\text{for the unit disc: } C\;\propto\;\frac{1}{(1-x^2-y^2)^{3/2}} .</div>
-  <p>It is again the dual volume (the polar dual of a disc is an ellipse), but its singularity
-    on the circle is a branch point of order <span class="tex">3/2</span> and not a simple pole.
-    This suggests looking for generalised positive geometries on branched covers of projective
-    space.</p>
+  <p>Like the canonical function of a polygon, it is a dual volume: the polar dual of a disc
+    with respect to an interior point is an ellipse, and the function is proportional to its area. But it
+    is not rational, and it behaves differently at the boundary. At distance
+    <span class="tex">h</span> from the circle it grows like <span class="tex">1/h^{3/2}</span>,
+    faster than the <span class="tex">1/h</span> of a simple pole; the square root makes the
+    singularity a branch point. This suggests looking for generalised positive geometries
+    whose forms are not rational, on branched covers of projective space.</p>
   <p class="update"><span class="badge">Later development</span> Transforms of regions with curved
     boundaries that are no longer rational, including exactly this function for the disc, have
     since been studied; see <a href="#later-transforms">Section 8.2</a>. In the dual picture
@@ -438,14 +699,18 @@
   </figure>
 
   <h3>Splines and integral geometry</h3>
-  <p>The dual-volume integral of Section 5 also appears in the theory of multivariate
-    simplex, box and cone splines, as a Laplace transform of indicator functions. Splines and
-    barycentric interpolants might therefore be two faces of one theory based on integral
+  <p>Splines are the piecewise polynomial functions on which curve and surface design is
+    built. The dual-volume integral at the end of Section 5 also appears in the theory of
+    multivariate simplex, box and cone splines, where it is the Laplace transform of the
+    indicator function of a region (the function that is one inside and zero outside). Splines
+    and barycentric interpolants might therefore be two faces of one theory based on integral
     geometry.</p>
   <p class="update"><span class="badge">Later development</span> The dual-volume and Laplace-transform
     side of this question has been developed considerably
-    (<a href="#later-transforms">Section 8.2</a>); we found no work that makes the link to
-    splines explicit.</p>
+    (<a href="#later-transforms">Section 8.2</a>). The link to splines can be made explicit:
+    the denominator of a canonical function is the Laplace transform of a multivariate spline,
+    and the adjoint polynomial acts on that spline as a differential operator; see
+    <a href="#later-splines">the last part of Section 8.2</a>.</p>
 </section>
 
 <!-- ================================================================== -->
@@ -455,28 +720,40 @@
   <p>Nothing in this section is part of the 2019 paper. It reports work published afterwards
     that bears directly on its questions. The summaries are ours; please consult the cited
     papers for the precise statements.</p>
+  <p>The subsections can be read independently. Each opens with one sentence saying what it
+    is about. 8.1–8.4 need only what was introduced in Sections 1–7; 8.5 is the most
+    demanding part of the page.</p>
 
   <h3 id="later-polypols">8.1 Curved boundaries: polypols, and the fall of Wachspress’ conjecture</h3>
+  <p class="gist"><strong>In short:</strong> regions with curved sides also have canonical
+    forms and adjoint curves, but a property that polygons have for free — the adjoint never
+    vanishes inside — can fail.</p>
   <p>The paper left out regions with curved sides for lack of space. They have since been
     treated systematically. Kohn, Piene, Ranestad, Rydell, Shapiro, Sinn, Sorea and Telen study
-    <em>polypols</em>: planar regions bounded by arcs of algebraic curves, of which Wachspress’
-    <em>polycons</em> (lines and conics) are the first case. They prove that every quasi-regular
-    rational polypol is a positive geometry and that its canonical form is, as for polygons,</p>
-  <div class="tex block">\Omega(P)=\frac{\operatorname{adj}_P(x,y)}{f_1(x,y)\,f_2(x,y)\cdots f_k(x,y)}\;dx\,dy ,</div>
-  <p>where <span class="tex">f_i=0</span> are the boundary curves and the numerator is an equation
-    of the <strong>adjoint curve</strong>, normalised so that the residues at the vertices are
-    <span class="tex">\pm1</span>. The adjoint has degree <span class="tex">d-3</span> for a boundary
-    of total degree <span class="tex">d</span> and passes through the <em>residual points</em>: the
-    points where boundary curves meet (or are singular) other than the vertices. The pizza
-    slice of Figure 3 is the simplest example: <span class="tex">d=4</span>, and the adjoint is the
-    line <span class="tex">1+2y=0</span>.</p>
+    <em>polypols</em>: planar regions bounded by arcs of algebraic curves. Wachspress’
+    <em>polycons</em>, whose sides are pieces of lines and conics, are the first case. They prove
+    that every polypol satisfying mild conditions (quasi-regular and rational, in their terms)
+    is a positive geometry, and that its canonical form has the same shape as for polygons in
+    Section 6:</p>
+  <div class="tex block">\Omega(P)=\frac{\operatorname{adj}_P(x,y)}{f_1(x,y)\,f_2(x,y)\cdots f_k(x,y)}\;dx\,dy .</div>
+  <p>Here <span class="tex">f_i=0</span> are the equations of the boundary curves, which take the
+    place of the distances <span class="tex">h_i</span>, and the numerator is an equation of the
+    <strong>adjoint curve</strong>, scaled so that the residues at the vertices are
+    <span class="tex">\pm1</span>. The adjoint plays the same role as before. The boundary curves,
+    continued beyond the region, meet each other in further points that are not vertices (and
+    may have singular points of their own). These are the <em>residual points</em>, and the
+    adjoint passes through all of them. Its degree is <span class="tex">d-3</span> when the
+    degrees of the boundary curves add up to <span class="tex">d</span>. The pizza slice of
+    Figure 3 is the simplest example: two lines and a circle give <span class="tex">d=4</span>, so
+    the adjoint is a line, <span class="tex">1+2y=0</span>.</p>
   <p>Wachspress defined rational basis functions on polycons with the adjoint as common
-    denominator. For them to make sense the adjoint must not vanish inside the element, and he
-    conjectured that for a <em>regular</em> polycon it never does. For convex polygons this is
-    true (Figure 7). Kohn et al. classified the 44 topological configurations of three
-    ellipses and proved the conjecture in 33 of them. In March 2026 Clemens Brüser settled the
-    question in the negative: he gave an explicit regular polycon bounded by arcs of three
-    ellipses whose adjoint cubic has an oval in the interior.</p>
+    denominator. A denominator must not vanish, so these functions make sense only if the
+    adjoint curve stays outside the element. Wachspress conjectured that for a
+    <em>regular</em> polycon it always does. For convex polygons this is true (Figure 7). Kohn
+    et al. classified the 44 topological configurations of three ellipses and proved the
+    conjecture in 33 of them. In March 2026 Clemens Brüser settled the question in the
+    negative: he gave an explicit regular polycon bounded by arcs of three ellipses whose
+    adjoint cubic has a closed branch (an oval) in the interior.</p>
 
   <figure class="fig" data-figure="polycon">
     <figcaption><strong>Figure 10.</strong> <span class="badge">Later development</span>
@@ -491,22 +768,31 @@
     curved side something new is needed.</p>
 
   <h4>Wachspress’ own basis functions on a polycon</h4>
-  <p>Restricted to a conic, a linear function is no longer determined by two values but by
-    three. Wachspress therefore puts one extra <em>side node</em> on every conic side; its
-    position on the side is arbitrary. For a polycon of boundary degree
-    <span class="tex">m</span> all basis functions (“wedges”) share the adjoint, of degree
-    <span class="tex">m-3</span>, as denominator and have numerators of degree
-    <span class="tex">m-2</span>. For the pizza slice (<span class="tex">m=4</span>), with side lines
-    <span class="tex">L_1,L_2</span>, circle <span class="tex">Q=1-x^2-y^2</span>, adjoint
-    <span class="tex">D=1+2y</span> and side node <span class="tex">M</span>:</p>
+  <p>Along a straight edge a linear function is known once its values at the two end points
+    are known; that is why two vertices per edge suffice on a polygon. Along a conic arc this
+    is no longer true: three values are needed. Wachspress therefore puts one extra
+    <em>side node</em> on every conic side; its position on the side is arbitrary. For a polycon
+    of boundary degree <span class="tex">m</span> all basis functions (Wachspress calls them
+    “wedges”) share the adjoint, of degree <span class="tex">m-3</span>, as denominator and have
+    numerators of degree <span class="tex">m-2</span>.</p>
+  <p>The pizza slice (<span class="tex">m=4</span>) has four nodes: the corner
+    <span class="tex">O</span> where the two straight sides meet, the two vertices
+    <span class="tex">V_1,V_2</span> on the circle, and the side node <span class="tex">M</span> on
+    the arc. Write <span class="tex">L_1,L_2</span> for the linear functions that vanish on the
+    two straight sides, <span class="tex">Q=1-x^2-y^2</span> for the circle and
+    <span class="tex">D=1+2y</span> for the adjoint. The four basis functions are</p>
   <div class="tex block">W_O=\frac{Q}{D},\qquad W_M=k_M\frac{L_1L_2}{D},\qquad
     W_{V_1}=k_1\frac{L_2\,\ell_1}{D},\qquad W_{V_2}=k_2\frac{L_1\,\ell_2}{D}.</div>
-  <p>The corner and the side node get the product of the sides they do not lie on. A vertex
-    where a line meets the conic gets the opposite side times an <em>adjacent factor</em>
-    <span class="tex">\ell_k</span>: the line through <span class="tex">M</span> and the residual point
-    where its side line meets the conic again. The constants make each function equal to one
-    at its own node. The four functions sum to one and reproduce linear functions for every
-    position of <span class="tex">M</span>.</p>
+  <p>The numerators follow one rule: a basis function must vanish on every side that does not
+    contain its node. So the corner gets <span class="tex">Q</span>, and the side node gets
+    <span class="tex">L_1L_2</span>. A vertex where a line meets the circle gets the straight
+    side it does not lie on, times one more linear factor <span class="tex">\ell_k</span>, the
+    <em>adjacent factor</em>. This is the line through <span class="tex">M</span> and the residual
+    point where the vertex’s own side line meets the circle a second time; it makes the
+    function vanish at <span class="tex">M</span> as well. The constants
+    <span class="tex">k</span> make each function equal to one at its own node. The four functions
+    sum to one and reproduce linear functions for every position of
+    <span class="tex">M</span>.</p>
 
   <figure class="fig" data-figure="pizzabasis">
     <figcaption><strong>Figure 11.</strong> <span class="badge">Later development</span>
@@ -528,8 +814,13 @@
     positivity of the common denominator cannot be taken for granted beyond polygons.</p>
 
   <h3 id="later-transforms">8.2 Dual volumes, Laplace transforms and non-rational forms</h3>
+  <p class="gist"><strong>In short:</strong> for a polygon the canonical function is the area
+    of the dual polygon. For curved regions the same integral still works if the dual region is
+    no longer counted uniformly but with a varying density.</p>
   <p>The dual-volume formula of Section 5 has been developed in several directions that touch
-    the second and third open problems.</p>
+    the second and third open problems. Three papers, in increasing distance from polygons
+    (the technical terms in this list are explained in the papers and are not used
+    afterwards):</p>
   <ul>
     <li><strong>Dual mixed volumes.</strong> Gao, Lam and Xue (2024) define a dual version of
       the mixed volume of several polytopes. It specialises to canonical forms and adjoints of
@@ -550,16 +841,21 @@
       that paper does not count the disc among the examples of canonical forms, because a
       circle has no vertices.</li>
   </ul>
-  <p>The second item can be seen directly. In the plane, and with the dual taken about the
-    origin, the dual-volume formula of Section 5 reads</p>
+  <p>The second item can be seen directly. Take the polar dual <span class="tex">P^*</span> once
+    and for all about the origin, not about the moving point <span class="tex">\mathbf x</span>.
+    In the plane the dual-volume formula of Section 5 then reads</p>
   <div class="tex block">C(\mathbf x)=2\int_{P^*}\frac{\mu(\mathbf y)\,d\mathbf y}{(1+\mathbf x\cdot\mathbf y)^{3}},</div>
-  <p>with <span class="tex">\mu\equiv1</span> for a polygon. For a disc cut by a line, Mazzucchelli and
-    Raman show that the same formula holds on the dual region (the convex hull of the disc and
-    the point dual to the line) with the density
+  <p>with <span class="tex">\mu\equiv1</span> for a polygon: every point of the dual counts
+    equally, and at <span class="tex">\mathbf x=\mathbf 0</span> the integral is simply the area of
+    the dual. Now take a region with a curved side, the unit disc cut by the line
+    <span class="tex">y=-a</span>. Mazzucchelli and Raman show that the same formula holds on its
+    dual region (the unit disc together with the point dual to the cutting line, and everything
+    between them), provided the points of the dual are counted with a density
+    <span class="tex">\mu</span> between 0 and 1:
     <span class="tex">\mu=\tfrac12+\tfrac1\pi\arctan\!\big((y_2-a)/\sqrt{(1-a^2)(1-|\mathbf y|^2)}\big)</span>
     inside the disc and <span class="tex">\mu=1</span> outside it. They prove that every such region
-    bounded by lines and <em>one</em> conic is completely monotone, and conjecture it for several
-    conics.</p>
+    bounded by lines and <em>one</em> conic is completely monotone, meaning that the density is
+    never negative, and conjecture it for several conics.</p>
 
   <figure class="fig" data-figure="dualmeasure">
     <figcaption><strong>Figure 12.</strong> <span class="badge">Later development</span>
@@ -569,23 +865,416 @@
       rational canonical function.</figcaption>
   </figure>
 
-  <p>For products of linear forms the corresponding kernels are piecewise polynomial, which is
-    as close as this literature comes to the splines of the third open problem; we found no
-    paper that makes the link explicit.</p>
+  <h4 id="later-splines">Splines: the same transform, read backwards <span class="badge alt">Added remark</span></h4>
+  <p class="gist"><strong>In short:</strong> a canonical function is the Laplace transform of
+    the indicator function of a cone. Splines are functions on the same cone, and their
+    Laplace transforms are the <em>denominators</em> of canonical functions. The adjoint
+    polynomial, read as a differential operator, turns the spline back into the indicator
+    function.</p>
+
+  <p><strong>The setting.</strong> Write the distance functions of a polygon in homogeneous
+    form, <span class="tex">h_i(\mathbf x)=\langle \mathbf a_i,(1,\mathbf x)\rangle</span> with
+    <span class="tex">\mathbf a_i=(-\mathbf n_i\!\cdot\!\mathbf p_i,\;\mathbf n_i)\in\mathbb R^3</span>. The
+    vectors <span class="tex">\mathbf a_0,\dots,\mathbf a_{n-1}</span> span a cone
+    <span class="tex">C</span> in three dimensions. Cutting this cone by a plane gives the dual
+    polygon: the points <span class="tex">(1-\mathbf x\!\cdot\!\mathbf w,\;\mathbf w)</span> of
+    <span class="tex">C</span> are those with <span class="tex">\mathbf w\in P^*_{\mathbf x}</span>.
+    The Laplace transform of a function <span class="tex">f</span> on the cone is
+    <span class="tex">\mathcal L f(\mathbf u)=\int e^{-\langle\mathbf u,\mathbf v\rangle}f(\mathbf v)\,d\mathbf v</span>.
+    In these terms the dual-volume formula of Section 5 reads</p>
+  <div class="tex block">C_P(\mathbf x)=\mathcal L\big[\mathbf 1_C\big](1,\mathbf x),</div>
+  <p>the Laplace transform of the function that is one on the cone and zero outside. This is
+    the “Laplace transform of indicator functions” that the third open problem of Section 7
+    refers to. The cone does not depend on <span class="tex">\mathbf x</span>; the point
+    <span class="tex">\mathbf x</span> only chooses the plane that cuts it, and the transform
+    is <span class="tex">3!</span> times the volume of the pyramid that this plane cuts
+    off.</p>
+
+  <figure class="fig" data-figure="conecut">
+    <figcaption><strong>Figure 12b.</strong> <span class="badge alt">Added remark</span>
+      The cone behind the dual polygon. Every edge of the polygon gives one ray of the cone, in
+      the same colour. The cutting plane belongs to the point <span class="tex">\mathbf x</span>,
+      and the cut (blue) is the dual polygon <span class="tex">P^*_{\mathbf x}</span> of Figure 5.
+      All dependence on <span class="tex">\mathbf x</span> is in the position of the plane.</figcaption>
+  </figure>
+
+  <p><strong>The spline.</strong> There is a second natural function on the same cone. Send the
+    positive part of <span class="tex">n</span>-dimensional space to the cone by
+    <span class="tex">(t_0,\dots,t_{n-1})\mapsto\sum_i t_i\,\mathbf a_i</span>. For
+    <span class="tex">n&gt;3</span> many points <span class="tex">\mathbf t</span> land on the same
+    point <span class="tex">\mathbf v</span>; they form a polytope of dimension
+    <span class="tex">n-3</span>, and its volume (suitably normalised) is a function
+    <span class="tex">T(\mathbf v)</span> on the cone. This is the <em>multivariate spline</em>, or
+    truncated power, of the vectors <span class="tex">\mathbf a_i</span>: the density of the shadow
+    that the positive orthant casts on the cone. The classical facts about it (De Concini and
+    Procesi, Chapter 7) are:</p>
+  <ul>
+    <li>it is piecewise polynomial and homogeneous of degree <span class="tex">n-3</span>; its
+      formula changes across the planes through two of the vectors
+      <span class="tex">\mathbf a_i</span>, which cut the dual polygon along its diagonals;</li>
+    <li>for <span class="tex">n\ge4</span> it is continuous and vanishes on the boundary of the
+      cone; if no three of the vectors lie in a plane (no three edge lines of the polygon pass
+      through one point), it has <span class="tex">n-4</span> continuous derivatives;</li>
+    <li>the derivative in the direction <span class="tex">\mathbf a_k</span> is the spline of the
+      remaining vectors, <span class="tex">D_{\mathbf a_k}T_{\{\mathbf a_i\}}=T_{\{\mathbf a_i\}\setminus\mathbf a_k}</span>,
+      and for three vectors the spline is the indicator function of their cone divided by
+      <span class="tex">|\det|</span>;</li>
+    <li>its Laplace transform is <span class="tex">1/\prod_i\langle\mathbf u,\mathbf a_i\rangle</span>.</li>
+  </ul>
+  <p>The last item is the link. Evaluated at <span class="tex">\mathbf u=(1,\mathbf x)</span>, the
+    two functions on the cone give the two halves of the canonical function:</p>
+  <div class="tex block">\mathcal L\big[\mathbf 1_C\big](1,\mathbf x)=\frac{\operatorname{adj}_P(\mathbf x)}{\prod_i h_i(\mathbf x)},
+    \qquad\qquad \mathcal L\big[T\big](1,\mathbf x)=\frac{1}{\prod_i h_i(\mathbf x)} .</div>
+  <p>On the dual polygon, where <span class="tex">\tau_{\mathbf x}(\mathbf w)=T(1-\mathbf x\!\cdot\!\mathbf w,\mathbf w)</span>
+    is the spline restricted to the slice, the same two statements are</p>
+  <div class="tex block">C_P(\mathbf x)=2\operatorname{Area}(P^*_{\mathbf x}),
+    \qquad\qquad \frac{1}{\prod_i h_i(\mathbf x)}=(n-1)!\int_{P^*_{\mathbf x}}\tau_{\mathbf x}(\mathbf w)\,d\mathbf w .</div>
+  <p>So the adjoint polynomial at <span class="tex">\mathbf x</span> is the ratio of two
+    measurements of one dual polygon: twice its area, and <span class="tex">(n-1)!</span> times
+    the mass of the spline on it.</p>
+
+  <p><strong>The adjoint as a differential operator.</strong> Under the Laplace transform,
+    multiplying by the linear function <span class="tex">\langle\mathbf u,\mathbf a\rangle</span>
+    corresponds to differentiating in the direction <span class="tex">\mathbf a</span>. A
+    polynomial in <span class="tex">\mathbf u</span> therefore corresponds to a differential
+    operator with constant coefficients. Write the adjoint, in homogeneous form, by Warren’s
+    formula for a triangulation of the dual polygon into triangles
+    <span class="tex">\sigma</span>:</p>
+  <div class="tex block">\operatorname{adj}(\mathbf u)=\sum_{\sigma}|\det\sigma|\prod_{k\notin\sigma}\langle\mathbf u,\mathbf a_k\rangle
+    \qquad\Longrightarrow\qquad
+    \operatorname{adj}(\partial)\,T=\sum_{\sigma}|\det\sigma|\prod_{k\notin\sigma}D_{\mathbf a_k}T
+    =\sum_\sigma \mathbf 1_{\operatorname{cone}(\sigma)}=\mathbf 1_C .</div>
+  <p>Each product of derivatives removes all vectors except the three of
+    <span class="tex">\sigma</span>, and what is left is the indicator function of one
+    triangular cone; the triangular cones tile <span class="tex">C</span>. In words: the spline
+    is a tent-like function on the dual polygon, built from polynomials of degree
+    <span class="tex">n-3</span>, and the adjoint is the differential operator of the same
+    order <span class="tex">n-3</span> that flattens it to the constant one. This gives the
+    adjoint a meaning that does not refer to poles or to curves through intersection
+    points.</p>
+
+  <figure class="fig" data-figure="splinedual">
+    <figcaption><strong>Figure 12c.</strong> <span class="badge alt">Added remark</span>
+      Two densities on the dual polygon. The uniform density gives the canonical function;
+      the spline, a piecewise polynomial that vanishes on the boundary for more than three
+      sides and changes its formula across the diagonals, gives the reciprocal of the product
+      of the distances. Their ratio is the adjoint polynomial. For a triangle the spline is
+      constant and the two coincide up to a factor.</figcaption>
+  </figure>
+
+  <p>The rule behind the operator formula, that a derivative along one of the vectors removes
+    that vector, can be tried out directly. Each removal lowers the degree of the spline by
+    one and shrinks its support to the cone of the remaining vectors. After
+    <span class="tex">n-3</span> removals three vectors are left, and the spline has become
+    the indicator function of a triangular cone divided by a determinant. The adjoint operator
+    is the sum of such complete sequences of removals, one for each triangle of a
+    triangulation of the dual polygon, weighted by the determinants.</p>
+
+  <figure class="fig" data-figure="splineladder">
+    <figcaption><strong>Figure 12d.</strong> <span class="badge alt">Added remark</span>
+      Differentiating removes a vector. Click corners of the dual polygon to remove their
+      vectors one after the other, until a flat triangle is left. At every stage the picture
+      is again a spline, and its transform is the reciprocal of the product of the remaining
+      distances.</figcaption>
+  </figure>
+
+  <p><strong>A dictionary.</strong> The other ingredients of Section 5 can be translated in the
+    same way. The left column lives on the polygon, as functions of
+    <span class="tex">\mathbf x</span>; the right column lives on the dual cone, before the
+    transform is taken.</p>
+  <table class="compare">
+    <thead>
+      <tr><th></th><th>On the polygon</th><th>On the dual cone</th></tr>
+    </thead>
+    <tbody>
+      <tr><th>Canonical function</th><td><span class="tex">C_P=\operatorname{adj}_P/\prod h_i</span></td>
+        <td>the indicator function <span class="tex">\mathbf 1_C</span></td></tr>
+      <tr><th>Denominator</th><td><span class="tex">1/\prod h_i</span></td>
+        <td>the spline <span class="tex">T</span></td></tr>
+      <tr><th>Numerator</th><td>the adjoint polynomial</td>
+        <td>the differential operator that turns <span class="tex">T</span> into
+          <span class="tex">\mathbf 1_C</span></td></tr>
+      <tr><th>Partition of unity</th><td><span class="tex">\sum_i w_i=C_P</span></td>
+        <td>the cones over the triangles <span class="tex">\mathbf 0\,\mathbf d_{i-1}\mathbf d_i</span>
+          tile <span class="tex">C</span></td></tr>
+      <tr><th>Linear precision</th><td><span class="tex">\sum_i w_i\,(1,\mathbf p_i)=C_P\,(1,\mathbf x)</span></td>
+        <td>Stokes’ theorem on <span class="tex">C</span>: a derivative of
+          <span class="tex">\mathbf 1_C</span> is a sum over the faces of the cone</td></tr>
+      <tr><th>Relation to a simplex</th><td>a polygon with <span class="tex">n</span> sides is a
+          plane <em>section</em> of an <span class="tex">(n-1)</span>-simplex; restricting
+          <span class="tex">1/(s_0\cdots s_{n-1})</span> to it gives
+          <span class="tex">1/\prod h_i</span></td>
+        <td>the spline is the <em>shadow</em> of the positive orthant</td></tr>
+    </tbody>
+  </table>
+  <p>The row on linear precision deserves a comment. The term
+    <span class="tex">w_i\,(1,\mathbf p_i)</span> is the Laplace transform of the two-dimensional
+    face of the cone spanned by <span class="tex">\mathbf a_{i-1}</span> and
+    <span class="tex">\mathbf a_i</span>, multiplied by the unit normal of that face, which points
+    along the homogeneous vertex <span class="tex">(1,\mathbf p_i)</span>. Stokes’ theorem for
+    indicator functions of polytopes is the set of “standard relations” from which Tveiten
+    builds the <span class="tex">D</span>-module of a polytope; he shows that, after projection,
+    these relations correspond to the recurrence relations of B-splines found by de Boor and
+    Höllig. Linear precision of Wachspress coordinates and the recurrence for
+    B-splines are thus two images of one identity.</p>
+
+  <p><strong>One variable: B-splines and the barycentric formula.</strong> The simplest case
+    connects with Section 1. Take <span class="tex">n+1</span> nodes
+    <span class="tex">t_0&lt;\dots&lt;t_n</span> on a line. Polynomial interpolation at these nodes
+    can be written in the Shepard-like form of Section 1 (the barycentric formula; see
+    Hormann’s survey),</p>
+  <div class="tex block">f(x)=\frac{\sum_i \dfrac{c_i}{x-t_i}\,f(t_i)}{\sum_i \dfrac{c_i}{x-t_i}},\qquad
+    c_i=\prod_{j\ne i}\frac{1}{t_i-t_j},\qquad \sum_i\frac{c_i}{x-t_i}=\frac{1}{\prod_i (x-t_i)} .</div>
+  <p>The denominator has a pole at every node. On the spline side stands the B-spline
+    <span class="tex">M(y)</span> with the nodes as knots: by a theorem of Curry and Schoenberg
+    it is the density of the shadow of an <span class="tex">n</span>-dimensional simplex on a
+    line, the knots being the shadows of the vertices. For <span class="tex">x</span> outside the
+    interval of the nodes the two are related by</p>
+  <div class="tex block">\int M(y)\,\frac{dy}{(x-y)^{n+1}}=\frac{1}{\prod_{i=0}^{n}(x-t_i)} ,</div>
+  <p>the one-variable version of the formula for <span class="tex">1/\prod h_i</span> above. For
+    two nodes the B-spline is the uniform density on <span class="tex">[a,b]</span> and the
+    right-hand side is, up to a constant factor, the canonical function of the segment from
+    Section 1. For more nodes the weights <span class="tex">c_i</span> alternate in sign, which
+    is why Lagrange’s basis functions are not positive: the function
+    <span class="tex">1/\prod(x-t_i)</span> is the transform of a positive spline, but it is a
+    canonical function only in the case of two nodes.</p>
+
+  <figure class="fig" data-figure="bsplinepoles">
+    <figcaption><strong>Figure 12e.</strong> <span class="badge alt">Added remark</span>
+      One variable. For three nodes the B-spline is the hat function, and its value is the
+      length of a vertical chord of any triangle whose vertices lie above the knots, divided
+      by the area of the triangle. Below, the function with a pole at every node is shown
+      with its partial fractions, whose coefficients are the weights of Lagrange’s barycentric
+      formula; for more than two nodes their signs alternate.</figcaption>
+  </figure>
+
+  <p><strong>What is known, and what the open problem looks like now.</strong> The spline
+    facts are classical. The link with rational functions through the Laplace transform is
+    the organising idea of De Concini and Procesi’s book, which studies the algebra of
+    rational functions with poles on a hyperplane arrangement as a module over differential
+    operators; the canonical forms of the regions of an arrangement live in the cohomology of
+    its complement (Eur and Lam). In physics, Paulos observed in 2012 that one-loop integrands
+    are Laplace transforms of splines and that numerators act on the spline as differential
+    operators. Kohn, Shapiro and Sturmfels show that the
+    adjoint is the numerator of the moment generating function of the uniform measure on a
+    polytope, and call the densities of its projections polytopal splines. Gao, Lam and Xue
+    have begun a discrete version, with lattice points in place of volumes; on the spline side
+    its counterpart is the theory of partition functions in the second half of De Concini and
+    Procesi’s book.</p>
+  <p>So, at the level of this dictionary, the third open problem has a positive answer:
+    barycentric coordinates and splines are obtained from the same objects, indicator
+    functions of cones and their shadows, on the two sides of the Laplace transform. What
+    the dictionary does not yet provide is a use of one theory for the other. The spline
+    lives on the dual polygon, not on the polygon where one interpolates, and the parts of
+    spline theory that matter in approximation (translates on a grid, refinement,
+    approximation order) have no counterpart for canonical forms so far.</p>
+  <p class="update">The statement that the adjoint, as a differential operator, turns the
+    spline into the indicator function, the formula with <span class="tex">(n-1)!</span>, and
+    the reading of linear precision as Stokes’ theorem are elementary consequences of the
+    cited facts. They are checked in the project’s tests; we did not find them stated in
+    this form.</p>
+
+  <h4 id="later-toric">Toric varieties and symplectic geometry: the same objects once more <span class="badge alt">Added remark</span></h4>
+  <p class="gist"><strong>In short:</strong> both functions on the dual cone are measures of
+    the kind studied by Duistermaat and Heckman. The spline belongs to a torus acting on
+    <span class="tex">\mathbb C^n</span>, the indicator function to a toric cone built from the
+    polygon. The canonical function is then a volume that geometers and physicists minimise,
+    and the Wachspress coordinates of the minimising point are known there under another
+    name.</p>
+
+  <details class="aside">
+    <summary>Background: moment maps and the Duistermaat–Heckman theorem, in one paragraph</summary>
+    <p>When a torus acts on a phase space of mechanics (a symplectic manifold) and preserves
+      its structure, the conserved quantities of the action fit together into a <em>moment
+      map</em> from the manifold to a real vector space; its image is convex. Pushing the
+      natural volume of the manifold forward along the moment map gives a measure on that
+      vector space, the <em>Duistermaat–Heckman measure</em>. Their theorem says that its
+      density is piecewise polynomial, and that its Laplace transform is given exactly by a
+      sum over the fixed points of the action: each fixed point contributes an exponential
+      divided by the product of the weights with which the torus acts near it. The density at
+      a point is the volume of the <em>reduced space</em> over that point (the fibre of the
+      moment map, divided by the torus). For a toric variety, where the torus has half the
+      dimension of the manifold, the image is a polytope and the measure is uniform on
+      it.</p>
+  </details>
+
+  <p><strong>The spline is a Duistermaat–Heckman measure.</strong> Let a three-dimensional torus
+    act on <span class="tex">\mathbb C^n</span> by rotating the <span class="tex">k</span>-th
+    coordinate with weight <span class="tex">\mathbf a_k</span> (this needs integer vectors; the
+    statements about measures and polytopes below hold for any polygon). Its moment map is
+    <span class="tex">\mathbf z\mapsto\sum_k \tfrac12|z_k|^2\,\mathbf a_k</span>. With
+    <span class="tex">t_k=\tfrac12|z_k|^2</span> this is the map
+    <span class="tex">\mathbf t\mapsto\sum_k t_k\mathbf a_k</span> that defined the spline, so the
+    Duistermaat–Heckman measure of this action is the spline, up to the factor
+    <span class="tex">(2\pi)^n</span>. The action has a single fixed point, the origin, with
+    weights <span class="tex">\mathbf a_0,\dots,\mathbf a_{n-1}</span>, and the fixed-point formula
+    gives <span class="tex">1/\prod_k\langle\mathbf u,\mathbf a_k\rangle</span>: the Laplace
+    transform of the spline is the simplest instance of the theorem. The box spline is the
+    same construction with a product of <span class="tex">n</span> spheres in place of
+    <span class="tex">\mathbb C^n</span>; its <span class="tex">2^n</span> fixed points give the
+    <span class="tex">2^n</span> terms of
+    <span class="tex">\prod_k(1-e^{-\langle\mathbf u,\mathbf a_k\rangle})/\langle\mathbf u,\mathbf a_k\rangle</span>.</p>
+  <p>The value of the spline at a point <span class="tex">\mathbf v</span> of the cone is the
+    volume of the reduced space over <span class="tex">\mathbf v</span>. That space is itself a
+    toric variety, of complex dimension <span class="tex">n-3</span>, and its moment polytope is
+    the fibre <span class="tex">\{\mathbf t\ge 0:\ \sum_k t_k\mathbf a_k=\mathbf v\}</span> from the
+    definition of the spline. When <span class="tex">\mathbf v</span> crosses a diagonal of the
+    dual polygon, this polytope changes its shape (for a pentagon, one of its sides
+    disappears) and with it the reduced space; the
+    diagonals are the walls of the variation of symplectic quotients, and this is the reason
+    why the spline changes its formula there.</p>
+
+  <figure class="fig" data-figure="fibre">
+    <figcaption><strong>Figure 12f.</strong> <span class="badge alt">Added remark</span>
+      The polytope in each fibre. For a pentagon the fibre over a point of the dual polygon is
+      a polygon with three, four or five sides, coloured like the corners of the dual polygon;
+      its area, suitably normalised, is the value of the spline. Dragging the point across a
+      diagonal makes one side shrink to a point.</figcaption>
+  </figure>
+
+  <p><strong>The indicator function is one too, and its transform is a volume.</strong> Suppose
+    the vertices of <span class="tex">P</span> have integer coordinates. The cone over
+    <span class="tex">P</span> then defines an affine toric variety <span class="tex">Y</span> of
+    complex dimension three, whose polynomial functions are spanned by the monomials with
+    exponents in the lattice points of the dual cone <span class="tex">C</span>. The moment map
+    of <span class="tex">Y</span> has image <span class="tex">C</span>, and since
+    <span class="tex">Y</span> is toric its Duistermaat–Heckman measure is uniform: it is the
+    indicator function <span class="tex">\mathbf 1_C</span>. So the canonical function
+    <span class="tex">C_P(\mathbf x)</span>, its Laplace transform at
+    <span class="tex">(1,\mathbf x)</span>, is a volume attached to <span class="tex">Y</span> and
+    to the direction <span class="tex">(1,\mathbf x)</span> in the torus: up to
+    <span class="tex">3!</span>, the volume of the pyramid of Figure 12b. Counting the monomials
+    on <span class="tex">Y</span> with a weight gives the same function in the limit,</p>
+  <div class="tex block">\lim_{\varepsilon\to0}\ \varepsilon^{3}\!\!\sum_{\mathbf m\in C\cap\mathbb Z^3}\! e^{-\varepsilon\langle(1,\mathbf x),\mathbf m\rangle}=C_P(\mathbf x) ,</div>
+  <p>which is how a canonical function arises from a count of lattice points.</p>
+  <p>This volume has been studied intensively for a different reason. Martelli, Sparks and Yau
+    call <span class="tex">P</span> the <em>toric diagram</em> of <span class="tex">Y</span>, a
+    Calabi–Yau cone, and consider metrics on its five-dimensional base that are determined by
+    a <em>Reeb vector</em> <span class="tex">\mathbf b</span> in the interior of the cone over
+    <span class="tex">P</span>. They show that the volume of the base depends only on
+    <span class="tex">\mathbf b</span>, and for <span class="tex">\mathbf b=3\,(1,\mathbf x)</span>
+    their formula is, in the notation of this page,</p>
+  <div class="tex block">\operatorname{vol}(\mathbf b)=\frac{\pi^3}{b_1}\sum_a\frac{(\mathbf v_{a-1},\mathbf v_a,\mathbf v_{a+1})}{(\mathbf b,\mathbf v_{a-1},\mathbf v_a)\,(\mathbf b,\mathbf v_a,\mathbf v_{a+1})}
+    =\frac{\pi^3}{27}\,C_P(\mathbf x),\qquad \mathbf v_a=(1,\mathbf p_a),</div>
+  <p>with one term for every vertex: the sum of the wedge weights of Section 5. They prove
+    that this function is strictly convex and infinite on the boundary, so that it has
+    exactly one minimum, and that the minimising Reeb vector is the one of a Sasaki–Einstein
+    metric, if there is one (existence was shown by Futaki, Ono and Wang, and in greater
+    generality by Berman). Three remarks translate this into the language of this page.</p>
+  <ul>
+    <li><strong>The minimiser is the Santaló point.</strong> Since
+      <span class="tex">C_P(\mathbf x)</span> is twice the area of the dual polygon about
+      <span class="tex">\mathbf x</span>, minimising the volume means finding the point about
+      which the dual polygon is smallest. Convex geometry calls it the Santaló point of
+      <span class="tex">P</span>; it is the point about which the dual polygon has its
+      centroid at the origin.</li>
+    <li><strong>The wedge weights are volumes.</strong> In the same paper the weight
+      <span class="tex">w_a</span> is, up to a constant, the volume of the three-dimensional
+      submanifold of the base that belongs to the vertex <span class="tex">\mathbf p_a</span>.</li>
+    <li><strong>Wachspress coordinates are R-charges.</strong> In the gauge theories that
+      physicists attach to <span class="tex">Y</span>, every vertex of the toric diagram
+      carries a number, its R-charge, and the charges sum to two. Butti and Zaffaroni found
+      that they are <span class="tex">2\,l_a/\sum_b l_b</span> with
+      <span class="tex">l_a</span>, up to a constant, the corner area divided by the product of
+      the two triangle areas at the vertex. In the notation of Section 3 this says that the R-charges are twice
+      the Wachspress coordinates of the Reeb point, and their “vectorial identity” is linear
+      precision.</li>
+  </ul>
+  <p>The known volumes are reproduced by minimising <span class="tex">C_P/27</span>:
+    <span class="tex">16/27</span> for the unit square (the conifold),
+    <span class="tex">(46+13\sqrt{13})/324</span> and
+    <span class="tex">(59+11\sqrt{33})/486</span> for the quadrilateral and the pentagon of the
+    first two del Pezzo surfaces, in units of <span class="tex">\pi^3</span>.</p>
+
+  <figure class="fig" data-figure="reebpoint">
+    <figcaption><strong>Figure 12g.</strong> <span class="badge alt">Added remark</span>
+      Volume minimisation. The polygon is shaded by its canonical function; the ring marks
+      its minimum, the Santaló point of the polygon. On the right, the dual polygon about
+      <span class="tex">\mathbf x</span> and its centroid, which coincides with
+      <span class="tex">\mathbf x</span> exactly at the minimum. The preset polygons are toric
+      diagrams with known volumes.</figcaption>
+  </figure>
+
+  <p><strong>The adjoint as an equivariant class.</strong> The two measures belong to two spaces,
+    one inside the other. For integer vectors <span class="tex">\mathbf a_k</span>, the torus
+    orbit of the point <span class="tex">(1,\dots,1)</span> in <span class="tex">\mathbb C^n</span>
+    closes up to a three-dimensional toric variety <span class="tex">Y_A</span> with moment cone
+    <span class="tex">C</span>. The volume function of <span class="tex">\mathbb C^n</span> is
+    <span class="tex">1/\prod\langle\mathbf u,\mathbf a_k\rangle</span>, that of
+    <span class="tex">Y_A</span> is <span class="tex">\operatorname{adj}(\mathbf u)/\prod\langle\mathbf u,\mathbf a_k\rangle</span>,
+    and their ratio, the adjoint, is the class of <span class="tex">Y_A</span> in the
+    equivariant cohomology of <span class="tex">\mathbb C^n</span>, which commutative algebra
+    calls its multidegree. The multidegree of a toric variety can be computed from a
+    triangulation, through Sturmfels’ description of the initial ideals of toric ideals and
+    the additivity of multidegrees, and the result is Warren’s formula for the adjoint. For a
+    quadrilateral the four vectors satisfy one relation
+    <span class="tex">c_0\mathbf a_0+c_2\mathbf a_2=c_1\mathbf a_1+c_3\mathbf a_3</span> with positive
+    coefficients, <span class="tex">Y_A</span> is the hypersurface
+    <span class="tex">z_0^{c_0}z_2^{c_2}=z_1^{c_1}z_3^{c_3}</span>, and its class
+    <span class="tex">\langle\mathbf u,c_0\mathbf a_0+c_2\mathbf a_2\rangle</span> is, up to a constant
+    factor, the adjoint line <span class="tex">c_0h_0+c_2h_2</span>; for the unit square this is the conifold
+    <span class="tex">z_0z_2=z_1z_3</span>.</p>
+
+  <p><strong>The polygon as a quotient, and two kinds of push-forward.</strong> The polygon is
+    itself a moment polytope, of a toric surface (for suitable lattice polygons; Delzant). In
+    Delzant’s construction that surface is a quotient of <span class="tex">\mathbb C^n</span>,
+    and the functions <span class="tex">\tfrac12|z_k|^2</span> become the distances
+    <span class="tex">h_k(\mathbf x)</span>, up to the normalisation of the edge normals: the embedding of the polygon into the positive
+    orthant by its distance functions, used in the dictionary above, is the moment-map
+    picture of the homogeneous coordinates of a toric variety. The push-forward of
+    <a href="#later-pushforward">Section 8.4</a> lives here as well. Arkani-Hamed, Bai and Lam
+    obtain the canonical form of a polytope by pushing the form
+    <span class="tex">\prod dX_i/X_i</span> of a toric variety forward along a map of the same
+    shape as the moment map, and call the result an algebraic analogue of the
+    Duistermaat–Heckman measure. The difference is in the kind of push-forward. The measure
+    is obtained by integrating a volume over the fibres; the canonical form by summing a
+    rational form over finitely many preimages.</p>
+
+  <p><strong>Newton polytopes.</strong> For a polynomial <span class="tex">p</span> with positive
+    coefficients, the polytope spanned by its exponents is its Newton polytope
+    <span class="tex">N</span>. Arkani-Hamed, He and Lam consider the integral</p>
+  <div class="tex block">I(\mathbf X)=\alpha'^{\,d}\int_{\mathbb R^d_{&gt;0}}\prod_i\frac{dx_i}{x_i}\;\mathbf x^{\alpha'\mathbf X}\,p(\mathbf x)^{-\alpha' c},</div>
+  <p>which converges when <span class="tex">\mathbf X</span> lies inside
+    <span class="tex">cN</span>, and show that for <span class="tex">\alpha'\to0</span> it tends to
+    the canonical function of <span class="tex">cN</span> at <span class="tex">\mathbf X</span>.
+    The simplest case is <span class="tex">p=1+x</span>: the integral is a Beta function, and its
+    limit <span class="tex">1/X+1/(c-X)</span> is the function of Section 1. The coefficients of
+    <span class="tex">p</span> do not matter in the limit, only its Newton polytope. The points
+    where the integrand is stationary satisfy
+    <span class="tex">\mathbf X=c\,\partial\log p/\partial\log\mathbf x</span>; this is a map from
+    the positive orthant onto the interior of the polytope of the same kind as a moment map,
+    and summing over its preimages is the push-forward just described. Here a Mellin
+    transform plays the role that the Laplace transform played above.</p>
+
+  <p class="update">The theorems quoted here are those of the cited authors. The translations
+    into the notation of this page — the volume of Martelli, Sparks and Yau as the canonical
+    function divided by 27, its minimiser as the Santaló point, the R-charges as twice the
+    Wachspress coordinates, the adjoint as a multidegree — are direct comparisons of formulas.
+    They are checked in the project’s tests, including the published values for the
+    conifold and the del Pezzo cones; we did not find them stated in these terms in the
+    literature we searched.</p>
 
   <h3 id="later-meanvalue">8.3 Mean value coordinates in the dual picture: area versus perimeter</h3>
-  <p>Section 7 related the disc function of eq. (5.14) to mean value coordinates. The dual
-    picture allows a sharper statement. Schaefer, Ju and Warren showed that Wachspress and mean
-    value coordinates are two members of one family of dual Shepard interpolants. Write
-    <span class="tex">L_i</span> for the length of the edge of the dual polygon
-    <span class="tex">P^*_{\mathbf x}</span> that corresponds to the vertex
-    <span class="tex">\mathbf p_i</span>, and <span class="tex">r_i=|\mathbf p_i-\mathbf x|</span>. Then</p>
+  <p class="gist"><strong>In short:</strong> Wachspress and mean value coordinates measure
+    the same dual polygon in two ways. Wachspress weights add up to twice its area, mean value
+    weights to its perimeter.</p>
+  <p>Section 7 related the disc function (eq. (5.14) of the paper, the function plotted in
+    Figure 9) to mean value coordinates. The dual picture of Section 5 allows a sharper
+    statement. Schaefer, Ju and Warren showed that Wachspress and mean value coordinates are
+    two members of one family of dual Shepard interpolants. Recall that the vertex
+    <span class="tex">\mathbf p_i</span> corresponds to one edge of the dual polygon
+    <span class="tex">P^*_{\mathbf x}</span>. Write <span class="tex">L_i</span> for the length of
+    that edge and <span class="tex">r_i=|\mathbf p_i-\mathbf x|</span> for the distance from
+    <span class="tex">\mathbf x</span> to the vertex. Then the normalising sums of the two kinds of
+    weights are</p>
   <div class="tex block">\underbrace{\sum_i w_i^{\mathrm{W}}}_{\text{Wachspress}}=\sum_i\frac{L_i}{r_i}=2\operatorname{Area}(P^*_{\mathbf x}),
     \qquad\qquad \underbrace{\sum_i w_i^{\mathrm{MV}}}_{\text{mean value}}=\sum_i L_i=\operatorname{Perimeter}(P^*_{\mathbf x}).</div>
-  <p>For Wachspress coordinates even the individual weights are
-    <span class="tex">w_i=L_i/r_i</span>, and linear precision becomes the fact that the edge
-    vectors of a closed polygon sum to zero. For mean value coordinates only the total is the
-    perimeter; the individual weights are distributed differently.</p>
+  <p>For Wachspress coordinates the statement holds weight by weight,
+    <span class="tex">w_i=L_i/r_i</span>: the dual edge lies at distance
+    <span class="tex">1/r_i</span> from the origin, so <span class="tex">L_i/r_i</span> is twice the
+    area of the triangle over that edge, as in Section 5. Linear precision becomes the fact
+    that the edge vectors of a closed polygon sum to zero. For mean value coordinates only the
+    total is the perimeter; the individual weights are distributed differently.</p>
 
   <figure class="fig" data-figure="meanvalue">
     <figcaption><strong>Figure 13.</strong> <span class="badge">Later development</span>
@@ -593,6 +1282,44 @@
       perimeter the mean value coordinates. On a triangle the two sets of coordinates
       coincide.</figcaption>
   </figure>
+
+  <p><strong>A second comparison: force polygons</strong>
+    <span class="badge alt">Added remark</span>. In the mechanical reading of
+    <a href="#wheel">Section 5</a>, every set of barycentric coordinates has a closed force
+    polygon at the point <span class="tex">\mathbf x</span>: its edge
+    <span class="tex">i</span> is perpendicular to the direction from
+    <span class="tex">\mathbf x</span> to <span class="tex">\mathbf p_i</span> and has length
+    <span class="tex">w_i\,r_i</span>. The three best-known coordinates differ only in where
+    that edge is placed:</p>
+  <table class="compare">
+    <thead>
+      <tr><th></th><th>Distance of edge <span class="tex">i</span> from
+        <span class="tex">\mathbf x</span></th><th>The force polygon is</th></tr>
+    </thead>
+    <tbody>
+      <tr><th>Wachspress</th><td><span class="tex">1/r_i</span></td>
+        <td>the polar dual of the polygon</td></tr>
+      <tr><th>Mean value</th><td><span class="tex">1</span></td>
+        <td>circumscribed about the unit circle around <span class="tex">\mathbf x</span>,
+          touching it on the lines from <span class="tex">\mathbf x</span> through the
+          vertices</td></tr>
+      <tr><th>Discrete harmonic</th><td><span class="tex">r_i</span></td>
+        <td>bounded by the perpendicular bisectors of the segments from
+          <span class="tex">\mathbf x</span> to the vertices, up to scale</td></tr>
+    </tbody>
+  </table>
+  <p>Discrete harmonic coordinates are the “cotangent weights” of geometry processing; they
+    are rational but can be negative. The three are the members
+    <span class="tex">p=0,1,2</span> of the family of Floater, Hormann and Kós. The table shows
+    at a glance why mean value coordinates are not rational: the line carrying edge
+    <span class="tex">i</span> is <span class="tex">\mathbf y\cdot(\mathbf p_i-\mathbf x)=c</span> with
+    <span class="tex">c=1</span> for Wachspress and <span class="tex">c=r_i^2</span> for discrete
+    harmonic coordinates, but <span class="tex">c=r_i</span>, a square root, for mean value
+    coordinates. Only the first polygon is the force diagram of the wheel; all three can be
+    compared in <a href="#wheel">Figure 5b</a>. On a polygon
+    inscribed in a circle the discrete harmonic coordinates coincide with Wachspress’, as the
+    uniqueness of the wheel’s self-stress requires: the perpendicular bisectors of the rim
+    bars then pass through one point.</p>
 
   <p>For the unit disc and a point at distance <span class="tex">r</span> from the centre, the dual
     is an ellipse with semi-axes <span class="tex">1/(1-r^2)</span> and
@@ -625,18 +1352,32 @@
     coordinates themselves remains open.</p>
 
   <h3 id="later-pushforward">8.4 Push-forwards, bilinear patches and polynomial coordinates</h3>
+  <p class="gist"><strong>In short:</strong> the canonical function of a complicated region
+    can be computed from that of a simple one, if a map carries the simple region onto the
+    complicated one. For a quadrilateral the map is the bilinear patch.</p>
   <p>Besides triangulation there is a second way to compute canonical forms, already in
-    Arkani-Hamed, Bai and Lam: the <strong>push-forward</strong>. If a map sends one positive
-    geometry onto another, the canonical form of the image is obtained by summing the form of
-    the source over all preimages of a point, each divided by the Jacobian determinant. For a
-    quadrilateral the map is one every modeller knows, the bilinear patch
-    <span class="tex">B(u,v)</span> over the unit square, whose canonical form is
-    <span class="tex">du\,dv/\big(u(1-u)\,v(1-v)\big)</span>:</p>
+    Arkani-Hamed, Bai and Lam: the <strong>push-forward</strong>. Suppose a map sends one
+    positive geometry onto another. To find the canonical function of the image at a point
+    <span class="tex">\mathbf x</span>, collect <em>all</em> points that the map sends to
+    <span class="tex">\mathbf x</span> (its preimages), evaluate the canonical function of the
+    source at each of them, divide by the Jacobian determinant of the map there (the factor by
+    which it stretches areas), and add up.</p>
+  <p>For a quadrilateral the map is one every modeller knows: the bilinear patch
+    <span class="tex">B(u,v)</span>, which carries the unit square onto the quadrilateral. The
+    square is a product of two segments, so its canonical function is the product of two
+    segment formulas, <span class="tex">1/\big(u(1-u)\,v(1-v)\big)</span>, and the recipe
+    gives</p>
   <div class="tex block">C_{\text{quad}}(\mathbf x)=\sum_{B(u,v)=\mathbf x}\frac{1}{u(1-u)\,v(1-v)\,\det\!\big(\partial_uB,\partial_vB\big)} .</div>
-  <p>Inverse bilinear interpolation has two solutions. One lies in the square; the other lies
-    outside it or is complex, and it cannot be left out of the sum. In the same way the
-    canonical form of any polygon is the push-forward of
-    <span class="tex">\tfrac{dX_1}{X_1}\wedge\tfrac{dX_2}{X_2}</span> under a suitable toric patch.</p>
+  <p>How many terms does the sum have? Solving <span class="tex">B(u,v)=\mathbf x</span> for
+    <span class="tex">(u,v)</span>, known as inverse bilinear interpolation, leads to a quadratic
+    equation, so in general there are two solutions (for a parallelogram, only one). For a point
+    <span class="tex">\mathbf x</span> of the quadrilateral one solution lies in the square and the
+    other outside it, and it is tempting to discard the second. It must be kept: each term
+    alone contains a square root, and only their sum is a rational function of
+    <span class="tex">\mathbf x</span>. In the
+    same way the canonical form of any polygon is the push-forward of
+    <span class="tex">\tfrac{dX_1}{X_1}\wedge\tfrac{dX_2}{X_2}</span> under a suitable toric
+    patch, a generalisation of Bézier patches whose domain is a polygon.</p>
 
   <figure class="fig" data-figure="quad">
     <figcaption><strong>Figure 15.</strong> <span class="badge">Later development</span>
@@ -645,41 +1386,54 @@
       through the two points where opposite sides meet.</figcaption>
   </figure>
 
-  <p>The bilinear blending functions, evaluated at the preimage inside the square, are also
-    barycentric coordinates of <span class="tex">\mathbf x</span>; but as functions of
-    <span class="tex">\mathbf x</span> they involve a square root, and in general they differ from
-    the Wachspress coordinates. For a parallelogram the map is affine, the two coincide, the
-    adjoint is constant and the coordinates are polynomials. Wachspress already observed that
-    a quadrilateral has polynomial barycentric coordinates only if it is a parallelogram.
-    Baumbach and Winter (2026) settle the general case: a polytope admits polynomial
-    generalised barycentric coordinates if and only if it is affinely equivalent to a product
-    of simplices, and Wachspress coordinates are the unique rational coordinates of minimal
-    degree. For toric patches, Garcia-Puente and Sottile relate linear precision to an
-    algebraic-statistics property, maximum likelihood degree one.</p>
+  <p>The bilinear patch also gives barycentric coordinates directly. Its four blending
+    functions <span class="tex">(1-u)(1-v),\,u(1-v),\,uv,\,(1-u)v</span>, evaluated at the
+    preimage inside the square, are non-negative, sum to one and reproduce
+    <span class="tex">\mathbf x</span>. But as functions of <span class="tex">\mathbf x</span> they
+    contain the square root from the quadratic equation, and in general they differ from the
+    Wachspress coordinates. For a parallelogram the map is affine, the two sets of coordinates
+    coincide, the adjoint is constant and the coordinates are polynomials.</p>
+  <p>When are barycentric coordinates polynomials? Wachspress already observed that for a
+    quadrilateral this happens only if it is a parallelogram. Baumbach and Winter (2026)
+    settle the general case: a polytope admits polynomial generalised barycentric coordinates
+    if and only if it is, up to an affine map, a product of simplices (such as a parallelogram
+    or a prism), and Wachspress coordinates are the unique rational coordinates of minimal
+    degree. For toric patches, Garcia-Puente and Sottile relate linear precision to a property
+    from algebraic statistics, maximum likelihood degree one.</p>
 
   <h3 id="later-lines">8.5 Line space: what is known about the canonical form</h3>
-  <p>The first open problem asks for barycentric coordinates in the space of lines. No such
-    construction has appeared, but the ingredients are now explicit, and they suggest keeping
-    two objects apart.</p>
+  <p class="gist"><strong>In short:</strong> the positive part of line space has only four boundary
+    pieces and less symmetry than the octahedron of Figure 8; the octahedron is a
+    three-dimensional shadow of it. A first “adjoint” in line space has been
+    found.</p>
+  <p>The first open problem asks for barycentric coordinates in the space of lines (see
+    Section 7 for Plücker coordinates <span class="tex">p_{ij}</span>). No such construction has
+    been published, but the ingredients are now explicit, and they suggest keeping two objects
+    apart: the positive Grassmannian itself, and the octahedron.</p>
   <ul>
     <li><strong>The positive Grassmannian has four facets.</strong> Its canonical form has poles
-      exactly where one of the <em>cyclically consecutive</em> Plücker coordinates vanishes
-      (Arkani-Hamed, Bai, Lam, eq. 5.40). For <span class="tex">G(2,4)</span>, in the chart where a
-      line is the row space of
+      exactly where one of the <em>cyclically consecutive</em> Plücker coordinates
+      <span class="tex">p_{12},p_{23},p_{34},p_{14}</span> vanishes
+      (Arkani-Hamed, Bai, Lam, eq. 5.40). To write it down one needs four free parameters for a
+      line. For <span class="tex">G(2,4)</span>, take the lines spanned by the two rows of
       <span class="tex">\left(\begin{smallmatrix}1&amp;0&amp;-c&amp;-d\\0&amp;1&amp;a&amp;b\end{smallmatrix}\right)</span>,
-      this gives
+      with parameters <span class="tex">a,b,c,d</span>. This gives
       <div class="tex block">\Omega\big(G_{\ge0}(2,4)\big)=\frac{da\,db\,dc\,dd}{b\,c\,(ad-bc)},\qquad
         p_{12}=1,\;p_{23}=c,\;p_{34}=ad-bc,\;p_{14}=b .</div>
-      The other two coordinates <span class="tex">p_{13}=a</span>, <span class="tex">p_{24}=d</span>
-      cannot vanish in the interior, because
-      <span class="tex">p_{13}p_{24}=p_{12}p_{34}+p_{14}p_{23}</span>. So this positive geometry has a
-      cyclic symmetry, not the full symmetry of a tetrahedron.</li>
-    <li><strong>The octahedron is a moment-map image.</strong> The six normalised Plücker
-      coordinates <span class="tex">p_{ij}/\sum p_{kl}</span> are non-negative and sum to one, and
-      they map the positive Grassmannian onto the octahedron (the hypersimplex) of Figure 8.
-      They look like barycentric coordinates with respect to the six edge lines, but the map
-      goes from four dimensions to three and is not injective; Łukowski and Stalknecht
-      describe the canonical forms that arise on the hypersimplex.</li>
+      The denominator contains exactly the consecutive coordinates. The other two,
+      <span class="tex">p_{13}=a</span> and <span class="tex">p_{24}=d</span>, cannot vanish in the
+      interior, because the Plücker equation says
+      <span class="tex">p_{13}p_{24}=p_{12}p_{34}+p_{14}p_{23}</span>, a sum of positive numbers.
+      So the six edge lines of the tetrahedron are not treated alike: this positive geometry has
+      a cyclic symmetry, not the full symmetry of a tetrahedron.</li>
+    <li><strong>The octahedron is a moment-map image.</strong> Divide the six Plücker
+      coordinates by their sum. The six numbers <span class="tex">p_{ij}/\sum p_{kl}</span> are
+      non-negative and sum to one, and using them as weights for the six vertices of the
+      octahedron of Figure 8 maps the positive Grassmannian onto that octahedron. They look
+      like barycentric coordinates with respect to the six edge lines. But the positive
+      Grassmannian is four-dimensional and the octahedron three-dimensional, so different lines
+      land on the same point: a point of the octahedron does not determine a line; Łukowski and Stalknecht
+      describe the canonical forms that arise on the octahedron.</li>
     <li><strong>A first adjoint in line space.</strong> Pavlov and Ranestad (2025) cut the positive
       Grassmannian with one more hyperplane <span class="tex">\sum c_{ij}p_{ij}\ge0</span> and show
       that, under genericity assumptions, the resulting “positive pentahedron” is a positive
@@ -731,7 +1485,7 @@
     <li>J. Warren. Barycentric coordinates for convex polytopes. <em>Advances in Computational
       Mathematics</em> 6(1):97–108, 1996.</li>
   </ol>
-  <p><strong>Later developments (Section 8)</strong></p>
+  <p><strong>Further sources (added remarks in Section 5, and Section 8)</strong></p>
   <ol class="refs" start="9">
     <li>K. Kohn, R. Piene, K. Ranestad, F. Rydell, B. Shapiro, R. Sinn, M.-Ş. Sorea, S. Telen.
       Adjoints and canonical forms of polypols. <em>Documenta Mathematica</em> 30:275–346, 2025.
@@ -758,6 +1512,55 @@
       <a href="https://arxiv.org/abs/2107.07520">arXiv:2107.07520</a>, 2021.</li>
     <li>D. Pavlov, K. Ranestad. Positive polytopes with few facets in the Grassmannian.
       <a href="https://arxiv.org/abs/2503.01652">arXiv:2503.01652</a>, 2025.</li>
+    <li>C. De Concini, C. Procesi. <em>Topics in Hyperplane Arrangements, Polytopes and
+      Box-Splines</em>. Springer, 2010.</li>
+    <li>K. Tveiten. B-splines, polytopes and their characteristic D-modules.
+      <a href="https://arxiv.org/abs/1306.6864">arXiv:1306.6864</a>; part of the thesis
+      <em>Period integrals and other direct images of D-modules</em>, Stockholm University,
+      2015.</li>
+    <li>C. de Boor, K. Höllig. Recurrence relations for multivariate B-splines.
+      <em>Proceedings of the American Mathematical Society</em> 85(3):397–400, 1982.</li>
+    <li>H. B. Curry, I. J. Schoenberg. On Pólya frequency functions IV: the fundamental spline
+      functions and their limits. <em>Journal d’Analyse Mathématique</em> 17:71–107, 1966.</li>
+    <li>M. F. Paulos. Loops, polytopes and splines.
+      <a href="https://arxiv.org/abs/1210.0578">arXiv:1210.0578</a>, 2012.</li>
+    <li>K. Kohn, B. Shapiro, B. Sturmfels. Moment varieties of measures on polytopes.
+      <a href="https://arxiv.org/abs/1807.10258">arXiv:1807.10258</a>, 2018.</li>
+    <li>C. Eur, T. Lam. Canonical forms of oriented matroids.
+      <a href="https://arxiv.org/abs/2502.20782">arXiv:2502.20782</a>, 2025.</li>
+    <li>Y. Gao, T. Lam, L. Xue. Dual lattice functions of polytopes.
+      <a href="https://arxiv.org/abs/2607.08101">arXiv:2607.08101</a>, 2026.</li>
+    <li>J. J. Duistermaat, G. J. Heckman. On the variation in the cohomology of the symplectic
+      form of the reduced phase space. <em>Inventiones Mathematicae</em> 69:259–268, 1982.</li>
+    <li>M. F. Atiyah, R. Bott. The moment map and equivariant cohomology. <em>Topology</em>
+      23:1–28, 1984.</li>
+    <li>T. Delzant. Hamiltoniens périodiques et images convexes de l’application moment.
+      <em>Bulletin de la Société Mathématique de France</em> 116:315–339, 1988.</li>
+    <li>D. Martelli, J. Sparks, S.-T. Yau. The geometric dual of a-maximisation for toric
+      Sasaki–Einstein manifolds. <a href="https://arxiv.org/abs/hep-th/0503183">arXiv:hep-th/0503183</a>;
+      <em>Communications in Mathematical Physics</em> 268, 2006.</li>
+    <li>D. Martelli, J. Sparks, S.-T. Yau. Sasaki–Einstein manifolds and volume minimisation.
+      <a href="https://arxiv.org/abs/hep-th/0603021">arXiv:hep-th/0603021</a>;
+      <em>Communications in Mathematical Physics</em> 280, 2008.</li>
+    <li>A. Butti, A. Zaffaroni. R-charges from toric diagrams and the equivalence of
+      a-maximization and Z-minimization.
+      <a href="https://arxiv.org/abs/hep-th/0506232">arXiv:hep-th/0506232</a>, 2005.</li>
+    <li>A. Futaki, H. Ono, G. Wang. Transverse Kähler geometry of Sasaki manifolds and toric
+      Sasaki–Einstein manifolds. <em>Journal of Differential Geometry</em> 83, 2009.</li>
+    <li>R. J. Berman. Conical Calabi–Yau metrics on toric affine varieties and convex cones.
+      <a href="https://arxiv.org/abs/2005.07053">arXiv:2005.07053</a>, 2020.</li>
+    <li>N. Arkani-Hamed, S. He, T. Lam. Stringy canonical forms.
+      <a href="https://arxiv.org/abs/1912.08707">arXiv:1912.08707</a>, 2019.</li>
+    <li>B. Sturmfels. <em>Gröbner Bases and Convex Polytopes</em>. American Mathematical Society,
+      1996.</li>
+    <li>E. Miller, B. Sturmfels. <em>Combinatorial Commutative Algebra</em>. Springer, 2005.</li>
+    <li>J. C. Maxwell. On reciprocal figures and diagrams of forces. <em>Philosophical
+      Magazine</em> 27:250–261, 1864.</li>
+    <li>W. Whiteley. Motions and stresses of projected polyhedra. <em>Structural Topology</em>
+      7, 1982.</li>
+    <li>M. S. Floater, K. Hormann, G. Kós. A general construction of barycentric coordinates
+      over convex polygons. <em>Advances in Computational Mathematics</em> 24:311–331,
+      2006.</li>
   </ol>
 </section>
 

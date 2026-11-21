@@ -18,6 +18,7 @@ import { initTriangle } from "./figures/triangle.js";
 import { initSurface } from "./figures/surface.js";
 import { initResidue } from "./figures/residue.js";
 import { initWachspress } from "./figures/wachspress.js";
+import { initWheel } from "./figures/wheel.js";
 import { initAdjoint } from "./figures/adjoint.js";
 import { initLineSpace } from "./figures/linespace.js";
 import { initDisc } from "./figures/disc.js";
@@ -25,6 +26,12 @@ import { initPolytope3d } from "./figures/polytope3d.js";
 import { initPolycon } from "./figures/polycon.js";
 import { initPizzaBasis } from "./figures/pizzabasis.js";
 import { initDualMeasure } from "./figures/dualmeasure.js";
+import { initConeCut } from "./figures/conecut.js";
+import { initSplineDual } from "./figures/splinedual.js";
+import { initSplineLadder } from "./figures/splineladder.js";
+import { initBsplinePoles } from "./figures/bsplinepoles.js";
+import { initFibre } from "./figures/fibre.js";
+import { initReebPoint } from "./figures/reebpoint.js";
 import { initMeanValue } from "./figures/meanvalue.js";
 import { initSmooth } from "./figures/smooth.js";
 import { initQuad } from "./figures/quad.js";
@@ -35,6 +42,7 @@ const FIGURES = {
   surface: initSurface,
   residue: initResidue,
   wachspress: initWachspress,
+  wheel: initWheel,
   adjoint: initAdjoint,
   linespace: initLineSpace,
   disc: initDisc,
@@ -42,6 +50,12 @@ const FIGURES = {
   polycon: initPolycon,
   pizzabasis: initPizzaBasis,
   dualmeasure: initDualMeasure,
+  conecut: initConeCut,
+  splinedual: initSplineDual,
+  splineladder: initSplineLadder,
+  bsplinepoles: initBsplinePoles,
+  fibre: initFibre,
+  reebpoint: initReebPoint,
   meanvalue: initMeanValue,
   smooth: initSmooth,
   quad: initQuad,
