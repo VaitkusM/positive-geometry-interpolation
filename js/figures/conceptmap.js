@@ -85,7 +85,7 @@ const TOPICS = {
 const RELATIONS = [
   ["segment", "triangle", "The same step one dimension up: divide by the product of the areas, and the weights get poles on the sides."],
   ["triangle", "polygon", "A polygon has more edges than a triangle; Wachspress’ weights keep poles only on the two edges that meet at the vertex."],
-  ["polypols", "hodge", "For a region bounded by curves, the genus of the curves decides whether its canonical form is unique: lines, conics and singular cubics are fine, a smooth cubic is not."],
+  ["polypols", "hodge", "For a region bounded by curves, the genus of the curves decides whether its canonical form is unique: it is for lines, conics and singular cubics, and it is not for a smooth cubic."],
   ["hodge", "push", "In this framework it is a theorem that canonical forms are carried along by maps, forwards and backwards."],
   ["polygon", "polypols", "Wachspress also treated regions with curved sides, the polycons."],
   ["segment", "onevar", "From two nodes to many: the same formula, with a pole at every node."],

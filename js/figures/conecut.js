@@ -1,5 +1,5 @@
 /**
- * conecut.js — Figure 12b (added remark): the cone behind the dual polygon.
+ * conecut.js — Figure 12b (added remark): the cone over the dual polygon.
  *
  * The edge normals of a polygon, written as vectors a_i = (−n_i·p_i, n_i) in
  * three dimensions (math/splines.js), span a cone C that does NOT depend on
