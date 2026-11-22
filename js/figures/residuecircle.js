@@ -1,5 +1,5 @@
 /**
- * residuecircle.js — Figure 12i (added remark): the residue theorem at work.
+ * residuecircle.js — Figure 12i (added remark): the residue theorem for a set of nodes.
  *
  * The form  ℓ(x) g(t) dt / (ℓ(t) (x − t))  with g(t) = t^k has a pole at every
  * node t_j, with residue λ_j(x) g(t_j), and one at t = x with residue −g(x)

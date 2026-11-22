@@ -1,5 +1,6 @@
 /**
- * quadcontour.js — Figure 12m (added remark): two triangulations from one contour.
+ * quadcontour.js — Figure 12m (added remark): the two triangulations of a
+ * quadrilateral as a contour integral.
  *
  * For a convex quadrilateral and a point x with positive coefficients c
  * (here: its Wachspress coordinates),

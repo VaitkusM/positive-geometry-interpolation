@@ -1,6 +1,6 @@
 /**
- * hodgecubic.js — Figure 11b (later development): a corner makes the canonical
- * form, a handle destroys its uniqueness.
+ * hodgecubic.js — Figure 11b (later development): a nodal cubic and a
+ * smooth cubic.
  *
  * The cubic curves  y² = x²(1 − x) − ε  (math/hodge.js). For ε = 0 the curve
  * has a node and bounds a "teardrop" with one corner; the pair (plane, curve)

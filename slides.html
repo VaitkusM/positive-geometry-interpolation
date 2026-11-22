@@ -215,7 +215,7 @@
 </section>
 
 <section class="slide side" id="residue" data-part="2 · Positive geometries" data-more="#positive" style="--text-w: 380px">
-  <h2>Residues: the boundary of a boundary</h2>
+  <h2>Residues on an edge and at its end points</h2>
   <div class="slide-body">
     <div class="slide-text">
       <ul>
@@ -235,7 +235,7 @@
 </section>
 
 <section class="slide text" id="additivity" data-part="2 · Positive geometries" data-more="#positive">
-  <h2>Triangulations, and a small zoo</h2>
+  <h2>Additivity and further examples</h2>
   <div class="slide-body">
     <p><strong>Additivity.</strong> Cut a region into pieces: the canonical forms of the pieces
       add up. The poles at the cut have opposite residues and cancel:</p>
@@ -322,7 +322,7 @@
         add up to the whole.</p>
     </div>
     <div>
-      <p><strong>Second answer: a picture.</strong> Replace every edge line by the point</p>
+      <p><strong>Second answer: the polar dual.</strong> Replace every edge line by the point</p>
       <div class="tex block">\mathbf d_k=\frac{\mathbf n_k}{h_k(\mathbf x)}</div>
       <p>The <span class="tex">\mathbf d_k</span> span the <strong>polar dual</strong>
         <span class="tex">P^*_{\mathbf x}</span>, and the wedges become triangles that tile it:</p>
@@ -524,13 +524,13 @@
       </ul>
     </div>
     <div>
-      <p><strong>Theorems, not assumptions:</strong> additivity, residues (for boundary
+      <p><strong>Proved in this setting:</strong> additivity, residues (for boundary
         pieces of genus zero), push-forwards, products.</p>
       <p><strong>Polygons.</strong> With edge functions <span class="tex">f_i</span>:</p>
       <div class="tex block">\varpi_P=-\sum_i d\log f_i\wedge d\log f_{i+1}</div>
       <p>One term per corner: this is the wedge decomposition of Part 3, and the Wachspress
         coordinate of a vertex is the share of its corner.</p>
-      <p class="small muted">Hodge theory is silent on positivity inside the domain; for
+      <p class="small muted">Hodge theory does not address positivity inside the domain; for
         that the adjoint remains the tool. Genus zero is sufficient but not necessary
         (Koefler, Pavlov, Sinn).</p>
     </div>
@@ -538,7 +538,7 @@
 </section>
 
 <section class="slide side" id="hodgecubic" data-part="5 · Since 2019" data-more="#later-hodge" style="--text-w: 360px; --fig-zoom: 0.78">
-  <h2>A corner makes the form, a handle destroys its uniqueness</h2>
+  <h2>Example: a nodal cubic and a smooth cubic</h2>
   <div class="slide-body">
     <div class="slide-text">
       <ul>
@@ -603,7 +603,7 @@
 </section>
 
 <section class="slide side" id="splinedual" data-part="5 · Since 2019" data-more="#later-splines" style="--text-w: 420px; --fig-zoom: 0.82">
-  <h2>Splines: the same transform, read backwards <span class="badge alt">Added remark</span></h2>
+  <h2>Splines and the Laplace transform <span class="badge alt">Added remark</span></h2>
   <div class="slide-body">
     <div class="slide-text">
       <p><span class="tex">T</span>: the multivariate spline (truncated power) of the vectors
@@ -716,7 +716,7 @@
 </section>
 
 <section class="slide side" id="residuecircle" data-notes="readout" data-part="5 · Since 2019" data-more="#later-contour" style="--text-w: 400px">
-  <h2>The residue theorem at work <span class="badge alt">Added remark</span></h2>
+  <h2>Reproduction of polynomials by the residue theorem <span class="badge alt">Added remark</span></h2>
   <div class="slide-body">
     <div class="slide-text">
       <div class="tex block">\omega=\frac{\ell(x)}{\ell(t)}\,\frac{g(t)\,dt}{x-t}</div>
@@ -732,7 +732,7 @@
 </section>
 
 <section class="slide side" id="baryrational" data-part="5 · Since 2019" data-more="#later-contour" data-notes="readout" style="--text-w: 400px; --fig-zoom: 0.83">
-  <h2>One formula, four choices of weights <span class="badge alt">Added remark</span></h2>
+  <h2>The barycentric formula with other weights <span class="badge alt">Added remark</span></h2>
   <div class="slide-body">
     <div class="slide-text">
       <p>Weights <span class="tex">w_j</span> in place of <span class="tex">c_j</span>. Berrut’s
@@ -780,7 +780,7 @@
 </section>
 
 <section class="slide side" id="quadcontour" data-part="5 · Since 2019" data-more="#later-contour" data-notes="readout" style="--text-w: 480px">
-  <h2>Two triangulations from one contour <span class="badge alt">Added remark</span></h2>
+  <h2>The two triangulations of a quadrilateral as a contour integral <span class="badge alt">Added remark</span></h2>
   <div class="slide-body">
     <div class="slide-text">
       <div class="tex block">C_P(\mathbf x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}\frac{ds}{\prod_{j=0}^{3}\,(c_j-i\,s\,k_j)}</div>
@@ -797,7 +797,7 @@
   <h2>Mean value coordinates: area versus perimeter <span class="badge">Later development</span></h2>
   <div class="slide-body">
     <div class="slide-text">
-      <p>One dual polygon, two measurements (after Schaefer, Ju, Warren):</p>
+      <p>Both normalisers are measured on the same dual polygon (after Schaefer, Ju, Warren):</p>
       <div class="tex block">\sum_i w_i^{\mathrm{W}}=\sum_i\frac{L_i}{r_i}=2\operatorname{Area}(P^*_{\mathbf x})</div>
       <div class="tex block">\sum_i w_i^{\mathrm{MV}}=\sum_i L_i=\operatorname{Perimeter}(P^*_{\mathbf x})</div>
       <ul>
@@ -851,7 +851,7 @@
   <div class="slide-body">
     <div class="tex block">\Omega\big(G_{\ge0}(2,4)\big)=\frac{da\,db\,dc\,dd}{b\,c\,(ad-bc)},\qquad p_{12}=1,\;p_{23}=c,\;p_{34}=ad-bc,\;p_{14}=b .</div>
     <ul>
-      <li><strong>Four facets, not six.</strong> The poles are where a cyclically consecutive
+      <li><strong>Four facets.</strong> The poles are where a cyclically consecutive
         Plücker coordinate vanishes; <span class="tex">p_{13}</span> and
         <span class="tex">p_{24}</span> cannot vanish inside. The symmetry is cyclic, not that
         of a tetrahedron.</li>
@@ -880,7 +880,7 @@
         numerators are canonical functions of <strong>wedges</strong>.</li>
       <li>Partition of unity is additivity of canonical forms, or a tiling of the
         <strong>polar dual</strong>.</li>
-      <li>The <strong>adjoint</strong> is what remains over a common denominator; it must stay
+      <li>The <strong>adjoint</strong> is the numerator over the common denominator; it must stay
         outside the domain.</li>
       <li>Open: curved domains, non-rational coordinates, line space.</li>
     </ul>

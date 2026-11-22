@@ -49,7 +49,7 @@
   <h1>Positive Geometries for Barycentric Interpolation</h1>
   <p class="byline">after Márton Vaitkus, Budapest University of Technology and Economics</p>
   <figure class="fig hero-fig" data-figure="hero">
-    <figcaption>The whole argument in one picture. The <em>canonical function</em> of a pentagon,
+    <figcaption>The <em>canonical function</em> of a pentagon,
       drawn over the entire plane: positive inside the pentagon and in the other blue regions,
       negative in the orange ones, stronger colour for larger values. It is infinite on the
       five edge lines and zero on the conic through the five outer crossing points
@@ -346,8 +346,8 @@
       to polytopes.</figcaption>
   </figure>
 
-  <h3>Residues: the boundary of a boundary</h3>
-  <p>The recursion rule can be watched at work. Take a polygon, and sample its canonical
+  <h3>Residues on an edge and at its end points</h3>
+  <p>The recursion rule can be checked numerically. Take a polygon, and sample its canonical
     function <span class="tex">C</span> along a line parallel to one edge, at distance
     <span class="tex">\varepsilon</span> from it. As the line approaches the edge,
     <span class="tex">C</span> grows like <span class="tex">1/\varepsilon</span>. Multiply by
@@ -367,7 +367,7 @@
       polygon restricts to linear interpolation along each edge.</figcaption>
   </figure>
 
-  <h3>Triangulations and a small zoo</h3>
+  <h3>Additivity and further examples</h3>
   <p>Canonical forms are <strong>additive</strong>: if a region is cut into pieces, its
     canonical form is the sum of the forms of the pieces. The smallest example is a segment
     <span class="tex">[a,b]</span> cut at a point <span class="tex">c</span>:</p>
@@ -991,7 +991,7 @@
 
   <figure class="fig" data-figure="hodgecubic">
     <figcaption><strong>Figure 11b.</strong> <span class="badge">Later development</span>
-      A corner makes the canonical form, a handle destroys its uniqueness. For
+      A nodal cubic and a smooth cubic. For
       <span class="tex">\varepsilon=0</span> the cubic has a node, the teardrop has one corner,
       and the residue of its canonical form along the boundary has a simple pole at each end:
       it is the canonical form of a segment. For <span class="tex">\varepsilon&gt;0</span> the
@@ -1050,7 +1050,7 @@
     Section 5 is a canonical form, so on a domain bounded by curves the first question is
     whether one exists and is unique: the rank must be positive and the genus zero. Second,
     the numerators are the corner terms of that form, and the framework says which corners
-    there are and with what sign each contributes. Third, Hodge theory is silent on the
+    there are and with what sign each contributes. Third, Hodge theory does not address the
     property that interpolation needs most, positivity inside the domain. That is a
     question about real points, for which the adjoint of Section 6 and the counterexample
     in this section remain the relevant tools.</p>
@@ -1116,7 +1116,7 @@
       rational canonical function.</figcaption>
   </figure>
 
-  <h4 id="later-splines">Splines: the same transform, read backwards <span class="badge alt">Added remark</span></h4>
+  <h4 id="later-splines">Splines and the Laplace transform <span class="badge alt">Added remark</span></h4>
   <p class="gist"><strong>In short:</strong> a canonical function is the Laplace transform of
     the indicator function of a cone. Splines are functions on the same cone, and their
     Laplace transforms are the <em>denominators</em> of canonical functions. The adjoint
@@ -1580,7 +1580,7 @@
 
   <figure class="fig" data-figure="residuecircle">
     <figcaption><strong>Figure 12i.</strong> <span class="badge alt">Added remark</span>
-      The residue theorem at work, for five nodes. The poles of the form
+      The residue theorem for five nodes. The poles of the form
       <span class="tex">\omega</span> are the nodes and the point <span class="tex">x</span>; the
       number above each pole is its residue. The integral over the circle, divided by
       <span class="tex">2\pi i</span>, is the sum of the residues inside. With all six poles
@@ -1671,7 +1671,7 @@
 
   <figure class="fig" data-figure="baryrational">
     <figcaption><strong>Figure 12j.</strong> <span class="badge alt">Added remark</span>
-      One formula, four choices of weights, for Runge’s function at equally spaced nodes.
+      The barycentric formula with four choices of weights, for Runge’s function at equally spaced nodes.
       The table reports the degree of the polynomials that are reproduced, the degree of the
       denominator <span class="tex">D</span> and the Lebesgue constant. With the polynomial
       weights the coordinates oscillate strongly near the ends as nodes are added; with the
@@ -1802,7 +1802,7 @@
 
   <figure class="fig" data-figure="quadcontour">
     <figcaption><strong>Figure 12m.</strong> <span class="badge alt">Added remark</span>
-      Two triangulations from one contour. On the right, the four poles of the integrand;
+      The two triangulations of a quadrilateral as a contour integral. On the right, the four poles of the integrand;
       each is coloured like the vertex whose coefficient vanishes there. Closing the contour
       above or below selects two of them, and on the left the corresponding two triangles
       are shaded, each in the colour of the vertex that it leaves out. The table adds their
@@ -1857,7 +1857,7 @@
 
   <figure class="fig" data-figure="meanvalue">
     <figcaption><strong>Figure 13.</strong> <span class="badge">Later development</span>
-      One dual polygon, two measurements. Its area normalises the Wachspress coordinates, its
+      The area of the dual polygon normalises the Wachspress coordinates, its
       perimeter the mean value coordinates. On a triangle the two sets of coordinates
       coincide.</figcaption>
   </figure>
